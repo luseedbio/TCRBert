@@ -13,7 +13,7 @@ import torch.nn.functional as F
 
 
 # Logger
-logger = logging.getLogger('epidab')
+logger = logging.getLogger('tcrpe')
 
 AMINO_ACIDS = 'ACDEFGHIKLMNPQRSTVWY'
 AA_PAIRS = [(AMINO_ACIDS[i], AMINO_ACIDS[j]) for i in range(len(AMINO_ACIDS)) for j in range(i, len(AMINO_ACIDS))]

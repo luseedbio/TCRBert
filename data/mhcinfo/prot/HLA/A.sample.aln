@@ -1,0 +1,39 @@
+# file: A_prot.txt
+# date: 2020-04-20
+# version: IPD-IMGT/HLA 3.40.0
+# origin: http://hla.alleles.org/wmda/A_prot.txt
+# repository: https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/alignments/A_prot.txt
+# author: WHO, Steven G. E. Marsh (steven.marsh@ucl.ac.uk)
+
+ Prot              -30
+                   |
+ HLA-A*01:01:01:01           MAVM APRTLLLLLSDQETRNMK
+ HLA-A*01:01:01:02N          ---- ------------------
+ HLA-A*01:01:01:03           ---- ------------------
+ HLA-A*01:02:01              ---- ...---------------
+ HLA-A*01:03:01:01           ---- -----------.------
+ HLA-A*80:01:01:01           ---- P----------E----V-
+ HLA-A*80:02                 ---- A----------E----V-
+ HLA-A*80:04                 ---* *----------E----V-
+
+ Prot              69
+                   |
+ HLA-A*01:01:01:01     AHSQTDRANL
+ HLA-A*01:01:01:02N    -X
+ HLA-A*01:01:01:03     ----------
+ HLA-A*01:02:01        ----------
+ HLA-A*01:03:01:01     ----------
+ HLA-A*80:01:01:01     -----N----
+ HLA-A*80:02           -------VD-
+ HLA-A*80:04           -----N-E--
+
+ Prot              342
+                   |
+ HLA-A*01:01:01:01
+ HLA-A*01:01:01:02N
+ HLA-A*01:01:01:03
+ HLA-A*01:02:01
+ HLA-A*01:03:01:01
+ HLA-A*80:01:01:01
+ HLA-A*80:02
+ HLA-A*80:04

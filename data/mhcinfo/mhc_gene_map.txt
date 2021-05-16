@@ -1,0 +1,13 @@
+{
+'HLA': (['A', 'B', 'C', 'E', 'G'], ['DRA', 'DPA1', 'DQA1', 'DRB1', 'DRB3', 'DRB4', 'DRB5', 'DPB1', 'DQB1']),
+'Patr': (['A', 'AL', 'B', 'C'], None),
+'Caja': (['E'], None),
+'Mamu': (['A1', 'A2', 'A7', 'B'], None),
+'Gogo': (['B'], None),
+'Eqca': (['N', '1', '2', '3', '4', '6', '7', '16'], ['DMB', 'DOB', 'DQA1', 'DQA2', 'DQA3', 'DQB1', 'DQB2', 'DQB3', 'DRA', 'DRB1', 'DRB2', 'DRB3']),
+'SLA' : (['1', '2', '3'], None),
+'DLA' : (['12', '64', '88'], ['DQA1', 'DQB1', 'DRB1']),
+'BoLA': (['1', '2', '3', '4','5', '6', 'T2c'], ['DQA', 'DQA1', 'DQB', 'DRA', 'DRB3']),
+'H2': (['D', 'K', 'L'], ['IA', 'IE']),
+'Gaga': (['BF1', 'BF2'], None),
+'Rano': (['A', 'A1', 'A2', 'A3', 'Ba', 'Bb', 'C'], ['Da', 'Db1', 'Db2'])}

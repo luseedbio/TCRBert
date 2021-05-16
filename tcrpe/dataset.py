@@ -1,6 +1,7 @@
 import logging
 import unittest
 from enum import auto
+import pandas as pd
 from tcrpe.commons import StrEnum
 
 # Logger
@@ -8,22 +9,27 @@ logger = logging.getLogger('tcrpe')
 
 class TCREpitopeDFLoader(object):
     class ColumnName(StrEnum):
-        cdr3_seq = auto()
+        beta_cdr3_seq = auto()
         pep_seq = auto()
         pep_len = auto()
         hla_allele = auto()
         label = auto()
 
-    def load(self, **kwargs):
-        if 'csv_file' in kwargs:
-            fn_csv = kwargs['csv_file']
-            return self._load_from_csv(fn_csv)
-
-    def _load_from_csv(self, fn_csv):
+    def load_from_file(self, fn, rm_dup=False):
         raise NotImplementedError()
 
 class VDJDBTCREpitopeDFLoader(TCREpitopeDFLoader):
-    def _load_from_csv(self, fn_csv):
+    def load_from_file(self, fn, rm_dup=False):
+        df = pd.read_table(fn, sep='\t', header=0)
+        # Only beta CDR3 sequence and MHC class I
+        df = df[
+            (df['Gene'] == 'TRB') &
+            (df['MHC class'] == 'MHCI')
+        ]
+        # Check check valid AA seq
+        df = df[
+            df['CDR3'].map()
+        ]
         raise NotImplementedError()
 
 

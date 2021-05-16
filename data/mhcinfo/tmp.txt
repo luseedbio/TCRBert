@@ -1,0 +1,2 @@
+['original_allele', 'allele', 'pep_seq', 'pep_len', 'meas_value', 'meas_method', 'assay_type', 'meas_inequality', 'meas_label', 'ref_id', 'authors']
+
