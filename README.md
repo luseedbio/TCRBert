@@ -1,4 +1,4 @@
-# TCRPE
+# TCRBert
 ### Predicting Epitope-specific TCR recognition using Pre-trained Protein Embeddings. 
 The pre-trained embeddings were derived from 
 the Tasks Assessing Protein Embeddings(TAPE) which is a semi-supervised BERT language model including the protein-specific prior knowledges, 
