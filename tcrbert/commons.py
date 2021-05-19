@@ -13,7 +13,7 @@ import torch.nn.functional as F
 
 
 # Logger
-logger = logging.getLogger('tcrpe')
+logger = logging.getLogger('tcrbert')
 
 AMINO_ACIDS = 'ACDEFGHIKLMNPQRSTVWY'
 AA_PAIRS = [(AMINO_ACIDS[i], AMINO_ACIDS[j]) for i in range(len(AMINO_ACIDS)) for j in range(i, len(AMINO_ACIDS))]
@@ -142,13 +142,14 @@ class TestModel(nn.Module):
         out = self.softmax(out)
         return out
 
+
 class BaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         warnings.filterwarnings('ignore')
         logging.config.fileConfig('../config/logging.conf')
 
-        cls.test_synonyms = [
+        cls.TEST_SYNONYMS = [
             'BoLA-AW10', 'BoLA-D18.4', 'BoLA-HD6', 'BoLA-JSP.1', 'BoLA-T2C', 'BoLA-T2a',
             'BoLA-T2b', 'ELA-A1', 'Gogo-B*0101', 'H-2-Db', 'H-2-Dd', 'H-2-Kb', 'H-2-Kbm8', 'H-2-Kwm7',
             'H-2-Kd', 'H-2-Kk', 'H-2-Ld', 'H-2-Lq', 'HLA-Cw1', 'HLA-Cw4', 'HLA-E*01:01',
@@ -161,7 +162,7 @@ class BaseTest(unittest.TestCase):
             'Patr-B*1301', 'Patr-B*1701', 'Patr-B*2401', 'RT1A', 'SLA-1*0401',
             'SLA-1*0701', 'SLA-2*0401', 'SLA-3*0401'
         ]
-        cls.target_classI_alleles = [
+        cls.MHCI_ALLELES = [
             'BoLA-1*023:01', 'BoLA-2*012:01', 'BoLA-3*001:01', 'BoLA-3*002:01',
             'BoLA-6*013:01', 'BoLA-6*041:01', 'BoLA-T2c', 'H2-Db', 'H2-Dd',
             'H2-Kb', 'H2-Kd', 'H2-Kk', 'H2-Ld', 'HLA-A*01:01', 'HLA-A*02:01',
@@ -195,15 +196,6 @@ class BaseTest(unittest.TestCase):
             'Patr-A*09:01', 'Patr-B*01:01', 'Patr-B*13:01', 'Patr-B*24:01',
             'Rano-A1*b', 'SLA-1*04:01', 'SLA-1*07:01', 'SLA-2*04:01','SLA-3*04:01']
 
-        with open('../output/all_alleles.txt', 'r') as f:
-            cls.pretrain_alleles = eval(f.read())
-
-        for allele in cls.pretrain_alleles:
-            if allele not in cls.target_classI_alleles:
-                cls.target_classI_alleles.append(allele)
-
-    def assertArrayEqual(self, first, second):
-        self.assertTrue(np.array_equal(first, second))
 
 class ImmunoLevelTest(BaseTest):
     # def test_is_binder(self):
@@ -243,7 +235,7 @@ class ImmunoLevelTest(BaseTest):
         self.assertTrue(ImmunoLevel.is_immunogenic(ImmunoLevel.IMMUNOGENIC))
 
     def test_immuno_levels(self):
-        self.assertArrayEqual([3, 2, 1, 0], ImmunoLevel.immuno_levels())
+        self.assertListEqual([3, 2, 1, 0], ImmunoLevel.immuno_levels())
 
     def test_n_levels(self):
         self.assertEqual(4, ImmunoLevel.n_levels())

@@ -2,10 +2,10 @@ import logging.config
 import unittest
 import re
 from enum import auto
-from tcrpe.commons import StrEnum, StrUtils
+from tcrbert.commons import StrEnum, StrUtils, BaseTest
 
 # Logger
-logger = logging.getLogger('tcrpe')
+logger = logging.getLogger('tcrbert')
 
 
 class MHCClass(StrEnum):
@@ -292,9 +292,9 @@ class MHCClassTest(unittest.TestCase):
     def test_class_eunm(self):
         self.assertEqual('I', MHCClass.I)
         self.assertEqual('II', MHCClass.II)
-        self.assertArrayEqual(['I', 'II'], MHCClass.values())
+        self.assertListEqual(['I', 'II'], MHCClass.values())
 
-class MHCAlleleNameTest(unittest.TestCase):
+class MHCAlleleNameTest(BaseTest):
     def test_format(self):
         an = MHCAlleleName(species='HLA', clazz=MHCClass.I, gene='A', group='01', protein='01')
         self.assertEqual('HLA', an.format(level=0))
@@ -321,7 +321,7 @@ class MHCAlleleNameTest(unittest.TestCase):
         self.assertEqual(3, MHCAlleleName.level('HLA-A*24:01'))
 
     def test_std_name(self):
-        for synm in MHCAlleleNameTest.test_synonyms:
+        for synm in self.TEST_SYNONYMS:
             aname = MHCAlleleName.std_name(synm)
             self.assertIsNotNone(aname)
 
