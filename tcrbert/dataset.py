@@ -31,6 +31,10 @@ class TCREpitopeDFLoader(object):
     def _get_index(self, row, sep='_'):
         return '%s%s%s' % (row[self.CN.beta_cdr3_seq], sep, row[self.CN.pep_seq])
 
+class DashTCREpitopeDFLoader(TCREpitopeDFLoader):
+    def load_from_file(self, fn, rm_dup=False):
+        pass
+
 class VDJdbTCREpitopeDFLoader(TCREpitopeDFLoader):
     def load_from_file(self, fn, rm_dup=False):
         logger.debug('Loading TCR-epitope DF from %s' % fn)
