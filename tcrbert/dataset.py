@@ -181,7 +181,7 @@ CN = TCREpitopeDFColumnName
 #
 #     def test_mcpas_loader(self):
 #         loader = McPASTCREpitopeDFLoader()
-#         df = loader.load_from_file(fn='../data/McPAS/McPAS-TCR.csv')
+#         df = loader.load_from_file(fn='../data/McPAS/McPAS-TCR_20210521.csv')
 #         self.assert_df_loaded(df)
 
 
