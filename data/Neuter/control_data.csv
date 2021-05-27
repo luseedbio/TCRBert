@@ -1,4 +1,4 @@
-V_gene,CDR3_sequence,J_gene,HLA_peptide
+v_gene,cdr3b,j_gene,epitope
 07-03,CASSLNVGPYEQYF,02-07,Control
 07-06,CASSLSGSEDNEQFF,02-01,Control
 09-01,CASSGAGRKTGELFF,02-02,Control
