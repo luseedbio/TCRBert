@@ -1,0 +1,290 @@
+2021-05-21 23:06:31 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-21 23:06:31 [DEBUG]: Select beta CDR3 sequence and MHCI
+2021-05-21 23:06:31 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-21 23:06:31 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-21 23:06:31 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-21 23:06:31 [DEBUG]: Select confidence score > 0
+2021-05-21 23:06:31 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-21 23:09:40 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-21 23:09:40 [DEBUG]: Select beta CDR3 sequence and MHCI
+2021-05-21 23:09:40 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-21 23:09:40 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-21 23:09:40 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-21 23:09:40 [DEBUG]: Select confidence score > 0
+2021-05-21 23:09:40 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-21 23:09:41 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:09:41 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-21 23:09:41 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:09:41 [DEBUG]: Final df.shape: (3225, 8)
+2021-05-21 23:10:11 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:10:11 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:10:11 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:10:11 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:10:11 [DEBUG]: Current df.shape: (12360, 37)
+2021-05-21 23:10:11 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:10:11 [DEBUG]: Final df.shape: (10803, 8)
+2021-05-21 23:12:25 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:12:25 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:12:25 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:12:25 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:12:25 [DEBUG]: Current df.shape: (12360, 37)
+2021-05-21 23:12:25 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:12:25 [DEBUG]: Final df.shape: (10803, 8)
+2021-05-21 23:12:54 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:12:54 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:12:54 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:12:54 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:12:54 [DEBUG]: Current df.shape: (12360, 37)
+2021-05-21 23:12:54 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:12:54 [DEBUG]: Final df.shape: (10803, 8)
+2021-05-21 23:13:27 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:13:27 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:13:27 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:13:27 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:13:27 [DEBUG]: Current df.shape: (12360, 37)
+2021-05-21 23:13:27 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:13:27 [DEBUG]: Final df.shape: (10803, 8)
+2021-05-21 23:20:47 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:20:47 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:20:47 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:20:47 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:21:37 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:21:37 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:21:37 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:21:37 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:21:37 [DEBUG]: Current df.shape: (1330, 29)
+2021-05-21 23:21:37 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:21:37 [DEBUG]: Current df.shape: (1121, 37)
+2021-05-21 23:21:37 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:21:37 [DEBUG]: Final df.shape: (1024, 8)
+2021-05-21 23:21:59 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:21:59 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:21:59 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:21:59 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:23:27 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:23:27 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:23:27 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:23:40 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:23:40 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:23:40 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:23:55 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:23:55 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:23:55 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:24:07 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:24:07 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:24:07 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:27:58 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:27:58 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:27:58 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:28:23 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:28:23 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:28:23 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:28:38 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:28:38 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:28:38 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:29:51 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:29:51 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:29:51 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:29:51 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:29:51 [DEBUG]: Current df.shape: (14405, 29)
+2021-05-21 23:30:12 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:30:12 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:30:12 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:30:12 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:30:12 [DEBUG]: Current df.shape: (14405, 29)
+2021-05-21 23:32:33 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:32:33 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:32:33 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:32:33 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:32:33 [DEBUG]: Current df.shape: (12683, 29)
+2021-05-21 23:32:52 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:32:52 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:32:52 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:32:52 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:32:52 [DEBUG]: Current df.shape: (2219, 29)
+2021-05-21 23:34:56 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:34:56 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:34:56 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:35:06 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:35:06 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:35:06 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:35:06 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:35:06 [DEBUG]: Current df.shape: (1330, 37)
+2021-05-21 23:35:25 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:35:25 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:35:25 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:35:26 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:36:24 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:36:24 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:36:24 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:36:24 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:36:31 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:36:31 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:36:31 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:36:32 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:36:32 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:38:05 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:38:05 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:38:05 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:38:05 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:38:05 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:39:14 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:39:14 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:39:14 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:39:14 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:39:14 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:40:19 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:40:19 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:40:19 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:40:19 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:40:19 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:41:02 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:41:02 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:41:02 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:41:03 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:41:03 [DEBUG]: Current df.shape: (1330, 37)
+2021-05-21 23:41:57 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:41:57 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:41:57 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:41:57 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:41:57 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:42:08 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:42:08 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:42:08 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:42:09 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:42:09 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:42:09 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:42:09 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-21 23:42:09 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:42:09 [DEBUG]: Final df.shape: (9720, 8)
+2021-05-21 23:42:50 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:42:50 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:42:50 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:42:50 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:42:50 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:42:50 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:42:50 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-21 23:42:50 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:42:50 [DEBUG]: Final df.shape: (9720, 8)
+2021-05-21 23:44:11 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:44:11 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:44:11 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:44:12 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:44:12 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:44:12 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:44:12 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-21 23:44:12 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:44:12 [DEBUG]: Final df.shape: (9720, 8)
+2021-05-21 23:45:28 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-21 23:45:28 [DEBUG]: Select beta CDR3 sequence and MHCI
+2021-05-21 23:45:28 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-21 23:45:28 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-21 23:45:28 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-21 23:45:28 [DEBUG]: Select confidence score > 0
+2021-05-21 23:45:28 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-21 23:45:28 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:45:28 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-21 23:45:28 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:45:28 [DEBUG]: Final df.shape: (3225, 8)
+2021-05-21 23:45:51 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-21 23:45:51 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-21 23:45:51 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-21 23:45:51 [DEBUG]: Select MHC-I restricted entries
+2021-05-21 23:45:52 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-21 23:45:52 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-21 23:45:52 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-21 23:45:52 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-21 23:45:52 [DEBUG]: Final df.shape: (9720, 8)
+2021-05-22 23:41:16 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-22 23:41:16 [DEBUG]: Select beta CDR3 sequence and MHCI
+2021-05-22 23:41:16 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-22 23:41:16 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-22 23:41:16 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-22 23:41:16 [DEBUG]: Select confidence score > 0
+2021-05-22 23:41:16 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-22 23:41:16 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-22 23:41:16 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-22 23:41:16 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-22 23:41:16 [DEBUG]: Final df.shape: (3225, 8)
+2021-05-22 23:47:02 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-22 23:47:02 [DEBUG]: Select beta CDR3 sequences and MHC-I restricted epitopes
+2021-05-22 23:47:02 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-22 23:47:02 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-22 23:47:02 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-22 23:47:02 [DEBUG]: Select confidence score > 0
+2021-05-22 23:47:02 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-22 23:47:02 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-22 23:47:02 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-22 23:47:35 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-22 23:47:35 [DEBUG]: Select beta CDR3 sequences and MHC-I restricted epitopes
+2021-05-22 23:47:35 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-22 23:47:35 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-22 23:47:35 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-22 23:47:35 [DEBUG]: Select confidence score > 0
+2021-05-22 23:47:35 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-22 23:47:35 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-22 23:47:35 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-22 23:48:42 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-22 23:48:42 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-22 23:48:42 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-22 23:48:42 [DEBUG]: Select MHC-I restricted entries
+2021-05-22 23:48:42 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-22 23:48:42 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-22 23:48:42 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-22 23:54:48 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-22 23:54:48 [DEBUG]: Final df.shape: (9720, 8)
+2021-05-23 00:44:43 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-23 00:44:43 [DEBUG]: Select beta CDR3 sequences and MHC-I restricted epitopes
+2021-05-23 00:44:43 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-23 00:44:43 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-23 00:44:43 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-23 00:44:43 [DEBUG]: Select confidence score > 0
+2021-05-23 00:44:43 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-23 00:44:43 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-23 00:44:43 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-23 00:44:53 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-23 00:44:53 [DEBUG]: Select beta CDR3 sequences and MHC-I restricted epitopes
+2021-05-23 00:44:53 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-23 00:44:53 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-23 00:44:53 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-23 00:44:53 [DEBUG]: Select confidence score > 0
+2021-05-23 00:44:53 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-23 00:44:53 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-23 00:44:53 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-23 00:45:26 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-23 00:45:26 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-23 00:45:26 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-23 00:45:27 [DEBUG]: Select MHC-I restricted entries
+2021-05-23 00:45:27 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-23 00:45:27 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-23 00:45:27 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-23 00:47:38 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-23 00:47:38 [DEBUG]: Final df.shape: (12229, 8)
+2021-05-23 00:49:07 [DEBUG]: Merge all datasets
+2021-05-23 00:49:07 [DEBUG]: Current df.shape: (16784, 8)
+2021-05-23 00:49:07 [DEBUG]: Drop duplicates
+2021-05-23 00:49:07 [DEBUG]: Current df.shape: (14031, 8)
+2021-05-23 00:49:07 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-23 00:49:07 [DEBUG]: Final df.shape: (12229, 8)
+2021-05-23 00:52:08 [DEBUG]: Current df.shape: (78701, 21)
+2021-05-23 00:52:08 [DEBUG]: Select beta CDR3 sequences and MHC-I restricted epitopes
+2021-05-23 00:52:08 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-23 00:52:08 [DEBUG]: Select valid CDR3 and epitope sequences
+2021-05-23 00:52:08 [DEBUG]: Current df.shape: (44797, 21)
+2021-05-23 00:52:08 [DEBUG]: Select confidence score > 0
+2021-05-23 00:52:08 [DEBUG]: Current df.shape: (6659, 21)
+2021-05-23 00:52:08 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-23 00:52:08 [DEBUG]: Current df.shape: (4275, 28)
+2021-05-23 00:52:48 [DEBUG]: Current df.shape: (39045, 29)
+2021-05-23 00:52:48 [DEBUG]: Select valid beta CDR3 and epitope sequences
+2021-05-23 00:52:48 [DEBUG]: Current df.shape: (15051, 29)
+2021-05-23 00:52:48 [DEBUG]: Select MHC-I restricted entries
+2021-05-23 00:52:48 [DEBUG]: Current df.shape: (13572, 37)
+2021-05-23 00:52:48 [DEBUG]: Drop duplicates with the same{epitope, CDR3b}
+2021-05-23 00:52:48 [DEBUG]: Current df.shape: (11101, 37)
+2021-05-23 00:54:25 [DEBUG]: Merge all datasets
+2021-05-23 00:54:25 [DEBUG]: Current df.shape: (16784, 8)
+2021-05-23 00:54:25 [DEBUG]: Drop duplicates
+2021-05-23 00:54:25 [DEBUG]: Current df.shape: (14031, 8)
+2021-05-23 00:54:25 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-23 00:54:25 [DEBUG]: Final df.shape: (12229, 8)
