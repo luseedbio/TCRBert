@@ -288,3 +288,9 @@
 2021-05-23 00:54:25 [DEBUG]: Current df.shape: (14031, 8)
 2021-05-23 00:54:25 [DEBUG]: Select all epitope with at least 30 TCRB sequences
 2021-05-23 00:54:25 [DEBUG]: Final df.shape: (12229, 8)
+2021-05-30 01:24:59 [DEBUG]: Merge all datasets
+2021-05-30 01:24:59 [DEBUG]: Current df.shape: (17165, 8)
+2021-05-30 01:24:59 [DEBUG]: Drop duplicates
+2021-05-30 01:24:59 [DEBUG]: Current df.shape: (14365, 8)
+2021-05-30 01:24:59 [DEBUG]: Select all epitope with at least 30 TCRB sequences
+2021-05-30 01:24:59 [DEBUG]: Final df.shape: (12534, 8)
