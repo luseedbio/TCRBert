@@ -15,12 +15,6 @@ import torch.nn.functional as F
 # Logger
 logger = logging.getLogger('tcrbert')
 
-AMINO_ACIDS = 'ACDEFGHIKLMNPQRSTVWY'
-AA_PAIRS = [(AMINO_ACIDS[i], AMINO_ACIDS[j]) for i in range(len(AMINO_ACIDS)) for j in range(i, len(AMINO_ACIDS))]
-AA_INDEX = list(AMINO_ACIDS)
-
-ALLELE_SEP = ','
-
 # Common constants
 EPS = 0.000001
 

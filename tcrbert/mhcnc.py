@@ -267,9 +267,9 @@ class MHCAlleleName(object):
 #     _allele_hla_st_map = None
 #
 #     @classmethod
-#     def load_hla_supertype_map(cls, fn='data/mhcinfo/HLA-supertype_revised.csv'):
+#     def load_hla_supertype_map(cls, fn_source='data/mhcinfo/HLA-supertype_revised.csv'):
 #         print('Load HLASupertype._allele_hla_st_map...')
-#         hla_st_tab = pd.read_csv(fn, na_values='Unclassified')
+#         hla_st_tab = pd.read_csv(fn_source, na_values='Unclassified')
 #         hla_st_tab.allele = hla_st_tab.allele.map(lambda s: 'HLA-%s:%s' % (s[:4], s[4:]))
 #         hla_st_tab.index = hla_st_tab.allele
 #         cls._allele_hla_st_map = hla_st_tab.supertype.to_dict()
