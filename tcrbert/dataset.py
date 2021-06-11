@@ -304,19 +304,23 @@ class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
 class TCREpitopeSentenceDataset(Dataset):
     CN_SENTENCE = 'sentence'
 
-    def __init__(self, df=None, max_len=None):
-        self._df = df
-        self.max_len = max_len
+    def __init__(self, df=None):
+        self.df = df
+        self.max_len = len(self.df.iloc[0][self.CN_SENTENCE])
 
     def __getitem__(self, index):
-        row = self._df.iloc[index, :]
-        sequence_ids = eval(row['sequence'])
+        row = self.df.iloc[index, :]
+        sentence_ids = row[self.CN_SENTENCE]
         label = row[CN.label]
 
-        return torch.tensor(sequence_ids), torch.tensor(label)
+        return torch.tensor(sentence_ids), torch.tensor(label)
 
     def __len__(self):
-        return self._df.shape[0]
+        return self.df.shape[0]
+
+    @classmethod
+    def load_df(cls, fn):
+        return pd.read_csv(fn, index_col=0, converters={cls.CN_SENTENCE: lambda x: eval(x)})
 
     @classmethod
     def encode_df(cls, df=None, max_len=None, tokenizer=None):
@@ -324,13 +328,13 @@ class TCREpitopeSentenceDataset(Dataset):
             epitope = row[CN.epitope]
             cdr3b = row[CN.cdr3b]
             logger.debug('Encoding epitope: %s, cdr3b: %s' % (epitope, cdr3b))
-            sequence_ids = tokenizer.encode(epitope)
+            sentence_ids = tokenizer.encode(epitope)
 
-            sequence_ids = np.append(sequence_ids, tokenizer.encode(cdr3b))
-            n_pads = max_len - sequence_ids.shape[0]
+            sentence_ids = np.append(sentence_ids, tokenizer.encode(cdr3b))
+            n_pads = max_len - sentence_ids.shape[0]
             if n_pads > 0:
-                sequence_ids = np.append(sequence_ids, [tokenizer.vocab['<pad>']] * n_pads)
-            return sequence_ids
+                sentence_ids = np.append(sentence_ids, [tokenizer.vocab['<pad>']] * n_pads)
+            return list(sentence_ids)
 
         df[cls.CN_SENTENCE] = df.apply(encode_row, axis=1)
         return df
@@ -483,6 +487,34 @@ class TCREpitopeDFLoaderTest(BaseTest):
             subdf_pos = subdf[subdf[CN.label] == 1]
             subdf_neg = subdf[subdf[CN.label] == 0]
             self.assertEqual(subdf_pos.shape[0], subdf_neg.shape[0])
+
+class TCREpitopeSentenceDatasetTest(BaseTest):
+    def setUp(self) -> None:
+        loader = DATA_LOADERS['dash']
+        self.df = loader.load()
+        self.max_len = 35
+        self.tokenizer = TAPETokenizer(vocab='iupac')
+
+
+    def test_encode_df(self):
+        df_enc = TCREpitopeSentenceDataset.encode_df(self.df, max_len=self.max_len, tokenizer=self.tokenizer)
+
+        self.assertEqual(self.df.shape[0], df_enc.shape[0])
+        self.assertTrue(TCREpitopeSentenceDataset.CN_SENTENCE in df_enc.columns)
+        self.assertTrue(all(df_enc[TCREpitopeSentenceDataset.CN_SENTENCE].map(lambda x: self.max_len == len(x))))
+        self.assertTrue((all(df_enc[CN.label].map(lambda x: x in [0, 1]))))
+
+    def test_ds(self):
+        df_enc = TCREpitopeSentenceDataset.encode_df(self.df, max_len=self.max_len, tokenizer=self.tokenizer)
+        fn_ds = '../tmp/test.csv'
+        df_enc.to_csv(fn_ds)
+
+        ds = TCREpitopeSentenceDataset(df=TCREpitopeSentenceDataset.load_df(fn_ds))
+        for i in range(len(ds)):
+            sent, label = ds[i]
+            self.assertEqual(self.max_len, len(sent))
+            self.assertTrue(label in [0, 1])
+
 
 if __name__ == '__main__':
     unittest.main()

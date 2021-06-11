@@ -1,11 +1,12 @@
 import json
+import os
 import pickle
 from argparse import ArgumentParser
 import warnings
 import logging
 import numpy as np
-from tape import TAPETokenizer
 from tcrbert.dataset import *
+from tcrbert.exp import Experiment
 
 warnings.filterwarnings("ignore")
 
@@ -15,54 +16,74 @@ logger = logging.getLogger('tcrbert')
 
 
 def generate_data(args):
-    def encode_row(row, max_len, tokenizer):
-        epitope = row[CN.epitope]
-        cdr3b = row[CN.cdr3b]
-        logger.debug('Encoding epitope: %s, cdr3b: %s' % (epitope, cdr3b))
-        sequence_ids = tokenizer.encode(epitope)
-
-        sequence_ids = np.append(sequence_ids, tokenizer.encode(cdr3b))
-        n_pads = max_len - sequence_ids.shape[0]
-        if n_pads > 0:
-            sequence_ids = np.append(sequence_ids, [tokenizer.vocab['<pad>']] * n_pads)
-        return sequence_ids
 
     logger.info('Start generate__data...')
-    logger.info('args.source_data_loaders: %s' % args.source_data_loaders)
-    logger.info('args.n_cdr3b_cutoff: %s' % args.n_cdr3b_cutoff)
-    logger.info('args.generate_negatives: %s' % args.generate_negatives)
-    logger.info('args.encode: %s' % args.encode)
-    logger.info('args.max_len: %s' % args.max_len)
+    logger.info('args.data: %s' % args.data)
 
-    logger.info('args.output_csv: %s' % args.output_csv)
-    logger.info('args.sample_csv: %s' % args.sample_csv)
+    conf = None
+    with open('../config/data.json', 'r') as f:
+        conf = json.load(f)
 
-    loaders = [DATA_LOADERS[loader_key] for loader_key in args.source_data_loaders.split(',')]
+    conf = conf[args.data]
+    logger.info('Data conf: %s' % conf)
+
+    loaders = [DATA_LOADERS[loader_key] for loader_key in conf['loaders']]
     filters = [TCREpitopeDFLoader.NotDuplicateFilter()]
-    if args.n_cdr3b_cutoff:
-        filters.append(TCREpitopeDFLoader.MoreThanCDR3bNumberFilter(cutoff=args.n_cdr3b_cutoff))
-    negative_generator = TCREpitopeDFLoader.DefaultNegativeGenerator() if args.generate_negatives else None
+    if conf['n_cdr3b_cutoff']:
+        filters.append(TCREpitopeDFLoader.MoreThanCDR3bNumberFilter(cutoff=conf['n_cdr3b_cutoff']))
+
+    negative_generator = TCREpitopeDFLoader.DefaultNegativeGenerator() if conf['generate_negatives'] else None
 
     loader = ConcatTCREpitopeDFLoader(loaders=loaders, filters=filters, negative_generator=negative_generator)
 
     df = loader.load()
-    if args.encode:
-        logger.info('Encode TCRB-epitope data')
-        tokenizer = TAPETokenizer(vocab='iupac')
-        df = TCREpitopeSentenceDataset.encode_df(df, max_len=args.max_len, tokenizer=tokenizer)
+    logger.info('Encoding TCRB-epitope data')
+    tokenizer = TAPETokenizer(vocab=conf['vocab'])
+    df = TCREpitopeSentenceDataset.encode_df(df, max_len=conf['max_len'], tokenizer=tokenizer)
 
     logger.info('Done to generate_data')
     logger.info(df.head().to_string())
     logger.info('epitope: %s' % df[CN.epitope].value_counts())
     logger.info('label: %s' % df[CN.label].value_counts())
 
-    df.to_csv(args.output_csv)
-    logger.info('Saved all data %s to %s.' % (str(df.shape), args.output_csv))
+    result = {}
+    result['vocab_size'] = tokenizer.vocab_size
+    result['max_len'] = conf['max_len']
 
-    if args.sample_csv:
-        sample_df = df.sample(frac=0.01, replace=False)
-        sample_df.to_csv(args.sample_csv)
-        logger.info('Saved sample data %s to %s.' % (str(sample_df.shape), args.sample_csv))
+    fn_result = conf['result']
+    output_dir = os.path.dirname(fn_result)
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
+    output_csv = '%s/%s.data.csv' % (output_dir, args.data)
+    sample_csv = '%s/%s.data.sample.csv' % (output_dir, args.data)
+
+    df.to_csv(output_csv)
+    logger.info('Saved %s data %s to %s.' % (args.data, str(df.shape), output_csv))
+
+    sample_df = df.sample(frac=0.01, replace=False)
+    sample_df.to_csv(sample_csv)
+    logger.info('Saved sample %s data %s to %s.' % (args.data, str(sample_df.shape), sample_csv))
+
+    result['output_csv'] = output_csv
+    result['sample_csv'] = sample_csv
+
+    with open(fn_result, 'w') as f:
+        json.dump(result, f)
+
+    logger.info('Saved result %s to %s' % (result, fn_result))
+
+def run_exp(args):
+    logger.info('Start run_exp for %s' % args.exp)
+    logger.info('phase: %s' % args.phase)
+
+    experiment = Experiment.from_key(args.exp)
+    if args.phase == 'train':
+        experiment.train()
+    elif args.phase == 'eval':
+        experiment.evaluate()
+    else:
+        raise ValueError('Unknown phase: %s' % args.phase)
 
 def main():
     parser = ArgumentParser('tcrbert')
@@ -70,26 +91,15 @@ def main():
     subparsers = parser.add_subparsers()
 
     # Arguments for sub command 'generate_train_data'
-    sub_parser = subparsers.add_parser('generate_train_data')
+    sub_parser = subparsers.add_parser('generate_data')
     sub_parser.set_defaults(func=generate_data)
-    sub_parser.add_argument('--source_data_loaders', type=str, default='dash,vdjdb,mcpas,shomuradova')
-    sub_parser.add_argument('--n_cdr3b_cutoff', type=int, default=20)
-    sub_parser.add_argument('--generate_negatives', type=bool, default=True)
-    sub_parser.add_argument('--encode', type=bool, default=True)
-    sub_parser.add_argument('--max_len', type=int, default=35)
-    sub_parser.add_argument('--output_csv', type=str, default='../output/train.csv')
-    sub_parser.add_argument('--sample_csv', type=str, default='../output/train.sample.csv')
+    sub_parser.add_argument('--data', type=str, default='exp1.train.0')
 
-    # Arguments for sub command 'generate_eval_data'
-    sub_parser = subparsers.add_parser('generate_eval_data')
-    sub_parser.set_defaults(func=generate_data)
-    sub_parser.add_argument('--source_data_loaders', type=str, default='immunecode')
-    sub_parser.add_argument('--n_cdr3b_cutoff', type=int, default=None)
-    sub_parser.add_argument('--generate_negatives', type=bool, default=False)
-    sub_parser.add_argument('--encode', type=bool, default=True)
-    sub_parser.add_argument('--max_len', type=int, default=35)
-    sub_parser.add_argument('--output_csv', type=str, default='../output/eval.csv')
-    sub_parser.add_argument('--sample_csv', type=str, default='../output/eval.sample.csv')
+    # Arguments for sub command 'run_exp'
+    sub_parser = subparsers.add_parser('run_exp')
+    sub_parser.set_defaults(func=run_exp)
+    sub_parser.add_argument('--exp', type=str, default='testexp')
+    sub_parser.add_argument('--phase', type=str, default='train')
 
     args = parser.parse_args()
 

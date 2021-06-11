@@ -1,4 +1,7 @@
+import json
 import unittest
+from collections import Iterable
+
 import numpy as np
 import pandas as pd
 from enum import Enum, auto, IntEnum
@@ -37,50 +40,6 @@ class StrEnum(str, Enum):
     def _generate_next_value_(name, *_):
         return name
 
-# BIND_THRESHOLD_IC50 = 500
-#
-# class BindLevel(IntEnum):
-#     POSITIVE_HIGH = 4
-#     POSITIVE = 3
-#     POSITIVE_INTERMEDIATE = 2
-#     POSITIVE_LOW = 1
-#     NEGATIVE = 0
-#
-#     @classmethod
-#     def is_binder(cls, level):
-#         return level > BindLevel.NEGATIVE
-#
-#     @classmethod
-#     def bind_levels(cls):
-#         return list(cls)
-
-class ImmunoLevel(IntEnum):
-    IMMUNOGENIC = 3
-    PRESENTED = 2
-    BINDER = 1
-    NONE = 0
-
-    @classmethod
-    def is_binder(cls, level):
-        return level > ImmunoLevel.NONE
-
-    @classmethod
-    def is_presented(cls, level):
-        return level > ImmunoLevel.BINDER
-
-    @classmethod
-    def is_immunogenic(cls, level):
-        return level > ImmunoLevel.PRESENTED
-
-    @classmethod
-    def immuno_levels(cls):
-        return list(cls)
-
-
-    @classmethod
-    def n_levels(cls):
-        return len(cls)
-
 class StrUtils(object):
     @staticmethod
     def rm_nonwords(s):
@@ -112,6 +71,32 @@ class NumUtils(object):
         except ValueError:
             return False
 
+class TypeUtils(object):
+    @staticmethod
+    def is_numeric_value(x):
+        try:
+            float(x)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def is_collection(x):
+        return isinstance(x, Iterable) and not isinstance(x, str)
+
+class FileUtils(object):
+    @staticmethod
+    def json_load(fn):
+        data = None
+        with open(fn, 'r') as f:
+            data = json.load(f)
+        return data
+
+    @staticmethod
+    def json_dump(data, fn):
+        with open(fn, 'w') as f:
+            json.dump(data, f)
+
 class Timestamp(object):
     def start(self):
         self._start = datetime.now()
@@ -121,22 +106,6 @@ class Timestamp(object):
 
 
 ### Tests
-class TestModel(nn.Module):
-    def __init__(self):
-        super(TestModel, self).__init__()
-        self.fc1 = nn.Linear(4, 100)
-        self.fc2 = nn.Linear(100, 100)
-        self.fc3 = nn.Linear(100, 3)
-        self.softmax = nn.Softmax(dim=1)
-
-    def forward(self, x):
-        out = F.relu(self.fc1(x))
-        out = self.fc2(out)
-        out = self.fc3(out)
-        out = self.softmax(out)
-        return out
-
-
 class BaseTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -190,55 +159,6 @@ class BaseTest(unittest.TestCase):
             'Patr-A*09:01', 'Patr-B*01:01', 'Patr-B*13:01', 'Patr-B*24:01',
             'Rano-A1*b', 'SLA-1*04:01', 'SLA-1*07:01', 'SLA-2*04:01','SLA-3*04:01']
 
-
-class ImmunoLevelTest(BaseTest):
-    # def test_is_binder(self):
-    #     self.assertTrue(BindLevel.is_binder(BindLevel.POSITIVE_HIGH))
-    #     self.assertTrue(BindLevel.is_binder(BindLevel.POSITIVE))
-    #     self.assertTrue(BindLevel.is_binder(BindLevel.POSITIVE_INTERMEDIATE))
-    #     self.assertTrue(BindLevel.is_binder(BindLevel.POSITIVE_LOW))
-    #     self.assertFalse(BindLevel.is_binder(BindLevel.NEGATIVE))
-    #
-    # def test_bind_levels(self):
-    #     expected_levels = [
-    #         BindLevel.POSITIVE_HIGH,
-    #         BindLevel.POSITIVE,
-    #         BindLevel.POSITIVE_INTERMEDIATE,
-    #         BindLevel.POSITIVE_LOW,
-    #         BindLevel.NEGATIVE
-    #     ]
-    #     self.assertListEqual(expected_levels, BindLevel.bind_levels())
-    #
-
-    def test_is_binder(self):
-        self.assertFalse(ImmunoLevel.is_binder(ImmunoLevel.NONE))
-        self.assertTrue(ImmunoLevel.is_binder(ImmunoLevel.BINDER))
-        self.assertTrue(ImmunoLevel.is_binder(ImmunoLevel.PRESENTED))
-        self.assertTrue(ImmunoLevel.is_binder(ImmunoLevel.IMMUNOGENIC))
-
-    def test_is_presented(self):
-        self.assertFalse(ImmunoLevel.is_presented(ImmunoLevel.NONE))
-        self.assertFalse(ImmunoLevel.is_presented(ImmunoLevel.BINDER))
-        self.assertTrue(ImmunoLevel.is_presented(ImmunoLevel.PRESENTED))
-        self.assertTrue(ImmunoLevel.is_presented(ImmunoLevel.IMMUNOGENIC))
-
-    def test_is_immunogenic(self):
-        self.assertFalse(ImmunoLevel.is_immunogenic(ImmunoLevel.NONE))
-        self.assertFalse(ImmunoLevel.is_immunogenic(ImmunoLevel.BINDER))
-        self.assertFalse(ImmunoLevel.is_immunogenic(ImmunoLevel.PRESENTED))
-        self.assertTrue(ImmunoLevel.is_immunogenic(ImmunoLevel.IMMUNOGENIC))
-
-    def test_immuno_levels(self):
-        self.assertListEqual([3, 2, 1, 0], ImmunoLevel.immuno_levels())
-
-    def test_n_levels(self):
-        self.assertEqual(4, ImmunoLevel.n_levels())
-
-    def test_immuno_level_is_integer(self):
-        self.assertEqual(3, ImmunoLevel.IMMUNOGENIC)
-        self.assertEqual(2, ImmunoLevel.PRESENTED)
-        self.assertEqual(1, ImmunoLevel.BINDER)
-        self.assertEqual(0, ImmunoLevel.NONE)
 
 class StrUtilsTest(BaseTest):
     def test_empty(self):
@@ -296,6 +216,24 @@ class StrEnumTest(BaseTest):
     def test_str_builtin(self):
         self.assertTrue(str(HttpMethod.GET) == "GET")
         self.assertTrue(HttpMethod.GET == "GET")
+
+class TypeUtilsTest(BaseTest):
+    def test_is_numeric(self):
+        self.assertTrue(TypeUtils.is_numeric_value(1))
+        self.assertTrue(TypeUtils.is_numeric_value(1.1))
+        self.assertTrue(TypeUtils.is_numeric_value('1.11'))
+        self.assertFalse(TypeUtils.is_numeric_value('x'))
+        self.assertFalse(TypeUtils.is_numeric_value('1.11xx'))
+
+    def test_is_collection(self):
+        self.assertTrue(TypeUtils.is_collection([]))
+        self.assertTrue(TypeUtils.is_collection({}))
+        self.assertTrue(TypeUtils.is_collection(list()))
+        self.assertTrue(TypeUtils.is_collection(set()))
+        self.assertTrue(TypeUtils.is_collection(dict()))
+        self.assertTrue(TypeUtils.is_collection(np.array([])))
+        self.assertFalse(TypeUtils.is_collection('ABC'))
+        self.assertFalse(TypeUtils.is_collection(None))
 
 
 if __name__ == '__main__':

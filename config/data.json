@@ -1,0 +1,43 @@
+{
+  "testexp.train.0": {
+    "loaders": ["dash"],
+    "n_cdr3b_cutoff": 20,
+    "generate_negatives": true,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/testexp.train.0.data.json"
+  },
+  "testexp.eval.0": {
+    "loaders": ["immunecode"],
+    "n_cdr3b_cutoff": null,
+    "generate_negatives": false,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/testexp.eval.0.data.json"
+  },
+
+  "exp1.train.0": {
+    "loaders": ["dash", "vdjdb", "mcpas"],
+    "n_cdr3b_cutoff": 20,
+    "generate_negatives": true,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/exp1/exp1.train.0.data.json"
+  },
+  "exp1.train.1": {
+    "loaders": ["shomuradova"],
+    "n_cdr3b_cutoff": 20,
+    "generate_negatives": true,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/exp1/exp1.train.1.data.json"
+  },
+  "exp1.eval.0": {
+    "loaders": ["immunecode"],
+    "n_cdr3b_cutoff": null,
+    "generate_negatives": false,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/exp1/exp1.eval.0.data.json"
+  }
+}
