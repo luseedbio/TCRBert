@@ -60,12 +60,13 @@ def state_dict_equal(st1, st2):
     return True
 
 def module_weights_equal(m1, m2):
-    for (k1, v1), (k2, v2) in zip(m1.state_dict().items(), m2.state_dict().items()):
-        k1 = replace_state_dict_key(k1)
-        k2 = replace_state_dict_key(k2)
-        if (k1 != k2) or (not torch.equal(v1, v2)):
-            return False
-    return True
+    return state_dict_equal(m1.state_dict(), m2.state_dict())
+    # for (k1, v1), (k2, v2) in zip(m1.state_dict().items(), m2.state_dict().items()):
+    #     k1 = replace_state_dict_key(k1)
+    #     k2 = replace_state_dict_key(k2)
+    #     if (k1 != k2) or (not torch.equal(v1, v2)):
+    #         return False
+    # return True
 
 def to_numpy(x, use_cuda=use_cuda):
     return x.detach().cpu().numpy() if use_cuda else x.detach().numpy()

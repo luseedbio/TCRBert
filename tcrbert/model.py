@@ -1,4 +1,5 @@
 import copy
+import re
 import unittest
 import logging
 from datetime import datetime
@@ -7,6 +8,7 @@ import numpy as np
 import torch
 from torch import nn
 from torch.nn import functional as F
+from torch.optim import Adam
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, r2_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
@@ -274,9 +276,13 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
     def train_bert_encoders(self, layer_range=(-2, None)):
         self.freeze_bert()
 
+        # Melt target encoder layers and pooler
         for layer in self.bert.encoder.layer[layer_range[0]:layer_range[1]]:
             for param in layer.parameters():
                 param.requires_grad = True
+
+        for param in self.bert.pooler.parameters():
+            param.requires_grad = True
 
     # For train_listeners
     def add_train_listener(self, listener):
@@ -440,6 +446,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 class BaseModelTest(BaseTest):
     def setUp(self):
         df = TCREpitopeSentenceDataset.load_df(fn='../output/train.sample.csv')
+
         train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, stratify=df[CN.label].values)
 
         self.train_ds = TCREpitopeSentenceDataset(df=train_df)
@@ -535,25 +542,81 @@ class BertTCREpitopeModelTest(BaseModelTest):
         self.assertFalse(module_weights_equal(embedding, self.model.bert.embeddings.word_embeddings))
 
     def test_train_bert_encoders(self):
-        layer_range = (-2, None)
+        logger.setLevel(logging.INFO)
+
+        layer_range = [-4, None]
+
+        for param in self.model.parameters():
+            self.assertTrue(param.requires_grad)
 
         self.model.train_bert_encoders(layer_range=layer_range)
 
         for param in self.model.bert.embeddings.parameters():
             self.assertFalse(param.requires_grad)
 
-        for layer in self.model.bert.encoder.layer[0:-2]:
+        for layer in self.model.bert.encoder.layer[0:-4]:
             for param in layer.parameters():
                 self.assertFalse(param.requires_grad)
 
-        for layer in self.model.bert.encoder.layer[-2:None]:
+        for layer in self.model.bert.encoder.layer[-4:None]:
             for param in layer.parameters():
                 self.assertTrue(param.requires_grad)
 
-        self.model.melt_bert()
+        for param in self.model.bert.pooler.parameters():
+                self.assertTrue(param.requires_grad)
 
+        for param in self.model.classifier.parameters():
+                self.assertTrue(param.requires_grad)
+
+        old_state_dict = copy.deepcopy(self.model.state_dict())
+
+        train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
+        test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
+
+        optimizer = Adam(self.model.parameters())
+
+        self.model.fit(train_data_loader=train_data_loader,
+                       test_data_loader=test_data_loader,
+                       optimizer=optimizer)
+
+        new_state_dict = self.model.state_dict()
+
+        for key in old_state_dict.keys():
+            old_weights = old_state_dict[key]
+            new_weights = new_state_dict[key]
+
+            if (re.match(r'bert.encoder.layer.([8-9]|1[0-1])', key) is not None) or \
+                    (re.match(r'bert.pooler', key) is not None) or \
+                    (re.match(r'classifier', key) is not None):
+
+                print('Trained module weights: %s' % key)
+                self.assertFalse(torch.equal(old_weights, new_weights))
+            else:
+                self.assertTrue(torch.equal(old_weights, new_weights))
+
+        self.model.melt_bert()
         for param in self.model.bert.parameters():
             self.assertTrue(param.requires_grad)
+
+        old_state_dict = copy.deepcopy(self.model.state_dict())
+
+        train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
+        test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
+
+        optimizer = Adam(self.model.parameters())
+
+        self.model.fit(train_data_loader=train_data_loader,
+                       test_data_loader=test_data_loader,
+                       optimizer=optimizer)
+
+        new_state_dict = self.model.state_dict()
+
+        for key in old_state_dict.keys():
+            print('key: %s' % key)
+            old_weights = old_state_dict[key]
+            new_weights = new_state_dict[key]
+
+            self.assertFalse(torch.equal(old_weights, new_weights))
 
 if __name__ == '__main__':
     unittest.main()
