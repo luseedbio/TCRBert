@@ -76,7 +76,7 @@
       "rounds": [{
         "data": "exp1.train.0",
         "test_size": 0.2,
-        "batch_size": 128,
+        "batch_size": 256,
         "n_epochs": 100,
         "n_workers": 12,
         "metrics": ["accuracy"],
