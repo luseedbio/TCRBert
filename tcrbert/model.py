@@ -21,7 +21,7 @@ from tape.models.modeling_utils import SimpleMLP
 from tcrbert.commons import BaseTest, TypeUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.optimizer import NoamOptimizer
-from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy, replace_state_dict_key, update_state_dict
+from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy, state_dict_equal
 
 # Logger
 
@@ -213,8 +213,19 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
     def state_dict(self):
         sd = super().state_dict()
         if self.is_data_parallel():
-            sd = update_state_dict(sd)
+            sd = OrderedDict({k.replace('bert.module', 'bert'): v for k, v in sd.items()})
         return sd
+
+    def load_state_dict(self, fnchk=None, use_cuda=False):
+        sd = None
+        if use_cuda:
+            sd = torch.load(fnchk)
+        else:
+            sd = torch.load(fnchk, map_location=torch.device('cpu'))
+        if self.is_data_parallel():
+            sd = OrderedDict({k.replace('bert', 'bert.module'): v for k, v in sd.items()})
+        super().load_state_dict(sd)
+
 
     def _train_epoch(self, data_loader, params):
         model = params['model']
@@ -686,6 +697,33 @@ class BertTCREpitopeModelTest(BaseModelTest):
 
         self.assertTrue(self.model.is_data_parallel())
         self.assertEqual(n_params, len(list(self.model.bert.parameters())))
+
+    def test_state_dict(self):
+        self.assertTrue(all(map(lambda k: 'bert.module' not in k, self.model.state_dict().keys())))
+        self.model.data_parallel()
+        self.assertTrue(all(map(lambda k: 'bert.module' not in k, self.model.state_dict().keys())))
+
+    def test_load_state_dict(self):
+        self.model.data_parallel()
+
+        train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
+        test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
+
+        optimizer = Adam(self.model.parameters())
+
+        self.model.fit(train_data_loader=train_data_loader,
+                       test_data_loader=test_data_loader,
+                       optimizer=optimizer)
+
+        fnchk = '../tmp/test_model.chk'
+        sd = self.model.state_dict()
+        torch.save(sd, fnchk)
+
+        self.model.init_weights()
+        self.model.load_state_dict(fnchk=fnchk)
+
+        self.assertTrue(all(map(lambda k: 'bert.module' not in k, self.model.state_dict().keys())))
+        self.assertTrue(state_dict_equal(sd, self.model.state_dict()))
 
 if __name__ == '__main__':
     unittest.main()

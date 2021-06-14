@@ -12,14 +12,13 @@ from torch.optim import Adam, SGD
 from torch.utils.data import DataLoader
 
 from tcrbert.commons import BaseTest, FileUtils
-
-# Logger
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.listener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
 from tcrbert.model import BertTCREpitopeModel
 from tcrbert.optimizer import NoamOptimizer
-from tcrbert.torchutils import load_state_dict, state_dict_equal
 
+
+# Logger
 logger = logging.getLogger('tcrbert')
 
 use_cuda = torch.cuda.is_available()
@@ -118,6 +117,11 @@ class Experiment(object):
 
             logger.info('End of % train round.')
 
+            # Set model states with the best chk
+            logger.info('Setting model states with the best checkpoint %s' % mc.best_chk)
+            model.load_state_dict(fnchk=mc.best_chk, use_cuda=use_cuda)
+            logger.info('Loaded best model states from %s' % (mc.best_chk))
+
         end = datetime.now()
         logger.info('End of train of %s, collapsed: %s' % (self.exp_conf['title'], end - begin))
 
@@ -139,12 +143,8 @@ class Experiment(object):
             result = json.load(f)
             fn_chk = result['best_chk']
             logger.info('Best model checkpoint: %s' % fn_chk)
-            state_dict = load_state_dict(fn_chk=fn_chk, use_cuda=use_cuda)
-            model.load_state_dict(state_dict)
-
-            assert(state_dict_equal(state_dict, model.state_dict()))
-
-            logger.info('Loaded fine-tuned model from %s' % (fn_chk))
+            model.load_state_dict(fnchk=fn_chk, use_cuda=use_cuda)
+            logger.info('Loaded the best model from %s' % (fn_chk))
 
         if eval_conf['data_parallel']:
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())

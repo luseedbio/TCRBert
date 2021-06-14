@@ -39,26 +39,24 @@ def collection_to(c, device):
 # https://discuss.pytorch.org/t/solved-keyerror-unexpected-key-module-encoder-embedding-weight-in-state-dict/1686/2
 # DataParallel로 wrapped된 모델로 저장된 내용을 wrapped되지 않은 모델을 사용하여 불러올때...
 # DataParallel로 저장하면 key값에 'module.'이 앞에 붙는다
-def load_state_dict(fn_chk, use_cuda=use_cuda):
-    state_dict = None
-    if use_cuda:
-        state_dict = torch.load(fn_chk)
-    else:
-        state_dict = torch.load(fn_chk, map_location=torch.device('cpu'))
-
-    return update_state_dict(state_dict)
-
-
-def update_state_dict(state_dict):
-    return OrderedDict({replace_state_dict_key(k): v for k, v in state_dict.items()})
-
-def replace_state_dict_key(key):
-    return key.replace('module.', '')
+# def load_state_dict(fn_chk, use_cuda=use_cuda):
+#     state_dict = None
+#     if use_cuda:
+#         state_dict = torch.load(fn_chk)
+#     else:
+#         state_dict = torch.load(fn_chk, map_location=torch.device('cpu'))
+#
+#     return update_state_dict(state_dict)
+#
+#
+# def update_state_dict(state_dict):
+#     return OrderedDict({replace_state_dict_key(k): v for k, v in state_dict.items()})
+#
+# def replace_state_dict_key(key):
+#     return key.replace('module.', '')
 
 def state_dict_equal(st1, st2):
     for (k1, v1), (k2, v2) in zip(st1.items(), st2.items()):
-        k1 = replace_state_dict_key(k1)
-        k2 = replace_state_dict_key(k2)
         if (k1 != k2) or (not torch.equal(v1, v2)):
             return False
     return True

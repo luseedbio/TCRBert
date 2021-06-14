@@ -31,7 +31,7 @@
         "result": "../output/testexp.train_{round}.result.json"
       },
       {
-        "data": "testexp.train.0",
+        "data": "exp1.train.1",
         "test_size": 0.2,
         "batch_size": 32,
         "n_epochs": 3,

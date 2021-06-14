@@ -60,7 +60,8 @@ def generate_data(args):
 
     df.to_csv(output_csv)
     logger.info('Saved %s data %s to %s.' % (args.data, str(df.shape), output_csv))
-
+    result['n_data'] = df.shape[0]
+    
     sample_df = df.sample(frac=0.01, replace=False)
     sample_df.to_csv(sample_csv)
     logger.info('Saved sample %s data %s to %s.' % (args.data, str(sample_df.shape), sample_csv))
