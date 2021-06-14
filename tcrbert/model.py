@@ -3,10 +3,11 @@ import re
 import unittest
 import logging
 from datetime import datetime
+from typing import overload
 
 import numpy as np
 import torch
-from torch import nn
+from torch import nn, Tensor
 from torch.nn import functional as F
 from torch.optim import Adam
 from torch.utils.data import DataLoader
@@ -20,7 +21,7 @@ from tape.models.modeling_utils import SimpleMLP
 from tcrbert.commons import BaseTest, TypeUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.optimizer import NoamOptimizer
-from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy
+from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy, replace_state_dict_key, update_state_dict
 
 # Logger
 
@@ -140,9 +141,9 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         device = torch.device("cuda:0" if use_cuda else "cpu")
         model.to(device)
 
-        if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
-            logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-            model.data_parallel()
+        # if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
+        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
+        #     model.data_parallel()
 
         # Callback params
         params = {}
@@ -208,6 +209,12 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
     def is_data_parallel(self):
         return isinstance(self.bert, nn.DataParallel)
+
+    def state_dict(self):
+        sd = super().state_dict()
+        if self.is_data_parallel():
+            sd = update_state_dict(sd)
+        return sd
 
     def _train_epoch(self, data_loader, params):
         model = params['model']
@@ -284,12 +291,31 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         self.freeze_bert()
 
         # Melt target encoder layers and pooler
-        for layer in self.bert.encoder.layer[layer_range[0]:layer_range[1]]:
+        bert = self.bert.module if self.is_data_parallel() else self.bert
+
+        for layer in bert.encoder.layer[layer_range[0]:layer_range[1]]:
             for param in layer.parameters():
                 param.requires_grad = True
 
-        for param in self.bert.pooler.parameters():
+        for param in bert.pooler.parameters():
             param.requires_grad = True
+
+    # For DataParallel
+    @property
+    def bert_config(self):
+        return self.bert.module.config if self.is_data_parallel() else self.bert.config
+
+    @property
+    def bert_embeddings(self):
+        return self.bert.module.embeddings if self.is_data_parallel() else self.bert.embeddings
+
+    @property
+    def bert_encoder(self):
+        return self.bert.module.encoder if self.is_data_parallel() else self.bert.encoder
+
+    @property
+    def bert_pooler(self):
+        return self.bert.module.pooler if self.is_data_parallel() else self.bert.pooler
 
     # For train_listeners
     def add_train_listener(self, listener):
@@ -357,9 +383,9 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         device = torch.device("cuda:0" if use_cuda else "cpu")
         model.to(device)
 
-        if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
-            logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-            model.data_parallel()
+        # if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
+        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
+        #     model.data_parallel()
 
         model.eval()
 
@@ -485,6 +511,8 @@ class BaseModelTest(BaseTest):
 class BertTCREpitopeModelTest(BaseModelTest):
 
     def test_forward(self):
+        self.model.data_parallel()
+
         inputs, targets = self.get_batch()
 
         outputs = self.model(inputs)
@@ -500,6 +528,8 @@ class BertTCREpitopeModelTest(BaseModelTest):
         self.assertTrue(all(map(lambda x: expected_shape == x.shape, attentions)))
 
     def test_loss(self):
+        self.model.data_parallel()
+
         inputs, targets = self.get_batch()
 
         outputs = self.model(inputs)
@@ -514,6 +544,8 @@ class BertTCREpitopeModelTest(BaseModelTest):
         loss.backward()
 
     def test_score_map(self):
+        self.model.data_parallel()
+
         inputs, targets = self.get_batch()
 
         outputs = self.model(inputs) # (token_pred_out, imcls_out, assay_types, attns)
@@ -527,18 +559,20 @@ class BertTCREpitopeModelTest(BaseModelTest):
             self.assertTrue(score >= 0)
 
     def test_fit(self):
+        self.model.data_parallel()
+
         logger.setLevel(logging.INFO)
 
-        embedding = copy.deepcopy(self.model.bert.embeddings.word_embeddings)
+        embedding = copy.deepcopy(self.model.bert_embeddings.word_embeddings)
         inputs, targets = self.get_batch()
         outputs = self.model(inputs)
-        self.assertTrue(module_weights_equal(embedding, self.model.bert.embeddings.word_embeddings))
+        self.assertTrue(module_weights_equal(embedding, self.model.bert_embeddings.word_embeddings))
 
         train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
         test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
 
         optimizer = NoamOptimizer(self.model.parameters(),
-                                  d_model=self.model.bert.config.hidden_size,
+                                  d_model=self.model.bert_config.hidden_size,
                                   lr=0.0001,
                                   warmup_steps=4000)
 
@@ -546,9 +580,11 @@ class BertTCREpitopeModelTest(BaseModelTest):
                        test_data_loader=test_data_loader,
                        optimizer=optimizer)
 
-        self.assertFalse(module_weights_equal(embedding, self.model.bert.embeddings.word_embeddings))
+        self.assertFalse(module_weights_equal(embedding, self.model.bert_embeddings.word_embeddings))
 
     def test_predict(self):
+        self.model.data_parallel()
+
         data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
         result = self.model.predict(data_loader, metrics=['accuracy'])
 
@@ -563,6 +599,8 @@ class BertTCREpitopeModelTest(BaseModelTest):
         self.assertTrue(all([prob >= 0 and prob <= 1 for prob in output_probs]))
 
     def test_train_bert_encoders(self):
+        self.model.data_parallel()
+
         logger.setLevel(logging.INFO)
 
         layer_range = [-4, None]
@@ -572,18 +610,18 @@ class BertTCREpitopeModelTest(BaseModelTest):
 
         self.model.train_bert_encoders(layer_range=layer_range)
 
-        for param in self.model.bert.embeddings.parameters():
+        for param in self.model.bert_embeddings.parameters():
             self.assertFalse(param.requires_grad)
 
-        for layer in self.model.bert.encoder.layer[0:-4]:
+        for layer in self.model.bert_encoder.layer[0:-4]:
             for param in layer.parameters():
                 self.assertFalse(param.requires_grad)
 
-        for layer in self.model.bert.encoder.layer[-4:None]:
+        for layer in self.model.bert_encoder.layer[-4:None]:
             for param in layer.parameters():
                 self.assertTrue(param.requires_grad)
 
-        for param in self.model.bert.pooler.parameters():
+        for param in self.model.bert_pooler.parameters():
                 self.assertTrue(param.requires_grad)
 
         for param in self.model.classifier.parameters():
@@ -641,8 +679,13 @@ class BertTCREpitopeModelTest(BaseModelTest):
 
     def test_is_data_parallel(self):
         self.assertFalse(self.model.is_data_parallel())
+        n_params = len(list(self.model.bert.parameters()))
+        self.assertTrue(n_params > 0)
+
         self.model.data_parallel()
+
         self.assertTrue(self.model.is_data_parallel())
+        self.assertEqual(n_params, len(list(self.model.bert.parameters())))
 
 if __name__ == '__main__':
     unittest.main()

@@ -39,9 +39,9 @@ class Experiment(object):
 
         model = BertTCREpitopeModel.from_pretrained(train_conf['pretrain_model_location'])
 
-        # if use_cuda and torch.cuda.device_count() > 1:
-        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-        #     model.data_parallel()
+        if train_conf['data_parallel']:
+            logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
+            model.data_parallel()
 
         for ir, round_conf in enumerate(train_conf['rounds']):
             logger.info('Start %s train round, round_conf: %s' % (ir, round_conf))
@@ -146,9 +146,9 @@ class Experiment(object):
 
             logger.info('Loaded fine-tuned model from %s' % (fn_chk))
 
-        # if use_cuda and torch.cuda.device_count() > 1:
-        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-        #     model.data_parallel()
+        if eval_conf['data_parallel']:
+            logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
+            model.data_parallel()
 
         eval_csv = eval_conf['data']['result']['output_csv']
         eval_df = TCREpitopeSentenceDataset.load_df(eval_csv)

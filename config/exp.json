@@ -5,6 +5,7 @@
     "paper": "testexp",
     "train": {
       "pretrain_model_location": "../config/bert-base/",
+      "data_parallel": true,
       "rounds": [{
         "data": "testexp.train.0",
         "test_size": 0.2,
@@ -57,6 +58,7 @@
     },
     "eval": {
       "train_round": 1,
+      "data_parallel": true,
       "data": "testexp.eval.0",
       "batch_size": 32,
       "n_workers": 2,
@@ -70,6 +72,7 @@
     "paper": "exp1",
     "train": {
       "pretrain_model_location": "../config/bert-base/",
+      "data_parallel": true,
       "rounds": [{
         "data": "exp1.train.0",
         "test_size": 0.2,
@@ -83,12 +86,12 @@
         },
         "train_bert_encoders": [-10, null],
         "early_stopper": {
-          "monitor": "loss",
+          "monitor": "accuracy",
           "patience": 10
         },
         "model_checkpoint": {
           "chk": "../output/exp1.train_{round}.model_{epoch}.chk",
-          "monitor": "loss",
+          "monitor": "accuracy",
           "save_best_only": true,
           "period": 1
         },
@@ -107,12 +110,12 @@
         },
         "train_bert_encoders": [-4, null],
         "early_stopper": {
-          "monitor": "loss",
+          "monitor": "accuracy",
           "patience": 10
         },
         "model_checkpoint": {
           "chk": "../output/exp1.train_{round}.model_{epoch}.chk",
-          "monitor": "loss",
+          "monitor": "accuracy",
           "save_best_only": true,
           "period": 1
         },
@@ -122,6 +125,7 @@
     },
     "eval": {
       "train_round": 1,
+      "data_parallel": true,
       "data": "exp1.eval.0",
       "batch_size": 128,
       "n_workers": 12,

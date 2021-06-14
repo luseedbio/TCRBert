@@ -46,6 +46,10 @@ def load_state_dict(fn_chk, use_cuda=use_cuda):
     else:
         state_dict = torch.load(fn_chk, map_location=torch.device('cpu'))
 
+    return update_state_dict(state_dict)
+
+
+def update_state_dict(state_dict):
     return OrderedDict({replace_state_dict_key(k): v for k, v in state_dict.items()})
 
 def replace_state_dict_key(key):
