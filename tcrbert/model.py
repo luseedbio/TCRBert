@@ -136,9 +136,9 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         device = torch.device("cuda:0" if use_cuda else "cpu")
         model.to(device)
 
-        # if use_cuda and torch.cuda.device_count() > 1:
-        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-        #     model.data_parallel()
+        if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
+            logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
+            model.data_parallel()
 
         # Callback params
         params = {}
@@ -201,6 +201,9 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
     def data_parallel(self):
         self.bert = nn.DataParallel(self.bert)
         return self
+
+    def is_data_parallel(self):
+        return isinstance(self.bert, nn.DataParallel)
 
     def _train_epoch(self, data_loader, params):
         model = params['model']
@@ -350,9 +353,9 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         device = torch.device("cuda:0" if use_cuda else "cpu")
         model.to(device)
 
-        # if use_cuda and torch.cuda.device_count() > 1:
-        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-        #     model = model.data_parallel()
+        if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
+            logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
+            model.data_parallel()
 
         model.eval()
 
@@ -617,6 +620,11 @@ class BertTCREpitopeModelTest(BaseModelTest):
             new_weights = new_state_dict[key]
 
             self.assertFalse(torch.equal(old_weights, new_weights))
+
+    def test_is_data_parallel(self):
+        self.assertFalse(self.model.is_data_parallel())
+        self.model.data_parallel()
+        self.assertTrue(self.model.is_data_parallel())
 
 if __name__ == '__main__':
     unittest.main()
