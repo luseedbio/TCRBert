@@ -445,7 +445,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
 class BaseModelTest(BaseTest):
     def setUp(self):
-        df = TCREpitopeSentenceDataset.load_df(fn='../output/train.sample.csv')
+        df = TCREpitopeSentenceDataset.load_df(fn='../data/train.sample.csv')
 
         train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, stratify=df[CN.label].values)
 
