@@ -20,7 +20,7 @@ from tape.models.modeling_utils import SimpleMLP
 from tcrbert.commons import BaseTest, TypeUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.optimizer import NoamOptimizer
-from tcrbert.torchutils import collection_to, module_weights_equal
+from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy
 
 # Logger
 
@@ -51,7 +51,10 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
             return self.criterion(logits, target)
 
         def score_map(self, output, target):
-            clsout = torch.argmax(output[0], dim=1)
+            # clsout = torch.argmax(output[0], dim=1)
+            clsout = np.argmax(to_numpy(output[0]), axis=1)
+            target = to_numpy(target)
+
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: output[0]: %s(%s)' % (output[0],
                                                                                                      str(output[0].shape)))
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: clsout: %s(%s)' % (clsout,
@@ -65,12 +68,13 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
             return sm
 
         def output_labels(self, output):
-            clsout = output[0]
+            clsout = to_numpy(output[0])
 
-            probs = torch.exp(torch.max(clsout, dim=1)[0])
-            labels = torch.argmax(clsout, dim=1)
+            # probs = to_numpy(torch.exp(torch.max(clsout, dim=1)[0]))
+            # labels = to_numpy(torch.argmax(clsout, dim=1))
+            probs  = np.exp(np.max(clsout, axis=1))
+            labels = np.argmax(clsout, axis=1)
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.output_labels]: probs:: %s, labels: %s' % (probs, labels))
-
             return labels, probs
 
     class TrainListener(object):
@@ -543,6 +547,20 @@ class BertTCREpitopeModelTest(BaseModelTest):
                        optimizer=optimizer)
 
         self.assertFalse(module_weights_equal(embedding, self.model.bert.embeddings.word_embeddings))
+
+    def test_predict(self):
+        data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
+        result = self.model.predict(data_loader, metrics=['accuracy'])
+
+        self.assertTrue('score_map' in result)
+        self.assertTrue('accuracy' in result['score_map'])
+        output_labels = result['output_labels']
+        output_probs = result['output_probs']
+
+        self.assertEqual(len(output_labels), len(self.test_ds))
+        self.assertTrue(all([label in [0, 1] for label in output_labels]))
+        self.assertEqual(len(output_probs), len(self.test_ds))
+        self.assertTrue(all([prob >= 0 and prob <= 1 for prob in output_probs]))
 
     def test_train_bert_encoders(self):
         logger.setLevel(logging.INFO)
