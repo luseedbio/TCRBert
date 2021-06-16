@@ -3,11 +3,11 @@
     "title": "testexp",
     "description": "testexp",
     "paper": "testexp",
+    "model_config": "../config/bert-base/",
     "train": {
       "pretrained_model": {
         "type": "local",
-        "config": "../config/bert-base/",
-        "fn_chk": "../output/testexp.train_0.model_2.chk"
+        "location": "../output/testexp.train_0.model_2.chk"
       },
       "data_parallel": true,
       "rounds": [{
@@ -36,7 +36,7 @@
       }]
     },
     "eval": {
-      "train_round": 0,
+      "pretrained_chk": "../output/testexp.train_1.model_2.chk",
       "data_parallel": true,
       "data": "testexp.eval.0",
       "batch_size": 32,
@@ -49,11 +49,11 @@
     "title": "exp1",
     "description": "Dash, VDJdb, McPAS 데이터로 말단 10개 encoder와 classifier 학습=>SARS-2 데이터로 말단 4개 encoder와 classifier 학습",
     "paper": "exp1",
+    "model_config": "../config/bert-base/",
     "train": {
       "pretrained_model": {
         "type": "local",
-        "config": "../config/bert-base/",
-        "fn_chk": "../output/exp1/exp1.train_0.model_37.chk"
+        "location": "../output/exp1/exp1.train_0.model_37.chk"
       },
       "data_parallel": false,
       "rounds": [{
@@ -82,7 +82,7 @@
       }]
     },
     "eval": {
-      "train_round": 0,
+      "pretrained_chk": "../output/exp1/exp1.train.1.model_18.chk",
       "data_parallel": false,
       "data": "exp1.eval.0",
       "batch_size": 128,

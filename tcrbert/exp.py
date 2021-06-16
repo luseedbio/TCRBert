@@ -139,15 +139,8 @@ class Experiment(object):
 
         model = self._create_model()
 
-        train_round = eval_conf['train_round']
-        fn_result = train_conf['rounds'][train_round]['result']
-        # fn_result = fn_result.replace('{round}', '%s' % train_round)
-        with open(fn_result, 'r') as f:
-            result = json.load(f)
-            fn_chk = result['best_chk']
-            logger.info('Best model checkpoint: %s' % fn_chk)
-            model.load_state_dict(fnchk=fn_chk, use_cuda=use_cuda)
-            logger.info('Loaded the best model from %s' % (fn_chk))
+        logger.info('Loading the pretrained model from %s' % (eval_conf['pretrained_chk']))
+        model.load_state_dict(fnchk=eval_conf['pretrained_chk'], use_cuda=use_cuda)
 
         if eval_conf['data_parallel']:
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
@@ -212,23 +205,21 @@ class Experiment(object):
             raise ValueError('Unknown optimizer name: %s' % name)
 
     def _create_model(self):
-        train_conf = self.exp_conf['train']
-        config = ProteinConfig.from_pretrained(train_conf['pretrain_model_location'])
+        logger.info('Create TAPE model using config: %s' % self.exp_conf['model_config'])
+        config = ProteinConfig.from_pretrained(self.exp_conf['model_config'])
         return BertTCREpitopeModel(config=config)
 
     def _load_pretrained_model(self, param):
         if param['type'] == 'tape':
-            logger.info('Loading the tape pretrained model from %s' % (param['config']))
-            return BertTCREpitopeModel.from_pretrained(param['config'])
+            logger.info('Loading the TAPE pretrained model from %s' % (param['location']))
+            return BertTCREpitopeModel.from_pretrained(param['location'])
         elif param['type'] == 'local':
-            config = ProteinConfig.from_pretrained(param['config'])
-            model = BertTCREpitopeModel(config=config)
-            logger.info('Loading the pretrained model from %s' % (param['fn_chk']))
-            model.load_state_dict(fnchk=param['fn_chk'], use_cuda=use_cuda)
+            model = self._create_model()
+            logger.info('Loading the pretrained model from %s' % (param['location']))
+            model.load_state_dict(fnchk=param['location'], use_cuda=use_cuda)
             return model
         else:
             raise ValueError('Unknown pretrained model type: %s' % param['type'])
-
 
 class ExperimentTest(BaseTest):
     def test_init_exp(self):
