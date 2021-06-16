@@ -31,12 +31,13 @@ class Experiment(object):
 
     def train(self):
         begin = datetime.now()
-        logger.info('Start train of %s at %s' % (self.exp_conf['title'], begin))
-
         train_conf = self.exp_conf['train']
+        n_rounds = len(train_conf['rounds'])
+        logger.info('Start %s train rounds of %s at %s' % (n_rounds, self.exp_conf['title'], begin))
         logger.info('train_conf: %s' % train_conf)
 
-        model = BertTCREpitopeModel.from_pretrained(train_conf['pretrain_model_location'])
+        # model = BertTCREpitopeModel.from_pretrained(train_conf['pretrain_model_location'])
+        model = self._load_pretrained_model(train_conf['pretrained_model'])
 
         if train_conf['data_parallel']:
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
@@ -110,12 +111,12 @@ class Experiment(object):
             rd_result['best_chk'] = mc.best_chk
 
             fn_result = round_conf['result']
-            fn_result = fn_result.replace('{round}', '%s' % ir)
+            # fn_result = fn_result.replace('{round}', '%s' % ir)
             logger.info('%s train round result: %s, writing to %s' % (ir, rd_result, fn_result))
             with open(fn_result, 'w') as f:
                 json.dump(rd_result, f)
 
-            logger.info('End of % train round.')
+            logger.info('End of %s train round.' % ir)
 
             # Set model states with the best chk
             logger.info('Setting model states with the best checkpoint %s' % mc.best_chk)
@@ -123,7 +124,9 @@ class Experiment(object):
             logger.info('Loaded best model states from %s' % (mc.best_chk))
 
         end = datetime.now()
-        logger.info('End of train of %s, collapsed: %s' % (self.exp_conf['title'], end - begin))
+        logger.info('End of %s train rounds of %s, collapsed: %s' % (n_rounds,
+                                                                     self.exp_conf['title'],
+                                                                     end - begin))
 
     def evaluate(self):
         logger.info('Start evaluate for best model...')
@@ -138,7 +141,7 @@ class Experiment(object):
 
         train_round = eval_conf['train_round']
         fn_result = train_conf['rounds'][train_round]['result']
-        fn_result = fn_result.replace('{round}', '%s' % train_round)
+        # fn_result = fn_result.replace('{round}', '%s' % train_round)
         with open(fn_result, 'r') as f:
             result = json.load(f)
             fn_chk = result['best_chk']
@@ -212,6 +215,20 @@ class Experiment(object):
         train_conf = self.exp_conf['train']
         config = ProteinConfig.from_pretrained(train_conf['pretrain_model_location'])
         return BertTCREpitopeModel(config=config)
+
+    def _load_pretrained_model(self, param):
+        if param['type'] == 'tape':
+            logger.info('Loading the tape pretrained model from %s' % (param['config']))
+            return BertTCREpitopeModel.from_pretrained(param['config'])
+        elif param['type'] == 'local':
+            config = ProteinConfig.from_pretrained(param['config'])
+            model = BertTCREpitopeModel(config=config)
+            logger.info('Loading the pretrained model from %s' % (param['fn_chk']))
+            model.load_state_dict(fnchk=param['fn_chk'], use_cuda=use_cuda)
+            return model
+        else:
+            raise ValueError('Unknown pretrained model type: %s' % param['type'])
+
 
 class ExperimentTest(BaseTest):
     def test_init_exp(self):

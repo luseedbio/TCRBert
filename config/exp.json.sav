@@ -5,12 +5,36 @@
     "paper": "testexp",
     "train": {
       "pretrained_model": {
-        "type": "local",
+        "type": "tape",
         "config": "../config/bert-base/",
-        "fn_chk": "../output/testexp.train_0.model_2.chk"
+        "state_dict": null
       },
       "data_parallel": true,
       "rounds": [{
+        "data": "testexp.train.0",
+        "test_size": 0.2,
+        "batch_size": 32,
+        "n_epochs": 3,
+        "n_workers": 2,
+        "metrics": ["accuracy"],
+        "optimizer": {
+          "name": "adam",
+          "lr": 0.0001
+        },
+        "train_bert_encoders": [-8, null],
+        "early_stopper": {
+          "monitor": "accuracy",
+          "patience": 2
+        },
+        "model_checkpoint": {
+          "chk": "../output/testexp.train_{round}.model_{epoch}.chk",
+          "monitor": "accuracy",
+          "save_best_only": true,
+          "period": 1
+        },
+        "result": "../output/testexp.train_{round}.result.json"
+      },
+      {
         "data": "exp1.train.1",
         "test_size": 0.2,
         "batch_size": 32,
@@ -27,16 +51,17 @@
           "patience": 2
         },
         "model_checkpoint": {
-          "chk": "../output/testexp.train.1.model_{epoch}.chk",
+          "chk": "../output/testexp.train_{round}.model_{epoch}.chk",
           "monitor": "accuracy",
           "save_best_only": true,
           "period": 1
         },
-        "result": "../output/testexp.train.1.result.json"
-      }]
+        "result": "../output/testexp.train_{round}.result.json"
+      }
+      ]
     },
     "eval": {
-      "train_round": 0,
+      "train_round": 1,
       "data_parallel": true,
       "data": "testexp.eval.0",
       "batch_size": 32,
@@ -50,13 +75,33 @@
     "description": "Dash, VDJdb, McPAS 데이터로 말단 10개 encoder와 classifier 학습=>SARS-2 데이터로 말단 4개 encoder와 classifier 학습",
     "paper": "exp1",
     "train": {
-      "pretrained_model": {
-        "type": "local",
-        "config": "../config/bert-base/",
-        "fn_chk": "../output/../output/exp1.train_0.model_37.chk"
-      },
+      "pretrain_model_location": "../config/bert-base/",
       "data_parallel": true,
       "rounds": [{
+        "data": "exp1.train.0",
+        "test_size": 0.2,
+        "batch_size": 256,
+        "n_epochs": 100,
+        "n_workers": 12,
+        "metrics": ["accuracy"],
+        "optimizer": {
+          "name": "adam",
+          "lr": 0.0001
+        },
+        "train_bert_encoders": [-10, null],
+        "early_stopper": {
+          "monitor": "accuracy",
+          "patience": 10
+        },
+        "model_checkpoint": {
+          "chk": "../output/exp1/exp1.train_{round}.model_{epoch}.chk",
+          "monitor": "accuracy",
+          "save_best_only": true,
+          "period": 1
+        },
+        "result": "../output/exp1/exp1.train_{round}.result.json"
+      },
+      {
         "data": "exp1.train.1",
         "test_size": 0.2,
         "batch_size": 32,
@@ -73,16 +118,17 @@
           "patience": 10
         },
         "model_checkpoint": {
-          "chk": "../output/exp1/exp1.train.1.model_{epoch}.chk",
+          "chk": "../output/exp1/exp1.train_{round}.model_{epoch}.chk",
           "monitor": "accuracy",
           "save_best_only": true,
           "period": 1
         },
-        "result": "../output/exp1/exp1.train.1.result.json"
-      }]
+        "result": "../output/exp1/exp1.train_{round}.result.json"
+      }
+      ]
     },
     "eval": {
-      "train_round": 0,
+      "train_round": 1,
       "data_parallel": true,
       "data": "exp1.eval.0",
       "batch_size": 128,

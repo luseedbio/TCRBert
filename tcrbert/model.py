@@ -475,6 +475,8 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         return result_map
 
     def forward(self, input_ids, input_mask=None):
+        logger.info('[BertTCREpitopeModel.forward]: input_ids: %s(%s)' % (input_ids,
+                                                                          str(input_ids.shape) if input_ids is not None else 'None'))
         # bert_out: # sequence_output, pooled_output, (hidden_states), (attentions)
         bert_out = self.bert(input_ids, input_mask=input_mask)
         # sequence_out.shape: (batch_size, seq_len, hidden_size), pooled_out.shape: (batch_size, hidden_size)
