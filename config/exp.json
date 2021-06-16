@@ -14,7 +14,7 @@
         "data": "shomuradova",
         "test_size": 0.2,
         "batch_size": 32,
-        "n_epochs": 3,
+        "n_epochs": 1,
         "n_workers": 2,
         "metrics": ["accuracy"],
         "optimizer": {
