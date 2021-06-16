@@ -53,7 +53,7 @@
       "pretrained_model": {
         "type": "local",
         "config": "../config/bert-base/",
-        "fn_chk": "../output/exp1.train_0.model_37.chk"
+        "fn_chk": "../output/../output/exp1.train_0.model_37.chk"
       },
       "data_parallel": true,
       "rounds": [{
