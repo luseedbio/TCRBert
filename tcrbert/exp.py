@@ -117,11 +117,11 @@ class Experiment(object):
                 json.dump(rd_result, f)
 
             logger.info('End of %s train round.' % ir)
-
-            # Set model states with the best chk
-            logger.info('Setting model states with the best checkpoint %s' % mc.best_chk)
-            model.load_state_dict(fnchk=mc.best_chk, use_cuda=use_cuda)
-            logger.info('Loaded best model states from %s' % (mc.best_chk))
+            if ir < (n_rounds -1):
+                # Set model states with the best chk
+                logger.info('Setting model states with the best checkpoint %s' % mc.best_chk)
+                model.load_state_dict(fnchk=mc.best_chk, use_cuda=use_cuda)
+                logger.info('Loaded best model states from %s' % (mc.best_chk))
 
         end = datetime.now()
         logger.info('End of %s train rounds of %s, collapsed: %s' % (n_rounds,
