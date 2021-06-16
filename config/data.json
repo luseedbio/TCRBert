@@ -1,43 +1,34 @@
 {
-  "testexp.train.0": {
+  "dash": {
     "loaders": ["dash"],
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
     "vocab": "iupac",
     "max_len": 40,
-    "result": "../output/testexp.train.0.data.json"
+    "result": "../output/dash.data.json"
   },
-  "testexp.eval.0": {
-    "loaders": ["immunecode"],
-    "n_cdr3b_cutoff": null,
-    "generate_negatives": false,
-    "vocab": "iupac",
-    "max_len": 40,
-    "result": "../output/testexp.eval.0.data.json"
-  },
-
-  "exp1.train.0": {
+  "dash_vdjdb_mcpas": {
     "loaders": ["dash", "vdjdb", "mcpas"],
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
     "vocab": "iupac",
     "max_len": 40,
-    "result": "../output/exp1/exp1.train.0.data.json"
+    "result": "../output/dash_vdjdb_mcpas.data.json"
   },
-  "exp1.train.1": {
+  "shomuradova": {
     "loaders": ["shomuradova"],
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
     "vocab": "iupac",
     "max_len": 40,
-    "result": "../output/exp1/exp1.train.1.data.json"
+    "result": "../output/shomuradova.data.json"
   },
-  "exp1.eval.0": {
+  "immunecode": {
     "loaders": ["immunecode"],
     "n_cdr3b_cutoff": null,
     "generate_negatives": false,
     "vocab": "iupac",
     "max_len": 40,
-    "result": "../output/exp1/exp1.eval.0.data.json"
+    "result": "../output/immunecode.data.json"
   }
 }

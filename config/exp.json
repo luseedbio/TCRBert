@@ -11,7 +11,7 @@
       },
       "data_parallel": true,
       "rounds": [{
-        "data": "exp1.train.1",
+        "data": "shomuradova",
         "test_size": 0.2,
         "batch_size": 32,
         "n_epochs": 3,
@@ -38,7 +38,7 @@
     "eval": {
       "pretrained_chk": "../output/testexp.train_1.model_2.chk",
       "data_parallel": true,
-      "data": "testexp.eval.0",
+      "data": "immunecode",
       "batch_size": 32,
       "n_workers": 2,
       "metrics": ["accuracy", "f1"],
@@ -57,7 +57,7 @@
       },
       "data_parallel": false,
       "rounds": [{
-        "data": "exp1.train.1",
+        "data": "shomuradova",
         "test_size": 0.2,
         "batch_size": 32,
         "n_epochs": 100,
@@ -84,7 +84,7 @@
     "eval": {
       "pretrained_chk": "../output/exp1/exp1.train.1.model_18.chk",
       "data_parallel": false,
-      "data": "exp1.eval.0",
+      "data": "immunecode",
       "batch_size": 128,
       "n_workers": 12,
       "metrics": ["accuracy", "f1"],
@@ -93,7 +93,7 @@
   },
   "exp2": {
     "title": "exp2",
-    "description": "Dash, VDJdb, McPAS 데이터로 말단 8개 encoder와 classifier 학습=>SARS-2 데이터로 말단 2개 encoder와 classifier 학습",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 12개 encoder와 classifier 학습=>SARS-2 데이터로 말단 4개 encoder와 classifier 학습",
     "paper": "exp2",
     "model_config": "../config/bert-base/",
     "train": {
@@ -103,7 +103,7 @@
       },
       "data_parallel": false,
       "rounds": [{
-          "data": "exp1.train.0",
+          "data": "dash_vdjdb_mcpas",
           "test_size": 0.2,
           "batch_size": 256,
           "n_epochs": 100,
@@ -113,7 +113,7 @@
             "name": "adam",
             "lr": 0.0001
           },
-          "train_bert_encoders": [-8, null],
+          "train_bert_encoders": [-12, null],
           "early_stopper": {
             "monitor": "accuracy",
             "patience": 10
@@ -127,7 +127,7 @@
           "result": "../output/exp2/train.0.result.json"
         },
         {
-          "data": "exp1.train.1",
+          "data": "shomuradova",
           "test_size": 0.2,
           "batch_size": 32,
           "n_epochs": 100,
@@ -137,7 +137,7 @@
             "name": "adam",
             "lr": 0.00001
           },
-          "train_bert_encoders": [-2, null],
+          "train_bert_encoders": [-4, null],
           "early_stopper": {
             "monitor": "accuracy",
             "patience": 10
@@ -154,7 +154,7 @@
     "eval": {
       "pretrained_chk": "../output/exp2/train.1.model_18.chk",
       "data_parallel": false,
-      "data": "exp1.eval.0",
+      "data": "immunecode",
       "batch_size": 128,
       "n_workers": 12,
       "metrics": ["accuracy", "f1"],

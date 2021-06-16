@@ -1,0 +1,1 @@
+{"vocab_size": 30, "max_len": 40, "n_data": 25238, "output_csv": "../output/dash_vdjdb_mcpas.data.csv", "sample_csv": "../output/dash_vdjdb_mcpas.data.sample.csv"}
