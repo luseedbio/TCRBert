@@ -41,7 +41,7 @@
       "data": "testexp.eval.0",
       "batch_size": 32,
       "n_workers": 2,
-      "metrics": ["accuracy", "roc_auc"],
+      "metrics": ["accuracy", "f1"],
       "result": "../output/testexp.eval.result.json"
     }
   },
@@ -87,7 +87,7 @@
       "data": "exp1.eval.0",
       "batch_size": 128,
       "n_workers": 12,
-      "metrics": ["accuracy", "roc_auc"],
+      "metrics": ["accuracy", "f1"],
       "result": "../output/exp1/exp1.eval.result.json"
     }
   }
