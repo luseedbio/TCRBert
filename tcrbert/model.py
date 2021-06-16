@@ -28,12 +28,12 @@ from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy, st
 logger = logging.getLogger('tcrbert')
 
 PRED_SCORER_MAP = {
-    'accuracy': lambda y_true, y_pred, y_prob: accuracy_score(y_true, y_pred),
-    'precision': lambda y_true, y_pred, y_prob: precision_score(y_true, y_pred),
-    'recall': lambda y_true, y_pred, y_prob: recall_score(y_true, y_pred),
-    'f1': lambda y_true, y_pred, y_prob: f1_score(y_true, y_pred),
-    'roc_auc': lambda y_true, y_pred, y_prob: roc_auc_score(y_true, y_prob),
-    'r2': lambda y_true, y_pred, y_prob: r2_score(y_true, y_pred)
+    'accuracy': accuracy_score,
+    'precision': precision_score,
+    'recall': recall_score,
+    'f1': f1_score,
+    'roc_auc': roc_auc_score,
+    'r2': r2_score
 }
 
 class BertTCREpitopeModel(ProteinBertAbstractModel):
@@ -57,7 +57,6 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
             y_true = to_numpy(target)
             y_pred = np.argmax(clsout, axis=1)
-            y_prob = np.exp(np.max(clsout, axis=1))
 
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: output[0]: %s(%s)' % (output[0],
                                                                                                      str(output[0].shape)))
@@ -66,11 +65,9 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: y_pred: %s(%s)' % (y_pred,
                                                                                                   str(y_pred.shape)))
 
-            logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: y_prob: %s(%s)' % (y_prob,
-                                                                                                  str(y_prob.shape)))
             sm = OrderedDict()
             for metric, scorer in self.scorer_map.items():
-                sm[metric] = scorer(y_true, y_pred, y_prob)
+                sm[metric] = scorer(y_true, y_pred)
 
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: score_map: %s' % sm)
             return sm
