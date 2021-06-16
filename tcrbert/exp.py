@@ -190,6 +190,7 @@ class Experiment(object):
             eval_conf['data'] = copy.deepcopy(data_conf[eval_conf['data']])
             eval_conf['data']['result'] = FileUtils.json_load(eval_conf['data']['result'])
 
+        logger.info('Loaded exp_conf: %s' % exp_conf)
         return exp_conf
 
     def _create_optimizer(self, model, param):
