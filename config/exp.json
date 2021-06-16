@@ -101,7 +101,7 @@
         "type": "tape",
         "location": "../config/bert-base/"
       },
-      "data_parallel": false,
+      "data_parallel": true,
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
           "test_size": 0.2,
