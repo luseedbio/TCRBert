@@ -101,11 +101,11 @@
         "type": "tape",
         "location": "../config/bert-base/"
       },
-      "data_parallel": true,
+      "data_parallel": false,
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
           "test_size": 0.2,
-          "batch_size": 256,
+          "batch_size": 128,
           "n_epochs": 100,
           "n_workers": 12,
           "metrics": ["accuracy"],
