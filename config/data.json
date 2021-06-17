@@ -30,5 +30,14 @@
     "vocab": "iupac",
     "max_len": 40,
     "result": "../output/immunecode.data.json"
+  },
+  "zhang": {
+    "loaders": ["zhang"],
+    "n_cdr3b_cutoff": 10,
+    "generate_negatives": false,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/zhang.data.json"
   }
+
 }

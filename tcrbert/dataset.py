@@ -286,6 +286,57 @@ class ImmuneCODETCREpitopeDFLoader(FileTCREpitopeDFLoader):
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
+        logger.debug('Loaded ImmuneCODE data. Current df.shape: %s' % str(df.shape))
+        return df
+
+import glob
+from tcrbert.commons import basename
+import re
+
+class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
+
+    def _load_from_file(self, source_dir):
+        logger.debug('Loading from source directory %s' % source_dir)
+
+        df_seq = pd.read_csv('%s/pep_seq.csv' % source_dir, index_col=0)
+
+        def get_pep_seq(pep_id):
+            the = re.sub('[\s_-]', '', pep_id)
+            if the in df_seq.index.values:
+                return df_seq[df_seq.index == the].peptide.iat[0]
+            else:
+                logger.warning('Peptide sequence for %s dose not exist' % the)
+                return None
+
+        dfs = []
+        for fn in glob.glob('%s/**/*.tsv' % source_dir, recursive=True):
+
+            logger.debug('Loading data from %s' % fn)
+            df = pd.read_csv(fn, sep='\t')
+            logger.debug('Current df.shape: %s' % str(df.shape))
+            bname = basename(fn, ext=False)
+            label = 1 if 'Pos' in bname else 0
+            if 'Peptide' in df.columns:
+                df[CN.epitope] = df['Peptide'].map(lambda x: get_pep_seq(x))
+            else:
+                pep_id = bname[bname.index('_') + 1:]
+                df[CN.epitope] = get_pep_seq(pep_id)
+
+            df[CN.epitope] = df[CN.epitope].str.strip().str.upper()
+            df[CN.epitope_gene] = None
+            df[CN.epitope_species] = 'human'
+            df[CN.mhc] = None
+            df[CN.cdr3b] = df['CDR3b'].str.strip().str.upper()
+            df[CN.species] = 'human'
+            df[CN.source] = 'Zhang'
+            df[CN.label] = label
+
+            df.index = df.apply(lambda row: self._make_index(row), axis=1)
+            df = df.loc[:, CN.values()]
+            dfs.append(df)
+
+        df = pd.concat(dfs)
+        logger.debug('Loaded Zhang data. Current df.shape: %s' % str(df.shape))
         return df
 
 class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
@@ -344,7 +395,8 @@ DATA_LOADERS = OrderedDict({
     'vdjdb':       VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
     'mcpas':       McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
     'shomuradova': ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
-    'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv')
+    'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
+    'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang')
 })
 
 

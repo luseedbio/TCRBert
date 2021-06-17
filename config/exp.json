@@ -312,12 +312,57 @@
     },
     "eval": {
       "data_parallel": false,
-      "data": "immunecode",
       "batch_size": 128,
       "n_workers": 12,
       "metrics": ["accuracy", "f1"],
+      "data": "immunecode",
       "result": "../output/exp5/eval.result.json"
     }
+  },
+  "exp6": {
+    "title": "exp6",
+    "description": "exp5 최종 모델을 사용하여 Zhang 데이터 평가",
+    "paper": "exp6",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "local",
+        "location": "../output/exp1/exp1.train_0.model_37.chk"
+      },
+      "data_parallel": false,
+      "rounds": [
+        {
+          "data": "shomuradova",
+          "test_size": 0.2,
+          "batch_size": 32,
+          "n_epochs": 150,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.00001
+          },
+          "train_bert_encoders": [-2, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 15
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp5/train.1.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+        },
+        "result": "../output/exp5/train.1.result.json"
+      }]
+    },
+    "eval": {
+      "data_parallel": false,
+      "batch_size": 128,
+      "n_workers": 12,
+      "metrics": ["accuracy", "f1"],
+      "data": "zhang",
+      "result": "../output/exp6/eval.result.json"
+    }
   }
-
 }
