@@ -294,7 +294,7 @@
           "data": "shomuradova",
           "test_size": 0.2,
           "batch_size": 32,
-          "n_epochs": 100,
+          "n_epochs": 150,
           "n_workers": 12,
           "metrics": ["accuracy"],
           "optimizer": {
@@ -304,7 +304,7 @@
           "train_bert_encoders": [-2, null],
           "early_stopper": {
             "monitor": "accuracy",
-            "patience": 10
+            "patience": 15
           },
           "model_checkpoint": {
             "chk": "../output/exp5/train.1.model_{epoch}.chk",
