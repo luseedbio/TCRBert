@@ -78,7 +78,6 @@ class Experiment(object):
             model.add_train_listener(stopper)
 
             fn_chk = round_conf['model_checkpoint']['chk']
-            fn_chk = fn_chk.replace('{round}', '%s' % ir)
             monitor = round_conf['model_checkpoint']['monitor']
             save_best_only = round_conf['model_checkpoint']['save_best_only']
             period = round_conf['model_checkpoint']['period']
@@ -111,7 +110,6 @@ class Experiment(object):
             rd_result['best_chk'] = mc.best_chk
 
             fn_result = round_conf['result']
-            # fn_result = fn_result.replace('{round}', '%s' % ir)
             logger.info('%s train round result: %s, writing to %s' % (ir, rd_result, fn_result))
             with open(fn_result, 'w') as f:
                 json.dump(rd_result, f)
@@ -138,9 +136,9 @@ class Experiment(object):
         logger.info('use_cuda: %s' % use_cuda)
 
         model = self._create_model()
-
-        logger.info('Loading the pretrained model from %s' % (eval_conf['pretrained_chk']))
-        model.load_state_dict(fnchk=eval_conf['pretrained_chk'], use_cuda=use_cuda)
+        fn_chk = eval_conf.get('pretrained_chk', self._get_train_besk_chk(train_conf))
+        logger.info('Loading the pretrained model from %s' % (fn_chk))
+        model.load_state_dict(fnchk=fn_chk, use_cuda=use_cuda)
 
         if eval_conf['data_parallel']:
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
@@ -221,6 +219,12 @@ class Experiment(object):
             return model
         else:
             raise ValueError('Unknown pretrained model type: %s' % param['type'])
+
+    def _get_train_besk_chk(self, train_conf):
+        last_round = train_conf['rounds'][-1]
+        result = FileUtils.json_load(last_round['result'])
+        return result['best_chk']
+
 
 class ExperimentTest(BaseTest):
     def test_init_exp(self):
