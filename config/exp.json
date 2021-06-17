@@ -163,7 +163,7 @@
   },
   "exp3": {
     "title": "exp3",
-    "description": "Dash, VDJdb, McPAS 데이터로 말단 8개 encoder와 classifier 학습=>SARS-2 데이터로 말단 4개 encoder와 classifier 학습",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 8개의 encoder와 classifier 학습=>SARS-2 데이터로 말단 4개 encoder와 classifier 학습",
     "paper": "exp3",
     "model_config": "../config/bert-base/",
     "train": {
