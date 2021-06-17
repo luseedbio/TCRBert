@@ -269,7 +269,7 @@
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/exp4/train.1.model_44.chk",
+      "pretrained_chk": "../output/exp4/train.1.model_55.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
@@ -279,9 +279,9 @@
     }
   },
   "exp5": {
-    "title": "exp4",
+    "title": "exp5",
     "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>SARS-2 데이터로 말단 2개 encoder와 classifier 학습",
-    "paper": "exp4",
+    "paper": "exp5",
     "model_config": "../config/bert-base/",
     "train": {
       "pretrained_model": {
@@ -307,22 +307,22 @@
             "patience": 10
           },
           "model_checkpoint": {
-            "chk": "../output/exp4/train.1.model_{epoch}.chk",
+            "chk": "../output/exp5/train.1.model_{epoch}.chk",
             "monitor": "accuracy",
             "save_best_only": true,
             "period": 1
         },
-        "result": "../output/exp4/train.1.result.json"
+        "result": "../output/exp5/train.1.result.json"
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/exp4/train.1.model_11.chk",
+      "pretrained_chk": "../output/exp5/train.1.model_11.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
       "n_workers": 12,
       "metrics": ["accuracy", "f1"],
-      "result": "../output/exp4/eval.result.json"
+      "result": "../output/exp5/eval.result.json"
     }
   }
 
