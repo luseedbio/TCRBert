@@ -222,13 +222,83 @@
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/exp3/train.1.model_2.chk",
+      "pretrained_chk": "../output/exp3/train.1.model_8.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
       "n_workers": 12,
       "metrics": ["accuracy", "f1"],
       "result": "../output/exp3/eval.result.json"
+    }
+  },
+  "exp4": {
+    "title": "exp4",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 8개의 encoder와 classifier 학습=>SARS-2 데이터로 말단 2개 encoder와 classifier 학습",
+    "paper": "exp4",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "tape",
+        "location": "../config/bert-base/"
+      },
+      "data_parallel": false,
+      "rounds": [{
+          "data": "dash_vdjdb_mcpas",
+          "test_size": 0.2,
+          "batch_size": 128,
+          "n_epochs": 100,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.0001
+          },
+          "train_bert_encoders": [-8, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 10
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp4/train.0.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+          },
+          "result": "../output/exp4/train.0.result.json"
+        },
+        {
+          "data": "shomuradova",
+          "test_size": 0.2,
+          "batch_size": 32,
+          "n_epochs": 100,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.00001
+          },
+          "train_bert_encoders": [-2, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 10
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp4/train.1.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+        },
+        "result": "../output/exp4/train.1.result.json"
+      }]
+    },
+    "eval": {
+      "pretrained_chk": "../output/exp4/train.1.model_2.chk",
+      "data_parallel": false,
+      "data": "immunecode",
+      "batch_size": 128,
+      "n_workers": 12,
+      "metrics": ["accuracy", "f1"],
+      "result": "../output/exp4/eval.result.json"
     }
   }
 
