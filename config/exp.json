@@ -36,7 +36,6 @@
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/testexp.train_1.model_2.chk",
       "data_parallel": true,
       "data": "immunecode",
       "batch_size": 32,
@@ -82,7 +81,6 @@
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/exp1/exp1.train.1.model_18.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
@@ -152,7 +150,6 @@
       }]
     },
     "eval": {
-      "model": "../output/exp2/train.1.model_2.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
@@ -222,7 +219,6 @@
       }]
     },
     "eval": {
-      "model": "../output/exp3/train.1.model_8.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
@@ -269,7 +265,6 @@
       }]
     },
     "eval": {
-      "model": "../output/exp4/train.1.model_55.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
@@ -316,7 +311,6 @@
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/exp5/train.1.model_46.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
