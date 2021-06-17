@@ -316,7 +316,7 @@
       }]
     },
     "eval": {
-      "pretrained_chk": "../output/exp4/train.1.model_2.chk",
+      "pretrained_chk": "../output/exp4/train.1.model_11.chk",
       "data_parallel": false,
       "data": "immunecode",
       "batch_size": 128,
