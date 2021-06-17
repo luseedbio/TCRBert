@@ -238,34 +238,11 @@
     "model_config": "../config/bert-base/",
     "train": {
       "pretrained_model": {
-        "type": "tape",
-        "location": "../config/bert-base/"
+        "type": "local",
+        "location": "../output/exp3/train.0.model_35.chk"
       },
       "data_parallel": false,
-      "rounds": [{
-          "data": "dash_vdjdb_mcpas",
-          "test_size": 0.2,
-          "batch_size": 128,
-          "n_epochs": 100,
-          "n_workers": 12,
-          "metrics": ["accuracy"],
-          "optimizer": {
-            "name": "adam",
-            "lr": 0.0001
-          },
-          "train_bert_encoders": [-8, null],
-          "early_stopper": {
-            "monitor": "accuracy",
-            "patience": 10
-          },
-          "model_checkpoint": {
-            "chk": "../output/exp4/train.0.model_{epoch}.chk",
-            "monitor": "accuracy",
-            "save_best_only": true,
-            "period": 1
-          },
-          "result": "../output/exp4/train.0.result.json"
-        },
+      "rounds": [
         {
           "data": "shomuradova",
           "test_size": 0.2,
