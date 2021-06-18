@@ -420,6 +420,7 @@ class TCREpitopeSentenceDataset(Dataset):
             return list(sentence_ids)
 
         df[cls.CN_SENTENCE] = df.apply(encode_row, axis=1)
+        df = df[df[cls.CN_SENTENCE].map(lambda x: len(x) <= max_len)]
         return df
 
 
