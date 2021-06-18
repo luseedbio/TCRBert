@@ -1,7 +1,7 @@
 ,epitope,epitope_gene,epitope_species,species,cdr3b,mhc,source,label,sentence
-FMLYLLTLM_CASSLGRSSYEQYF,FMLYLLTLM,,human,human,CASSLGRSSYEQYF,,Zhang,0,"[2, 10, 16, 15, 28, 15, 15, 23, 15, 16, 3, 2, 7, 5, 22, 22, 15, 11, 21, 22, 22, 28, 9, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-LLWNGPMAV_CASRTGTSGGFPNTGELFF,LLWNGPMAV,,human,human,CASRTGTSGGFPNTGELFF,,Zhang,0,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 22, 21, 23, 11, 23, 22, 11, 11, 10, 19, 17, 23, 11, 9, 15, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0]"
-LLWNGPMAV_CASSAGRYEQYF,LLWNGPMAV,,human,human,CASSAGRYEQYF,,Zhang,0,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 22, 22, 5, 11, 21, 28, 9, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-FLYNLLTRV_CASSPGRTQYF,FLYNLLTRV,,human,human,CASSPGRTQYF,,Zhang,0,"[2, 10, 15, 28, 17, 15, 15, 23, 21, 25, 3, 2, 7, 5, 22, 22, 19, 11, 21, 23, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-LLWNGPMAV_CASSQEMASVQETQYF,LLWNGPMAV,,human,human,CASSQEMASVQETQYF,,Zhang,0,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 22, 22, 20, 9, 16, 5, 22, 25, 20, 9, 23, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-LLWNGPMAV_CASSLTALGAAYVYTF,LLWNGPMAV,,human,human,CASSLTALGAAYVYTF,,Zhang,1,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 22, 22, 15, 23, 5, 15, 11, 5, 5, 28, 25, 28, 23, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+LLWNGPMAV_CASSESTIVQGYNEQFF,LLWNGPMAV,,human,human,CASSESTIVQGYNEQFF,,Zhang,0,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 22, 22, 9, 22, 23, 13, 25, 20, 11, 28, 17, 9, 20, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+LLWNGPMAV_CAWSGFSRTEAFF,LLWNGPMAV,,human,human,CAWSGFSRTEAFF,,Zhang,0,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 26, 22, 11, 10, 22, 21, 23, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+LLWNGPMAV_CASSFALSNEAFF,LLWNGPMAV,,human,human,CASSFALSNEAFF,,Zhang,0,"[2, 15, 15, 26, 17, 11, 19, 16, 5, 25, 3, 2, 7, 5, 22, 22, 10, 5, 15, 22, 17, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+FLYNLLTRV_CASGLDTQYF,FLYNLLTRV,,human,human,CASGLDTQYF,,Zhang,0,"[2, 10, 15, 28, 17, 15, 15, 23, 21, 25, 3, 2, 7, 5, 22, 11, 15, 8, 23, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+ALSPVIPHI_CASSFSGTFEAFF,ALSPVIPHI,,human,human,CASSFSGTFEAFF,,Zhang,0,"[2, 5, 15, 22, 19, 25, 13, 19, 12, 13, 3, 2, 7, 5, 22, 22, 10, 22, 11, 23, 10, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
+ELAGIGILTV_CASSPLRGPADRTGTEAFF,ELAGIGILTV,,human,human,CASSPLRGPADRTGTEAFF,,Zhang,0,"[2, 9, 15, 5, 11, 13, 11, 13, 15, 23, 25, 3, 2, 7, 5, 22, 22, 19, 15, 21, 11, 19, 5, 8, 21, 23, 11, 23, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0]"

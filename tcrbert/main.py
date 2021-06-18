@@ -30,8 +30,10 @@ def generate_data(args):
 
         loaders = [DATA_LOADERS[loader_key] for loader_key in conf['loaders']]
         filters = [TCREpitopeDFLoader.NotDuplicateFilter()]
-        if conf['n_cdr3b_cutoff']:
+        if conf.get('n_cdr3b_cutoff'):
             filters.append(TCREpitopeDFLoader.MoreThanCDR3bNumberFilter(cutoff=conf['n_cdr3b_cutoff']))
+        if conf.get('query'):
+            filters.append(TCREpitopeDFLoader.QueryFilter(query=conf['query']))
 
         negative_generator = TCREpitopeDFLoader.DefaultNegativeGenerator() if conf['generate_negatives'] else None
 
@@ -95,7 +97,7 @@ def main():
     # Arguments for sub command 'generate_data'
     sub_parser = subparsers.add_parser('generate_data')
     sub_parser.set_defaults(func=generate_data)
-    sub_parser.add_argument('--data', type=str, default='zhang')
+    sub_parser.add_argument('--data', type=str, default='dash,dash_vdjdb_mcpas,iedb_sars2,shomuradova,immunecode,zhang')
 
     # Arguments for sub command 'run_exp'
     sub_parser = subparsers.add_parser('run_exp')

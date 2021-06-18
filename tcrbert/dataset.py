@@ -8,7 +8,10 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 from tape import TAPETokenizer
+import glob
+import re
 
+from tcrbert.commons import basename
 from tcrbert.bioseq import is_valid_aaseq
 from tcrbert.commons import StrEnum, BaseTest
 
@@ -52,6 +55,17 @@ class TCREpitopeDFLoader(object):
                 tmp = df[CN.epitope].value_counts()
                 tmp = tmp[tmp >= self.cutoff]
                 df = df[df[CN.epitope].map(lambda x: x in tmp.index)]
+                logger.debug('Current df.shape: %s' % str(df.shape))
+            return df
+
+    class QueryFilter(Filter):
+        def __init__(self, query=None):
+            self.query = query
+
+        def filter_df(self, df):
+            if self.query is not None:
+                logger.debug("Select all epitope by query: %s" % self.query)
+                df = df.query(self.query, engine='python')
                 logger.debug('Current df.shape: %s' % str(df.shape))
             return df
 
@@ -289,10 +303,6 @@ class ImmuneCODETCREpitopeDFLoader(FileTCREpitopeDFLoader):
         logger.debug('Loaded ImmuneCODE data. Current df.shape: %s' % str(df.shape))
         return df
 
-import glob
-from tcrbert.commons import basename
-import re
-
 class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
 
     def _load_from_file(self, source_dir):
@@ -338,6 +348,28 @@ class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df = pd.concat(dfs)
         logger.debug('Loaded Zhang data. Current df.shape: %s' % str(df.shape))
         return df
+
+class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
+    def _load_from_file(self, fn_source):
+        logger.debug('Loading from %s' % fn_source)
+        df = pd.read_csv(fn_source)
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
+        df[CN.epitope] = df['Description'].str.strip().str.upper()
+        df[CN.epitope_gene] = df['Antigen']
+        df[CN.epitope_species] = df['Organism']
+        df[CN.mhc] = df['MHC Allele Names']
+        df[CN.cdr3b] = df['Chain 2 CDR3 Curated'].str.strip().str.upper()
+        df[CN.species] = 'human'
+        df[CN.source] = 'IEDB'
+        df[CN.label] = 1
+
+        df.index = df.apply(lambda row: self._make_index(row), axis=1)
+        df = df.loc[:, CN.values()]
+        logger.debug('Loaded IEDB data. Current df.shape: %s' % str(df.shape))
+        return df
+
+
 
 class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
     def __init__(self, loaders=None, filters=None, negative_generator=None):
@@ -390,13 +422,15 @@ class TCREpitopeSentenceDataset(Dataset):
         df[cls.CN_SENTENCE] = df.apply(encode_row, axis=1)
         return df
 
+
 DATA_LOADERS = OrderedDict({
     'dash':        DashTCREpitopeDFLoader('../data/Dash/human_mouse_pairseqs_v1_parsed_seqs_probs_mq20_clones.tsv'),
     'vdjdb':       VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
     'mcpas':       McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
     'shomuradova': ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
     'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
-    'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang')
+    'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang'),
+    'iedb_sars2':        IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv')
 })
 
 

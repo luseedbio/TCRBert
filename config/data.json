@@ -15,6 +15,16 @@
     "max_len": 40,
     "result": "../output/dash_vdjdb_mcpas.data.json"
   },
+  "iedb_sars2": {
+    "loaders": ["iedb_sars2"],
+    "n_cdr3b_cutoff": 20,
+    "generate_negatives": true,
+    "query": "(epitope_species == 'SARS-CoV2') and (epitope != 'YLQPRTFLL') and (epitope.str.len() <= 15)",
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/iedb_sars2.data.json"
+  },
+
   "shomuradova": {
     "loaders": ["shomuradova"],
     "n_cdr3b_cutoff": 20,

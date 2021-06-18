@@ -144,25 +144,29 @@ class Experiment(object):
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
             model.data_parallel()
 
-        eval_csv = eval_conf['data']['result']['output_csv']
-        eval_df = TCREpitopeSentenceDataset.load_df(eval_csv)
-        logger.info('Loaded test data, df.shape: %s' % str(eval_df.shape))
-
-        eval_ds = TCREpitopeSentenceDataset(df=eval_df)
-
-        batch_size = eval_conf.get('batch_size', len(eval_ds))
+        batch_size = eval_conf['batch_size']
         n_workers = eval_conf['n_workers']
         metrics = eval_conf['metrics']
 
-        eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=True, num_workers=n_workers)
 
-        result = model.predict(data_loader=eval_data_loader, metrics=metrics)
+        for i, test_coonf in enumerate(eval_conf['tests']):
+            logger.info('Start %s test, test_conf: %s' % (i, test_coonf))
+            eval_csv = test_coonf['data']['result']['output_csv']
+            eval_df = TCREpitopeSentenceDataset.load_df(eval_csv)
+            logger.info('Loaded test data, df.shape: %s' % str(eval_df.shape))
 
-        fn_result = eval_conf['result']
-        with open(fn_result, 'w') as f:
-            json.dump(result, f)
+            eval_ds = TCREpitopeSentenceDataset(df=eval_df)
+            eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=True, num_workers=n_workers)
 
-        logger.info('Done to evaluate, result: %s saved to %s' % (result, fn_result))
+            result = model.predict(data_loader=eval_data_loader, metrics=metrics)
+
+            fn_result = test_coonf['result']
+            with open(fn_result, 'w') as f:
+                json.dump(result, f)
+
+            logger.info('Done to test data: %s, result: %s saved to %s' % (eval_csv, result, fn_result))
+
+        logger.info('Dont to evaluate for %s tests' % len(eval_conf['tests']))
 
     @classmethod
     def from_key(cls, key=None):
@@ -185,8 +189,9 @@ class Experiment(object):
                 round_conf['data'] = copy.deepcopy(data_conf[data_key])
                 round_conf['data']['result'] = FileUtils.json_load(round_conf['data']['result'])
 
-            eval_conf['data'] = copy.deepcopy(data_conf[eval_conf['data']])
-            eval_conf['data']['result'] = FileUtils.json_load(eval_conf['data']['result'])
+            for test_conf in eval_conf['tests']:
+                test_conf['data'] = copy.deepcopy(data_conf[test_conf['data']])
+                test_conf['data']['result'] = FileUtils.json_load(test_conf['data']['result'])
 
         logger.info('Loaded exp_conf: %s' % exp_conf)
         return exp_conf
