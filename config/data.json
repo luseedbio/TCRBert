@@ -28,6 +28,7 @@
   "shomuradova": {
     "loaders": ["shomuradova"],
     "n_cdr3b_cutoff": 20,
+    "query": "(epitope != 'RLQSLQTYV')",
     "generate_negatives": true,
     "vocab": "iupac",
     "max_len": 40,

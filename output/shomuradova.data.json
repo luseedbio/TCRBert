@@ -1,1 +1,1 @@
-{"vocab_size": 30, "max_len": 40, "n_data": 664, "output_csv": "../output/shomuradova.data.csv", "sample_csv": "../output/shomuradova.data.sample.csv"}
+{"vocab_size": 30, "max_len": 40, "n_data": 610, "output_csv": "../output/shomuradova.data.csv", "sample_csv": "../output/shomuradova.data.sample.csv"}
