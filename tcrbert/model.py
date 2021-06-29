@@ -28,12 +28,12 @@ from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy, st
 logger = logging.getLogger('tcrbert')
 
 PRED_SCORER_MAP = {
-    'accuracy': accuracy_score,
-    'precision': precision_score,
-    'recall': recall_score,
-    'f1': f1_score,
-    'roc_auc': roc_auc_score,
-    'r2': r2_score
+    'accuracy': lambda y_true, y_pred, y_prob: accuracy_score(y_true=y_true, y_pred=y_pred),
+    'precision': lambda y_true, y_pred, y_prob: precision_score(y_true=y_true, y_pred=y_pred),
+    'recall': lambda y_true, y_pred, y_prob: recall_score(y_true=y_true, y_pred=y_pred),
+    'f1': lambda y_true, y_pred, y_prob: f1_score(y_true=y_true, y_pred=y_pred),
+    'roc_auc': lambda y_true, y_pred, y_prob: roc_auc_score(y_true=y_true, y_score=y_prob),
+    'r2': lambda y_true, y_pred, y_prob: r2_score(y_true=y_true, y_pred=y_pred)
 }
 
 class BertTCREpitopeModel(ProteinBertAbstractModel):
@@ -52,11 +52,8 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
             return self.criterion(logits, target)
 
         def score_map(self, output, target):
-            # y_pred = torch.argmax(output[0], dim=1)
-            clsout = to_numpy(output[0])
-
             y_true = to_numpy(target)
-            y_pred = np.argmax(clsout, axis=1)
+            y_pred, y_prob = self.output_labels(output)
 
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: output[0]: %s(%s)' % (output[0],
                                                                                                      str(output[0].shape)))
@@ -64,10 +61,12 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
                                                                                                   str(y_true.shape)))
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: y_pred: %s(%s)' % (y_pred,
                                                                                                   str(y_pred.shape)))
+            logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: y_prob: %s(%s)' % (y_prob,
+                                                                                                  str(y_prob.shape)))
 
             sm = OrderedDict()
             for metric, scorer in self.scorer_map.items():
-                sm[metric] = scorer(y_true, y_pred)
+                sm[metric] = scorer(y_true, y_pred, y_prob)
 
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.score_map]: score_map: %s' % sm)
             return sm
@@ -79,6 +78,8 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
             # labels = to_numpy(torch.argmax(clsout, dim=1))
             probs  = np.exp(np.max(clsout, axis=1))
             labels = np.argmax(clsout, axis=1)
+            select = (labels == 0)
+            probs[select] = (1 - probs[select])
             logger.debug('[BertTCREpitopeModel.PredictionEvaluator.output_labels]: probs:: %s, labels: %s' % (probs, labels))
             return labels, probs
 
@@ -600,6 +601,7 @@ class BertTCREpitopeModelTest(BaseModelTest):
         self.assertFalse(module_weights_equal(embedding, self.model.bert_embeddings.word_embeddings))
 
     def test_predict(self):
+        print(sum([np.prod(p.size()) for p in self.model.parameters()]))
         self.model.data_parallel()
 
         data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
