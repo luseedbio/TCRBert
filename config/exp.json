@@ -409,7 +409,7 @@
       "data_parallel": false,
       "batch_size": 128,
       "n_workers": 12,
-      "metrics": ["accuracy", "f1"],
+      "metrics": ["accuracy", "f1", "roc_auc"],
       "tests": [
         {"data": "shomuradova", "result": "../output/exp7/eval.shomuradova.result.json"},
         {"data": "immunecode", "result": "../output/exp7/eval.immunecode.result.json"},
