@@ -49,6 +49,15 @@
     "vocab": "iupac",
     "max_len": 40,
     "result": "../output/zhang.data.json"
+  },
+  "nettcr": {
+    "loaders": ["nettcr"],
+    "n_cdr3b_cutoff": 10,
+    "generate_negatives": false,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/nettcr.data.json"
   }
+
 
 }

@@ -388,6 +388,25 @@ class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         return df
 
 
+class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
+    def _load_from_file(self, fn_source):
+        logger.debug('Loading from %s' % fn_source)
+        df = pd.read_csv(fn_source, sep=';')
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
+        df[CN.epitope] = df['peptide'].str.strip().str.upper()
+        df[CN.epitope_gene] = df['antigen']
+        df[CN.epitope_species] = df['organism']
+        df[CN.mhc] = 'HLA-A*02:01'
+        df[CN.cdr3b] = df['CDR3'].str.strip().str.upper()
+        df[CN.species] = 'human'
+        df[CN.source] = 'IEDB_MIRA'
+        df[CN.label] = df['binder']
+
+        df.index = df.apply(lambda row: self._make_index(row), axis=1)
+        df = df.loc[:, CN.values()]
+        logger.debug('Loaded NetTCR MIRA data. Current df.shape: %s' % str(df.shape))
+        return df
 
 class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
     def __init__(self, loaders=None, filters=None, negative_generator=None):
@@ -443,14 +462,16 @@ class TCREpitopeSentenceDataset(Dataset):
 
 
 DATA_LOADERS = OrderedDict({
-    # 'dash':        DashTCREpitopeDFLoader('../data/Dash/human_mouse_pairseqs_v1_parsed_seqs_probs_mq20_clones.tsv'),
-    # 'vdjdb':       VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
-    # 'mcpas':       McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
-    # 'shomuradova': ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
-    # 'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
+    'dash':        DashTCREpitopeDFLoader('../data/Dash/human_mouse_pairseqs_v1_parsed_seqs_probs_mq20_clones.tsv'),
+    'vdjdb':       VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
+    'mcpas':       McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
+    'shomuradova': ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
+    'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
     'immunecode002.1':  ImmuneCODE2TCREpitopeDFLoader('../data/ImmuneCODE-MIRA-Release002.1/peptide-detail-ci.csv'),
-    # 'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang'),
-    # 'iedb_sars2':        IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv')
+    'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang'),
+    'iedb_sars2':        IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),
+    'nettcr': NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv')
+
 })
 
 
