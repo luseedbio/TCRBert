@@ -428,7 +428,7 @@
         "type": "local",
         "location": "../output/exp1/exp1.train_0.model_37.chk"
       },
-      "data_parallel": true,
+      "data_parallel": false,
       "rounds": [
         {
           "data": "nettcr_train",
