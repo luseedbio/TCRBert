@@ -103,6 +103,7 @@ class TCREpitopeDFLoader(object):
         df = self._load()
 
         logger.debug('Select valid epitope and CDR3b seq')
+        df = df.dropna(subset=['epitope', 'cdr3b'])
         df = df[
             (df[CN.epitope].map(is_valid_aaseq)) &
             (df[CN.cdr3b].map(is_valid_aaseq))
@@ -160,7 +161,6 @@ class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df = pd.read_table(fn_source, sep='\t')
         logger.debug('Current df.shape: %s' % str(df.shape))
 
-        df = df.dropna(subset=['epitope', 'cdr3b'])
         df[CN.epitope_gene] = df['epitope']
         df[CN.epitope_species] = df[CN.epitope_gene].map(lambda x: self.GENE_INFO_MAP[x][0])
         df[CN.epitope] = df[CN.epitope_gene].map(lambda x: self.GENE_INFO_MAP[x][1])
@@ -395,17 +395,17 @@ class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         logger.debug('Current df.shape: %s' % str(df.shape))
 
         df[CN.epitope] = df['peptide'].str.strip().str.upper()
-        df[CN.epitope_gene] = df['antigen']
-        df[CN.epitope_species] = df['organism']
+        df[CN.epitope_gene] = None
+        df[CN.epitope_species] = None
         df[CN.mhc] = 'HLA-A*02:01'
         df[CN.cdr3b] = df['CDR3'].str.strip().str.upper()
         df[CN.species] = 'human'
-        df[CN.source] = 'IEDB_MIRA'
+        df[CN.source] = 'NetTCR'
         df[CN.label] = df['binder']
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
-        logger.debug('Loaded NetTCR MIRA data. Current df.shape: %s' % str(df.shape))
+        logger.debug('Loaded NetTCR data. Current df.shape: %s' % str(df.shape))
         return df
 
 class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
@@ -470,8 +470,8 @@ DATA_LOADERS = OrderedDict({
     'immunecode002.1':  ImmuneCODE2TCREpitopeDFLoader('../data/ImmuneCODE-MIRA-Release002.1/peptide-detail-ci.csv'),
     'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang'),
     'iedb_sars2':        IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),
-    'nettcr': NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv')
-
+    'nettcr_train': NetTCREpitopeDFLoader('../data/NetTCR/train_beta_90.csv'),
+    'nettcr_eval': NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv')
 })
 
 

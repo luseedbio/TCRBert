@@ -50,14 +50,23 @@
     "max_len": 40,
     "result": "../output/zhang.data.json"
   },
-  "nettcr": {
-    "loaders": ["nettcr"],
+  "nettcr_train": {
+    "loaders": ["nettcr_train"],
     "n_cdr3b_cutoff": 10,
     "generate_negatives": false,
     "vocab": "iupac",
     "max_len": 40,
-    "result": "../output/nettcr.data.json"
+    "result": "../output/nettcr_train.data.json"
+  },
+  "nettcr_eval": {
+    "loaders": ["nettcr_eval"],
+    "n_cdr3b_cutoff": 10,
+    "generate_negatives": false,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/nettcr_eval.data.json"
   }
+
 
 
 }
