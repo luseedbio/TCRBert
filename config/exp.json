@@ -434,16 +434,17 @@
           "data": "nettcr_train",
           "test_size": 0.2,
           "batch_size": 128,
-          "n_epochs": 150,
+          "n_epochs": 200,
           "n_workers": 12,
           "metrics": ["accuracy"],
           "optimizer": {
             "name": "noam",
             "lr": 0.0001
           },
+          "train_bert_encoders": [-8, null],
           "early_stopper": {
             "monitor": "accuracy",
-            "patience": 15
+            "patience": 20
           },
           "model_checkpoint": {
             "chk": "../output/exp8/train.0.model_{epoch}.chk",
