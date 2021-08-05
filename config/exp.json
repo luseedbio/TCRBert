@@ -438,10 +438,9 @@
           "n_workers": 12,
           "metrics": ["accuracy"],
           "optimizer": {
-            "name": "adam",
+            "name": "noam",
             "lr": 0.0001
           },
-          "train_bert_encoders": [-6, null],
           "early_stopper": {
             "monitor": "accuracy",
             "patience": 15
