@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 
 from tcrbert.commons import BaseTest, FileUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
+from tcrbert.predlistener import PredResultRecoder
 from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
 from tcrbert.model import BertTCREpitopeModel
 from tcrbert.optimizer import NoamOptimizer
@@ -147,7 +148,8 @@ class Experiment(object):
         batch_size = eval_conf['batch_size']
         n_workers = eval_conf['n_workers']
         metrics = eval_conf['metrics']
-
+        result_recoder = PredResultRecoder()
+        model.add_pred_listener(result_recoder)
 
         for i, test_coonf in enumerate(eval_conf['tests']):
             logger.info('Start %s test, test_conf: %s' % (i, test_coonf))
@@ -158,13 +160,13 @@ class Experiment(object):
             eval_ds = TCREpitopeSentenceDataset(df=eval_df)
             eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=True, num_workers=n_workers)
 
-            result = model.predict(data_loader=eval_data_loader, metrics=metrics)
+            model.predict(data_loader=eval_data_loader, metrics=metrics)
 
             fn_result = test_coonf['result']
             with open(fn_result, 'w') as f:
-                json.dump(result, f)
+                json.dump(result_recoder.result_map, f)
 
-            logger.info('Done to test data: %s, result: %s saved to %s' % (eval_csv, result, fn_result))
+            logger.info('Done to test data: %s, saved to %s' % (eval_csv, fn_result))
 
         logger.info('Dont to evaluate for %s tests' % len(eval_conf['tests']))
 
