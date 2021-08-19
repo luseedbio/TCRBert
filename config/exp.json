@@ -413,8 +413,6 @@
       "tests": [
         {"data": "shomuradova", "result": "../output/exp7/eval.shomuradova.result.json"},
         {"data": "immunecode", "result": "../output/exp7/eval.immunecode.result.json"},
-        {"data": "zhang", "result": "../output/exp7/eval.zhang.result.json"},
-        {"data": "nettcr", "result": "../output/exp7/eval.nettcr.result.json"}
       ]
     }
   },
