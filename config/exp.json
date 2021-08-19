@@ -412,7 +412,7 @@
       "metrics": ["accuracy", "f1", "roc_auc"],
       "tests": [
         {"data": "shomuradova", "result": "../output/exp7/eval.shomuradova.result.json"},
-        {"data": "immunecode", "result": "../output/exp7/eval.immunecode.result.json"},
+        {"data": "immunecode", "result": "../output/exp7/eval.immunecode.result.json"}
       ]
     }
   },
