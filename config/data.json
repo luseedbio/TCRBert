@@ -42,6 +42,15 @@
     "max_len": 40,
     "result": "../output/immunecode.data.json"
   },
+  "immunecode002_1": {
+    "loaders": ["immunecode002_1"],
+    "n_cdr3b_cutoff": 20,
+    "generate_negatives": true,
+    "vocab": "iupac",
+    "max_len": 40,
+    "result": "../output/immunecode002_1.data.json"
+  },
+
   "zhang": {
     "loaders": ["zhang"],
     "n_cdr3b_cutoff": 10,

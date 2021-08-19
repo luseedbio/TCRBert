@@ -13,7 +13,7 @@ from torch.utils.data import DataLoader
 
 from tcrbert.commons import BaseTest, FileUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
-from tcrbert.listener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
+from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
 from tcrbert.model import BertTCREpitopeModel
 from tcrbert.optimizer import NoamOptimizer
 
@@ -39,7 +39,7 @@ class Experiment(object):
         # model = BertTCREpitopeModel.from_pretrained(train_conf['pretrain_model_location'])
         model = self._load_pretrained_model(train_conf['pretrained_model'])
 
-        if train_conf['data_parallel']:
+        if use_cuda and train_conf['data_parallel']:
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
             model.data_parallel()
 

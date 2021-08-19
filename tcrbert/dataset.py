@@ -102,13 +102,13 @@ class TCREpitopeDFLoader(object):
     def load(self):
         df = self._load()
 
-        logger.debug('Select valid epitope and CDR3b seq')
-        df = df.dropna(subset=['epitope', 'cdr3b'])
-        df = df[
-            (df[CN.epitope].map(is_valid_aaseq)) &
-            (df[CN.cdr3b].map(is_valid_aaseq))
-        ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        # logger.debug('Select valid epitope and CDR3b seq')
+        # df = df.dropna(subset=[CN.epitope, CN.cdr3b])
+        # df = df[
+        #     (df[CN.epitope].map(is_valid_aaseq)) &
+        #     (df[CN.cdr3b].map(is_valid_aaseq))
+        # ]
+        # logger.debug('Current df.shape: %s' % str(df.shape))
 
         if self.filters:
             logger.debug('Filter data')
@@ -169,6 +169,15 @@ class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.cdr3b] = df['cdr3b'].str.strip().str.upper()
         df[CN.source] = 'Dash'
         df[CN.label] = 1
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
         return df
@@ -185,9 +194,13 @@ class VDJDbTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df = df[(df['gene'] == 'TRB') & (df['mhc.class'] == 'MHCI')]
         logger.debug('Current df.shape: %s' % str(df.shape))
 
-        # Check valid CDR3 and peptide sequences
+        # Select valid CDR3 and peptide sequences
         logger.debug('Select valid CDR3 and epitope sequences')
         df = df.dropna(subset=['cdr3', 'antigen.epitope'])
+        df = df[
+            (df['antigen.epitope'].map(is_valid_aaseq)) &
+            (df['cdr3'].map(is_valid_aaseq))
+        ]
         logger.debug('Current df.shape: %s' % str(df.shape))
 
         logger.debug('Select confidence score > 0')
@@ -216,9 +229,12 @@ class McPASTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df = pd.read_csv(fn_source)
         logger.debug('Current df.shape: %s' % str(df.shape))
 
-        # Select valid beta CDR3 sequence and epitope sequence
         logger.debug('Select valid beta CDR3 and epitope sequences')
         df = df.dropna(subset=['CDR3.beta.aa', 'Epitope.peptide'])
+        df = df[
+            (df['CDR3.beta.aa'].map(is_valid_aaseq)) &
+            (df['Epitope.peptide'].map(is_valid_aaseq))
+        ]
         logger.debug('Current df.shape: %s' % str(df.shape))
 
         # df[CN.epitope] = df['Epitope.peptide'].map(lambda x: x.split('/')[0].upper())
@@ -278,6 +294,14 @@ class ShomuradovaTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.source] = 'Shomuradova'
         df[CN.label] = 1
 
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
         return df
@@ -296,6 +320,14 @@ class ImmuneCODETCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.species] = 'human'
         df[CN.source] = 'ImmuneCODE'
         df[CN.label] = df['subject'].map(lambda x: 0 if x == 'control' else 1)
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
@@ -318,6 +350,15 @@ class ImmuneCODE2TCREpitopeDFLoader(FileTCREpitopeDFLoader):
                 rows.append([epitope, orfs, 'SARS-CoV-2', 'human', cdr3b, None, 'ImmuneCODE_002.1', 1])
 
         df = pd.DataFrame(rows, columns=CN.values())
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         return df
 
@@ -364,6 +405,15 @@ class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             dfs.append(df)
 
         df = pd.concat(dfs)
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
         logger.debug('Loaded Zhang data. Current df.shape: %s' % str(df.shape))
         return df
 
@@ -381,6 +431,14 @@ class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.species] = 'human'
         df[CN.source] = 'IEDB'
         df[CN.label] = 1
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
@@ -402,6 +460,14 @@ class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.species] = 'human'
         df[CN.source] = 'NetTCR'
         df[CN.label] = df['binder']
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
@@ -467,7 +533,7 @@ DATA_LOADERS = OrderedDict({
     'mcpas':       McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
     'shomuradova': ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
     'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
-    'immunecode002.1':  ImmuneCODE2TCREpitopeDFLoader('../data/ImmuneCODE-MIRA-Release002.1/peptide-detail-ci.csv'),
+    'immunecode002_1':  ImmuneCODE2TCREpitopeDFLoader('../data/ImmuneCODE-MIRA-Release002.1/peptide-detail-ci.csv'),
     'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang'),
     'iedb_sars2':        IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),
     'nettcr_train': NetTCREpitopeDFLoader('../data/NetTCR/train_beta_90.csv'),
@@ -544,9 +610,13 @@ class TCREpitopeDFLoaderTest(BaseTest):
     #     self.assert_df(df)
     #     self.print_summary_df(df)
 
-    def test_all_data_loaders(self):
-        for key, loader in DATA_LOADERS.items():
+    def test_data_loaders(self):
+        # keys = ['vdjdb', 'mcpas']
+        keys = DATA_LOADERS.keys()
+
+        for key in keys:
             logger.debug('Test loader: %s' % key)
+            loader = DATA_LOADERS[key]
             df = loader.load()
             self.assert_df(df)
             self.print_summary_df(df)

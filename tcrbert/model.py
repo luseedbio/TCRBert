@@ -405,9 +405,10 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
         model.eval()
 
-        scores_map = OrderedDict({metric: [] for metric in metrics})
-        output_labels = []
-        output_probs = []
+        # scores_map = OrderedDict({metric: [] for metric in metrics})
+        # input_labels = []
+        # output_labels = []
+        # output_probs = []
 
         params = OrderedDict()
         params['use_cuda'] = use_cuda
@@ -444,40 +445,27 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
             with torch.no_grad():
                 outputs = model(inputs)
-                score_map = evaluator.score_map(outputs, targets)
-                logger.debug('Batch %s: score_map: %s' % (bi, score_map))
-                for metric, score in score_map.items():
-                    scores_map[metric].append(score)
 
-                cur_labels, cur_probs = evaluator.output_labels(outputs)
-                logger.debug('Batch %s: cur_labels: %s, cur_probs: %s' % (bi, cur_labels, cur_probs))
-                output_labels.extend(cur_labels.tolist())
-                output_probs.extend(cur_probs.tolist())
+                score_map = evaluator.score_map(outputs, targets)
+                logger.debug('outputs: %s' % str(outputs))
+                logger.debug('score_map: %s' % score_map)
+
+                output_labels, output_probs = evaluator.output_labels(outputs)
+                logger.debug('Batch %s: output_labels: %s, output_probs: %s' % (bi, output_labels, output_probs))
 
                 params['outputs'] = outputs
                 params['score_map'] = score_map
-                params['cum_output_labels'] = output_labels
-                params['cum_output_probs'] = output_probs
+                params['output_labels'] = output_labels
+                params['output_probs'] = output_probs
 
-                logger.debug('outputs: %s' % str(outputs))
-                logger.debug('score_map: %s' % params['score_map'])
                 self._fire_pred_batch_end(params)
 
             logger.info('End %s/%s prediction batch' % (bi, n_batches))
 
-        result_map = OrderedDict()
-        result_map['score_map'] = OrderedDict({metric: np.mean(scores) for metric, scores in scores_map.items()})
-        result_map['output_labels'] = output_labels
-        result_map['output_probs'] = output_probs
-
-        params['result'] = result_map
         self._fire_predict_end(params)
 
-        logger.info('End precit...')
-        logger.info('result: %s' % result_map)
+        logger.info('Done to predict...')
         logger.info('======================')
-
-        return result_map
 
     def forward(self, input_ids, input_mask=None):
         logger.debug('[BertTCREpitopeModel.forward]: input_ids: %s(%s)' % (input_ids,
@@ -495,6 +483,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
 
 class BaseModelTest(BaseTest):
+
     def setUp(self):
         df = TCREpitopeSentenceDataset.load_df(fn='../data/train.sample.csv')
 
@@ -526,7 +515,12 @@ class BaseModelTest(BaseTest):
             targets = targets.to(self.device)
         return inputs, targets
 
+from unittest.mock import MagicMock
+
 class BertTCREpitopeModelTest(BaseModelTest):
+    @classmethod
+    def setUpClass(cls):
+        logger.setLevel(logging.INFO)
 
     def test_forward(self):
         self.model.data_parallel()
@@ -601,21 +595,35 @@ class BertTCREpitopeModelTest(BaseModelTest):
         self.assertFalse(module_weights_equal(embedding, self.model.bert_embeddings.word_embeddings))
 
     def test_predict(self):
-        print(sum([np.prod(p.size()) for p in self.model.parameters()]))
-        self.model.data_parallel()
+        # print(sum([np.prod(p.size()) for p in self.model.parameters()]))
+        # self.model.data_parallel()
+
+        listener = BertTCREpitopeModel.PredictionListener()
+        listener.on_predict_begin = MagicMock()
+        listener.on_predict_end = MagicMock()
+        listener.on_batch_begin = MagicMock()
+        listener.on_batch_end = MagicMock()
 
         data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
-        result = self.model.predict(data_loader, metrics=['accuracy'])
+        n_batches = round(len(data_loader.dataset) / data_loader.batch_size)
 
-        self.assertTrue('score_map' in result)
-        self.assertTrue('accuracy' in result['score_map'])
-        output_labels = result['output_labels']
-        output_probs = result['output_probs']
+        self.model.add_pred_listener(listener)
+        self.model.predict(data_loader, metrics=['accuracy'])
 
-        self.assertEqual(len(output_labels), len(self.test_ds))
-        self.assertTrue(all([label in [0, 1] for label in output_labels]))
-        self.assertEqual(len(output_probs), len(self.test_ds))
-        self.assertTrue(all([prob >= 0 and prob <= 1 for prob in output_probs]))
+        listener.on_predict_begin.assert_called_once()
+        listener.on_batch_begin.assert_called()
+        listener.on_batch_end.assert_called()
+        listener.on_predict_end.assert_called_once()
+        #
+        # self.assertTrue('score_map' in result)
+        # self.assertTrue('accuracy' in result['score_map'])
+        # output_labels = result['output_labels']
+        # output_probs = result['output_probs']
+        #
+        # self.assertEqual(len(output_labels), len(self.test_ds))
+        # self.assertTrue(all([label in [0, 1] for label in output_labels]))
+        # self.assertEqual(len(output_probs), len(self.test_ds))
+        # self.assertTrue(all([prob >= 0 and prob <= 1 for prob in output_probs]))
 
     def test_train_bert_encoders(self):
         self.model.data_parallel()
