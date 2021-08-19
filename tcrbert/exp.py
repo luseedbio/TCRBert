@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader
 
 from tcrbert.commons import BaseTest, FileUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
+from tcrbert.jsonutils import NumpyEncoder
 from tcrbert.predlistener import PredResultRecoder
 from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
 from tcrbert.model import BertTCREpitopeModel
@@ -164,7 +165,7 @@ class Experiment(object):
 
             fn_result = test_coonf['result']
             with open(fn_result, 'w') as f:
-                json.dump(result_recoder.result_map, f)
+                json.dump(result_recoder.result_map, cls=NumpyEncoder, fp=f)
 
             logger.info('Done to test data: %s, saved to %s' % (eval_csv, fn_result))
 
