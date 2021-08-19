@@ -149,7 +149,8 @@ class Experiment(object):
         batch_size = eval_conf['batch_size']
         n_workers = eval_conf['n_workers']
         metrics = eval_conf['metrics']
-        result_recoder = PredResultRecoder()
+        output_attentions = eval_conf.get(['output_attentions'], False)
+        result_recoder = PredResultRecoder(output_attentions=output_attentions)
         model.add_pred_listener(result_recoder)
 
         for i, test_coonf in enumerate(eval_conf['tests']):

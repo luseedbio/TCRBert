@@ -6,8 +6,9 @@ from torch.utils.data import DataLoader
 from tcrbert.model import BertTCREpitopeModel, BaseModelTest
 
 class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
-    def __init__(self):
+    def __init__(self, output_attentions=False):
         self.result_map = None
+        self.output_attentions = output_attentions
 
     def on_predict_begin(self, model, params):
         self.result_map = OrderedDict()
@@ -15,7 +16,8 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
         self.result_map['input_labels'] = []
         self.result_map['output_labels'] = []
         self.result_map['output_probs'] = []
-        self.result_map['attentions'] = None
+        if self.output_attentions:
+            self.result_map['attentions'] = None
 
         self.scores_map = OrderedDict()
         for metric in params['metrics']:
@@ -38,12 +40,13 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
         self.result_map['output_labels'].extend(output_labels.tolist())
         self.result_map['output_probs'].extend(output_probs.tolist())
 
-        if self.result_map['attentions'] is None:
-            self.result_map['attentions'] = list(params['outputs'][2])
-        else:
-            for li, lay_attentions in enumerate(params['outputs'][2]):
-                self.result_map['attentions'][li] = np.concatenate((self.result_map['attentions'][li],
-                                                                    lay_attentions), axis=0)
+        if self.output_attentions:
+            if self.result_map['attentions'] is None:
+                self.result_map['attentions'] = list(params['outputs'][2])
+            else:
+                for li, lay_attentions in enumerate(params['outputs'][2]):
+                    self.result_map['attentions'][li] = np.concatenate((self.result_map['attentions'][li],
+                                                                        lay_attentions), axis=0)
 
 
 class PredictionListenerTest(BaseModelTest):
