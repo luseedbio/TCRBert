@@ -154,7 +154,8 @@ class Experiment(object):
         model.add_pred_listener(result_recoder)
 
         for i, test_coonf in enumerate(eval_conf['tests']):
-            logger.info('Start %s test, test_conf: %s' % (i, test_coonf))
+            data_key = test_coonf['data']['key']
+            logger.info('Start %s test for %s, test_conf: %s' % (i, data_key, test_coonf))
             eval_csv = test_coonf['data']['result']['output_csv']
             eval_df = TCREpitopeSentenceDataset.load_df(eval_csv)
             logger.info('Loaded test data, df.shape: %s' % str(eval_df.shape))
@@ -191,10 +192,13 @@ class Experiment(object):
             for round_conf in train_conf['rounds']:
                 data_key = round_conf['data']
                 round_conf['data'] = copy.deepcopy(data_conf[data_key])
+                round_conf['data']['key'] = data_key
                 round_conf['data']['result'] = FileUtils.json_load(round_conf['data']['result'])
 
             for test_conf in eval_conf['tests']:
-                test_conf['data'] = copy.deepcopy(data_conf[test_conf['data']])
+                data_key = test_conf['data']
+                test_conf['data'] = copy.deepcopy(data_conf[data_key])
+                test_conf['data']['key'] = data_key
                 test_conf['data']['result'] = FileUtils.json_load(test_conf['data']['result'])
 
         logger.info('Loaded exp_conf: %s' % exp_conf)

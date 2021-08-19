@@ -48,7 +48,6 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
                     self.result_map['attentions'][li] = np.concatenate((self.result_map['attentions'][li],
                                                                         lay_attentions), axis=0)
 
-
 class PredictionListenerTest(BaseModelTest):
     def test_pred_result_recoder(self):
         result_recoder = PredResultRecoder()
