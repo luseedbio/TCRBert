@@ -1,1 +1,0 @@
-{"metrics": ["accuracy"], "train.score": {"loss": [0.5274673489963307], "accuracy": [0.7559984520123839]}, "val.score": {"loss": [0.4852061927318573], "accuracy": [0.7787499999999999]}, "n_epochs": 1, "stopped_epoch": 0, "monitor": "accuracy", "best_epoch": 0, "best_score": 0.7787499999999999, "best_chk": "../output/testexp.train.1.model_0.chk"}

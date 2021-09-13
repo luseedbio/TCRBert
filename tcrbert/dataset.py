@@ -1,3 +1,5 @@
+import copy
+import os
 import unittest
 from enum import auto
 import pandas as pd
@@ -5,14 +7,15 @@ import numpy as np
 from collections import OrderedDict
 import logging.config
 import torch
+from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 import numpy as np
 from tape import TAPETokenizer
 import glob
 import re
 
-from tcrbert.commons import basename
-from tcrbert.bioseq import is_valid_aaseq
+from tcrbert.commons import basename, FileUtils
+from tcrbert.bioseq import is_valid_aaseq, rand_aaseq
 from tcrbert.commons import StrEnum, BaseTest
 
 # Logger
@@ -42,7 +45,7 @@ class TCREpitopeDFLoader(object):
         def filter_df(self, df):
             logger.debug('Drop duplicates with the same{epitope, CDR3b}')
             df = df[~df.index.duplicated()]
-            logger.debug('Current df.shape: %s' % str(df.shape))
+            logger.debug('Current df_enc.shape: %s' % str(df.shape))
             return df
 
     class MoreThanCDR3bNumberFilter(Filter):
@@ -55,7 +58,7 @@ class TCREpitopeDFLoader(object):
                 tmp = df[CN.epitope].value_counts()
                 tmp = tmp[tmp >= self.cutoff]
                 df = df[df[CN.epitope].map(lambda x: x in tmp.index)]
-                logger.debug('Current df.shape: %s' % str(df.shape))
+                logger.debug('Current df_enc.shape: %s' % str(df.shape))
             return df
 
     class QueryFilter(Filter):
@@ -66,7 +69,7 @@ class TCREpitopeDFLoader(object):
             if self.query is not None:
                 logger.debug("Select all epitope by query: %s" % self.query)
                 df = df.query(self.query, engine='python')
-                logger.debug('Current df.shape: %s' % str(df.shape))
+                logger.debug('Current df_enc.shape: %s' % str(df.shape))
             return df
 
     # Generate negative examples
@@ -103,12 +106,12 @@ class TCREpitopeDFLoader(object):
         df = self._load()
 
         # logger.debug('Select valid epitope and CDR3b seq')
-        # df = df.dropna(subset=[CN.epitope, CN.cdr3b])
-        # df = df[
-        #     (df[CN.epitope].map(is_valid_aaseq)) &
-        #     (df[CN.cdr3b].map(is_valid_aaseq))
+        # df_enc = df_enc.dropna(subset=[CN.epitope, CN.cdr3b])
+        # df_enc = df_enc[
+        #     (df_enc[CN.epitope].map(is_valid_aaseq)) &
+        #     (df_enc[CN.cdr3b].map(is_valid_aaseq))
         # ]
-        # logger.debug('Current df.shape: %s' % str(df.shape))
+        # logger.debug('Current df_enc.shape: %s' % str(df_enc.shape))
 
         if self.filters:
             logger.debug('Filter data')
@@ -159,7 +162,7 @@ class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_table(fn_source, sep='\t')
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df[CN.epitope_gene] = df['epitope']
         df[CN.epitope_species] = df[CN.epitope_gene].map(lambda x: self.GENE_INFO_MAP[x][0])
@@ -176,7 +179,7 @@ class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
@@ -187,12 +190,12 @@ class VDJDbTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_table(fn_source, sep='\t', header=0)
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         # Select beta CDR3 sequence
         logger.debug('Select beta CDR3 sequences and MHC-I restricted epitopes')
         df = df[(df['gene'] == 'TRB') & (df['mhc.class'] == 'MHCI')]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         # Select valid CDR3 and peptide sequences
         logger.debug('Select valid CDR3 and epitope sequences')
@@ -201,18 +204,18 @@ class VDJDbTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df['antigen.epitope'].map(is_valid_aaseq)) &
             (df['cdr3'].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         logger.debug('Select confidence score > 0')
         df = df[df['vdjdb.score'].map(lambda score: score > 0)]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df[CN.epitope] = df['antigen.epitope'].str.strip().str.upper()
         df[CN.epitope_species] = df['antigen.species']
         df[CN.epitope_gene] = df['antigen.gene']
         df[CN.species] = df['species']
         df[CN.cdr3b] = df['cdr3'].str.strip().str.upper()
-        # df[CN.mhc] = df['mhc.a'].map(lambda x: MHCAlleleName.sub_name(MHCAlleleName.std_name(x)))
+        # df_enc[CN.mhc] = df_enc['mhc.a'].map(lambda x: MHCAlleleName.sub_name(MHCAlleleName.std_name(x)))
         df[CN.mhc] = df['mhc.a']
         df[CN.source] = 'VDJdb'
         df[CN.label] = 1
@@ -227,7 +230,7 @@ class McPASTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source)
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         logger.debug('Select valid beta CDR3 and epitope sequences')
         df = df.dropna(subset=['CDR3.beta.aa', 'Epitope.peptide'])
@@ -235,9 +238,9 @@ class McPASTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df['CDR3.beta.aa'].map(is_valid_aaseq)) &
             (df['Epitope.peptide'].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
-        # df[CN.epitope] = df['Epitope.peptide'].map(lambda x: x.split('/')[0].upper())
+        # df_enc[CN.epitope] = df_enc['Epitope.peptide'].map(lambda x: x.split('/')[0].upper())
         df[CN.epitope] = df['Epitope.peptide'].str.strip().str.upper()
 
         # Handle multiple epitope
@@ -253,7 +256,7 @@ class McPASTCREpitopeDFLoader(FileTCREpitopeDFLoader):
                 logger.debug('Extend by epitope: %s' % epitope)
                 subdf[CN.epitope] = epitope
                 df = df.append(subdf)
-        logger.debug('Current df.shape: %s' % (str(df.shape)))
+        logger.debug('Current df_enc.shape: %s' % (str(df.shape)))
 
         df[CN.epitope_gene] = None
         df[CN.epitope_species] = df['Pathology']
@@ -270,7 +273,7 @@ class McPASTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.mhc].notnull()) &
             (np.logical_not(df[CN.mhc].str.contains('DR|DP|DQ')))
             ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
         df = df.loc[:, CN.values()]
         return df
 
@@ -279,11 +282,11 @@ class ShomuradovaTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source, sep='\t')
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         logger.debug('Select TRB Gene')
         df = df[df['Gene'] == 'TRB']
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df[CN.epitope] = df['Epitope'].str.strip().str.upper()
         df[CN.epitope_gene] = df['Epitope gene']
@@ -300,7 +303,7 @@ class ShomuradovaTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
@@ -310,7 +313,7 @@ class ImmuneCODETCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source)
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df[CN.epitope] = 'YLQPRTFLL'
         df[CN.epitope_gene] = 'Spike'
@@ -327,11 +330,11 @@ class ImmuneCODETCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
-        logger.debug('Loaded ImmuneCODE data. Current df.shape: %s' % str(df.shape))
+        logger.debug('Loaded ImmuneCODE data. Current df_enc.shape: %s' % str(df.shape))
         return df
 
 class ImmuneCODE2TCREpitopeDFLoader(FileTCREpitopeDFLoader):
@@ -339,7 +342,7 @@ class ImmuneCODE2TCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source)
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         rows = []
         for i, row in df.iterrows():
@@ -357,7 +360,7 @@ class ImmuneCODE2TCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         return df
@@ -382,7 +385,7 @@ class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
 
             logger.debug('Loading data from %s' % fn)
             df = pd.read_csv(fn, sep='\t')
-            logger.debug('Current df.shape: %s' % str(df.shape))
+            logger.debug('Current df_enc.shape: %s' % str(df.shape))
             bname = basename(fn, ext=False)
             label = 1 if 'Pos' in bname else 0
             if 'Peptide' in df.columns:
@@ -412,16 +415,16 @@ class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
-        logger.debug('Loaded Zhang data. Current df.shape: %s' % str(df.shape))
+        logger.debug('Loaded Zhang data. Current df_enc.shape: %s' % str(df.shape))
         return df
 
 class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source)
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df[CN.epitope] = df['Description'].str.strip().str.upper()
         df[CN.epitope_gene] = df['Antigen']
@@ -438,11 +441,11 @@ class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
-        logger.debug('Loaded IEDB data. Current df.shape: %s' % str(df.shape))
+        logger.debug('Loaded IEDB data. Current df_enc.shape: %s' % str(df.shape))
         return df
 
 
@@ -450,7 +453,7 @@ class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source, sep=';')
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df[CN.epitope] = df['peptide'].str.strip().str.upper()
         df[CN.epitope_gene] = None
@@ -467,11 +470,11 @@ class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df.shape: %s' % str(df.shape))
+        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
-        logger.debug('Loaded NetTCR data. Current df.shape: %s' % str(df.shape))
+        logger.debug('Loaded NetTCR data. Current df_enc.shape: %s' % str(df.shape))
         return df
 
 class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
@@ -486,61 +489,208 @@ class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
 
         return pd.concat(dfs)
 
+class TCREpitopeSentenceEncoder(object):
+
+    def __init__(self, tokenizer=None, max_len=None):
+        self.tokenizer = tokenizer
+        self.max_len = max_len
+
+    def encode(self, epitope, cdr3b):
+        pass
+
+    def decode(self, sentence_ids):
+        pass
+
+    def is_valid_sentence(self, sentence_ids):
+        pass
+
+    @property
+    def pad_token(self):
+        return '<pad>'
+
+    @property
+    def start_token(self):
+        return self.tokenizer.start_token
+
+    @property
+    def start_token_id(self):
+        return self.tokenizer.vocab[self.tokenizer.start_token]
+
+    @property
+    def stop_token(self):
+        return self.tokenizer.stop_token
+
+    @property
+    def stop_token_id(self):
+        return self.tokenizer.vocab[self.tokenizer.stop_token]
+
+    @property
+    def sep_token(self):
+        return self.tokenizer.stop_token
+
+    @property
+    def sep_token_id(self):
+        return self.tokenizer.vocab[self.tokenizer.stop_token]
+
+    @property
+    def mask_token(self):
+        return self.tokenizer.mask_token
+
+    @property
+    def mask_token_id(self):
+        return self.tokenizer.vocab[self.tokenizer.mask_token]
+
+    def to_tokens(self, token_ids):
+        return self.tokenizer.convert_ids_to_tokens(token_ids)
+
+    def to_token_ids(self, tokens):
+        return self.tokenizer.convert_tokens_to_ids(tokens)
+
+class DefaultTCREpitopeSentenceEncoder(TCREpitopeSentenceEncoder):
+    def __init__(self, tokenizer=None, max_len=None):
+        super(DefaultTCREpitopeSentenceEncoder, self).__init__(tokenizer=tokenizer, max_len=max_len)
+
+    def encode(self, epitope, cdr3b):
+        tokens = [self.start_token] + list(epitope) + [self.sep_token] + list(cdr3b) + [self.stop_token]
+        n_tokens = len(tokens)
+        if n_tokens > self.max_len:
+            raise ValueError('Too long tokens: %s > %s, %s' % (n_tokens, self.max_len, tokens))
+
+        n_pads = self.max_len - n_tokens
+        if n_pads > 0:
+            tokens = tokens + [self.pad_token] * n_pads
+
+        return self.to_token_ids(tokens)
+
+    def decode(self, sentence_ids):
+        sep_loc = sentence_ids.index(self.sep_token_id)
+        epitope_ids = sentence_ids[1:sep_loc]
+        stop_loc = sentence_ids[sep_loc+1:].index(self.stop_token_id)
+        cdr3b_ids = sentence_ids[sep_loc+1:sep_loc+stop_loc+1]
+
+        return ''.join(self.to_tokens(epitope_ids)), ''.join(self.to_tokens(cdr3b_ids))
+
+    def is_valid_sentence(self, sentence_ids):
+        epitope, cdr3b = self.decode(sentence_ids)
+        return is_valid_aaseq(epitope + cdr3b)
 
 class TCREpitopeSentenceDataset(Dataset):
-    CN_SENTENCE = 'sentence'
 
-    def __init__(self, df=None):
-        self.df = df
-        self.max_len = len(self.df.iloc[0][self.CN_SENTENCE])
+    CN_SENTENCE = 'sentence'
+    # TRAIN_TEST_SUFFIXES = ('.train', '.test')
+    _all_data_conf = None
+
+    def __init__(self, config=None, df_enc=None, encoder=None):
+        self.config = config
+        self.df_enc = df_enc
+        self.encoder = encoder
+
+    def train_test_split(self, test_size=0.2, shuffle=True):
+        train_df, test_df = train_test_split(self.df_enc,
+                                             test_size=test_size,
+                                             shuffle=shuffle,
+                                             stratify=self.df_enc[CN.label].values)
+        train_config = copy.deepcopy(self.config)
+        test_config = copy.deepcopy(self.config)
+
+        return TCREpitopeSentenceDataset(config=train_config, df_enc=train_df, encoder=self.encoder), \
+               TCREpitopeSentenceDataset(config=test_config, df_enc=test_df, encoder=self.encoder)
 
     def __getitem__(self, index):
-        row = self.df.iloc[index, :]
+        row = self.df_enc.iloc[index, :]
         sentence_ids = row[self.CN_SENTENCE]
         label = row[CN.label]
-
         return torch.tensor(sentence_ids), torch.tensor(label)
 
     def __len__(self):
-        return self.df.shape[0]
+        return self.df_enc.shape[0]
+
+    @property
+    def name(self):
+        return self.config['name']
+
+    @property
+    def max_len(self):
+        return self.encoder.max_len
+
+    @property
+    def output_csv(self):
+        return self.config['output_csv']
 
     @classmethod
-    def load_df(cls, fn):
-        return pd.read_csv(fn, index_col=0, converters={cls.CN_SENTENCE: lambda x: eval(x)})
+    def from_key(cls, data_key=None):
+        def encode_row(row, encoder):
+            try:
+                return encoder.encode(epitope=row[CN.epitope], cdr3b=row[CN.cdr3b])
+            except ValueError as e:
+                logger.warning(e)
+                return None
+
+        config = cls._get_data_conf(data_key)
+        config['name'] = data_key
+        encoder_config = config['encoder']
+        encoder = DefaultTCREpitopeSentenceEncoder(tokenizer=TAPETokenizer(vocab=encoder_config['vocab']),
+                                                   max_len=encoder_config['max_len'])
+        output_csv = config['output_csv'].format(**config)
+        df = None
+        if not os.path.exists(output_csv) or config['overwrite']:
+            df = cls._load_source_df(config)
+            df[cls.CN_SENTENCE] = df.apply(lambda row: encode_row(row, encoder), axis=1)
+            df = df.dropna(subset=[cls.CN_SENTENCE])
+            df.to_csv(output_csv)
+        else:
+            df = pd.read_csv(output_csv, index_col=0, converters={cls.CN_SENTENCE: lambda x: eval(x)})
+
+        config['output_csv'] = output_csv
+        return cls(config=config, df_enc=df, encoder=encoder)
+
+    # @classmethod
+    # def load_df(cls, fn):
+    #     return pd.read_csv(fn, index_col=0, converters={cls.CN_SENTENCE: lambda x: eval(x)})
 
     @classmethod
-    def encode_df(cls, df=None, max_len=None, tokenizer=None):
-        def encode_row(row):
-            epitope = row[CN.epitope]
-            cdr3b = row[CN.cdr3b]
-            logger.debug('Encoding epitope: %s, cdr3b: %s' % (epitope, cdr3b))
-            sentence_ids = tokenizer.encode(epitope)
+    def _load_source_df(cls, config):
+        logger.debug('Loading source dataset for %s' % config['name'])
+        logger.debug('config: %s' % config)
 
-            sentence_ids = np.append(sentence_ids, tokenizer.encode(cdr3b))
-            n_pads = max_len - sentence_ids.shape[0]
-            if n_pads > 0:
-                sentence_ids = np.append(sentence_ids, [tokenizer.vocab['<pad>']] * n_pads)
-            return list(sentence_ids)
+        loaders = [DATA_LOADERS[loader_key] for loader_key in config['loaders']]
+        filters = [TCREpitopeDFLoader.NotDuplicateFilter()]
+        if config.get('n_cdr3b_cutoff'):
+            filters.append(TCREpitopeDFLoader.MoreThanCDR3bNumberFilter(cutoff=config['n_cdr3b_cutoff']))
+        if config.get('query'):
+            filters.append(TCREpitopeDFLoader.QueryFilter(query=config['query']))
 
-        df[cls.CN_SENTENCE] = df.apply(encode_row, axis=1)
-        df = df[df[cls.CN_SENTENCE].map(lambda x: len(x) <= max_len)]
-        return df
+        negative_generator = TCREpitopeDFLoader.DefaultNegativeGenerator() if config['generate_negatives'] else None
+
+        loader = ConcatTCREpitopeDFLoader(loaders=loaders, filters=filters, negative_generator=negative_generator)
+        return loader.load()
+
+    @classmethod
+    def _get_data_conf(cls, data_key):
+        if cls._all_data_conf is None:
+            cls._all_data_conf = FileUtils.json_load('../config/data.json')
+        conf = cls._all_data_conf[data_key]
+        return conf
+
 
 
 DATA_LOADERS = OrderedDict({
-    'dash':        DashTCREpitopeDFLoader('../data/Dash/human_mouse_pairseqs_v1_parsed_seqs_probs_mq20_clones.tsv'),
-    'vdjdb':       VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
-    'mcpas':       McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
-    'shomuradova': ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
-    'immunecode':  ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
+    'test':             NetTCREpitopeDFLoader('../data/test.csv'),
+    'dash':             DashTCREpitopeDFLoader('../data/Dash/human_mouse_pairseqs_v1_parsed_seqs_probs_mq20_clones.tsv'),
+    'vdjdb':            VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
+    'mcpas':            McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
+    'shomuradova':      ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
+    'immunecode':       ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
     'immunecode002_1':  ImmuneCODE2TCREpitopeDFLoader('../data/ImmuneCODE-MIRA-Release002.1/peptide-detail-ci.csv'),
-    'zhang':       ZhangTCREpitopeDFLoader('../data/Zhang'),
-    'iedb_sars2':        IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),
-    'nettcr_train': NetTCREpitopeDFLoader('../data/NetTCR/train_beta_90.csv'),
-    'nettcr_eval': NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv')
+    'zhang':            ZhangTCREpitopeDFLoader('../data/Zhang'),
+    'iedb_sars2':       IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),
+    'nettcr_train':     NetTCREpitopeDFLoader('../data/NetTCR/train_beta_90.csv'),
+    'nettcr_eval':      NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv')
 })
 
-
+#######
+# Tests
+#######
 class TCREpitopeDFLoaderTest(BaseTest):
     @classmethod
     def setUpClass(cls):
@@ -576,7 +726,7 @@ class TCREpitopeDFLoaderTest(BaseTest):
         self.assertTrue(all(df[CN.label].map(lambda x: x in [0, 1])))
 
     def print_summary_df(self, df):
-        print('df.shape: %s' % str(df.shape))
+        print('df_enc.shape: %s' % str(df.shape))
         print(df.head())
         print(df[CN.epitope].value_counts())
         print(df[CN.label].value_counts())
@@ -585,30 +735,30 @@ class TCREpitopeDFLoaderTest(BaseTest):
     #     # loader = DashTCREpitopeDFLoader(fn_source=self.fn_dash)
     #     loader = DATA_LOADERS['dash']
     #
-    #     df = loader.load()
-    #     self.assert_df(df)
-    #     self.print_summary_df(df)
+    #     df_enc = loader.load()
+    #     self.assert_df(df_enc)
+    #     self.print_summary_df(df_enc)
     #
     # def test_vdjdb(self):
     #     # loader = VDJDbTCREpitopeDFLoader(fn_source=self.fn_vdjdb)
     #     loader = DATA_LOADERS['vdjdb']
-    #     df = loader.load()
-    #     self.assert_df(df)
-    #     self.print_summary_df(df)
+    #     df_enc = loader.load()
+    #     self.assert_df(df_enc)
+    #     self.print_summary_df(df_enc)
     #
     # def test_mcpas(self):
     #     # loader = McPASTCREpitopeDFLoader(fn_source=self.fn_mcpas)
     #     loader = DATA_LOADERS['mcpas']
-    #     df = loader.load()
-    #     self.assert_df(df)
-    #     self.print_summary_df(df)
+    #     df_enc = loader.load()
+    #     self.assert_df(df_enc)
+    #     self.print_summary_df(df_enc)
     #
     # def test_shomuradova(self):
     #     # loader = ShomuradovaTCREpitopeDFLoader(fn_source=self.fn_shomuradova)
     #     loader = DATA_LOADERS['shomuradova']
-    #     df = loader.load()
-    #     self.assert_df(df)
-    #     self.print_summary_df(df)
+    #     df_enc = loader.load()
+    #     self.assert_df(df_enc)
+    #     self.print_summary_df(df_enc)
 
     def test_data_loaders(self):
         # keys = ['vdjdb', 'mcpas']
@@ -685,33 +835,91 @@ class TCREpitopeDFLoaderTest(BaseTest):
             subdf_neg = subdf[subdf[CN.label] == 0]
             self.assertEqual(subdf_pos.shape[0], subdf_neg.shape[0])
 
-class TCREpitopeSentenceDatasetTest(BaseTest):
-    def setUp(self) -> None:
-        loader = DATA_LOADERS['dash']
-        self.df = loader.load()
-        self.max_len = 35
+class TCREpitopeSentenceEncoderTest(BaseTest):
+
+    def setUp(self):
+        self.max_len = 40
         self.tokenizer = TAPETokenizer(vocab='iupac')
+        self.encoders = [DefaultTCREpitopeSentenceEncoder(tokenizer=self.tokenizer, max_len=self.max_len)]
 
+    def test_encode_decode(self):
+        for encoder in self.encoders:
+            self._test_encode_decode(encoder)
+            self._test_long_sentence(encoder)
 
-    def test_encode_df(self):
-        df_enc = TCREpitopeSentenceDataset.encode_df(self.df, max_len=self.max_len, tokenizer=self.tokenizer)
+    def _test_encode_decode(self, encoder):
+        epitope = 'YLQPRTFLL'
+        cdr3b = 'CAKGLANTGELFF'
+        sentence_ids = encoder.encode(epitope, cdr3b)
+        self.assertTrue(encoder.is_valid_sentence(sentence_ids))
+        self.assertTrue(len(sentence_ids), encoder.max_len)
+        self.assertEqual((epitope, cdr3b), encoder.decode(sentence_ids))
 
-        self.assertEqual(self.df.shape[0], df_enc.shape[0])
-        self.assertTrue(TCREpitopeSentenceDataset.CN_SENTENCE in df_enc.columns)
-        self.assertTrue(all(df_enc[TCREpitopeSentenceDataset.CN_SENTENCE].map(lambda x: self.max_len == len(x))))
-        self.assertTrue((all(df_enc[CN.label].map(lambda x: x in [0, 1]))))
+    def _test_long_sentence(self, encoder):
+        epitope = 'YLQPRTFLL'
+        cdr3b = rand_aaseq(seq_len=encoder.max_len)
+        with self.assertRaises(ValueError):
+            encoder.encode(epitope, cdr3b)
 
-    def test_ds(self):
-        df_enc = TCREpitopeSentenceDataset.encode_df(self.df, max_len=self.max_len, tokenizer=self.tokenizer)
-        fn_ds = '../tmp/test.csv'
-        df_enc.to_csv(fn_ds)
+class TCREpitopeSentenceDatasetTest(BaseTest):
+    def setUp(self):
+        logger.setLevel(logging.INFO)
 
-        ds = TCREpitopeSentenceDataset(df=TCREpitopeSentenceDataset.load_df(fn_ds))
+    def test_from_key(self):
+        all_conf = FileUtils.json_load('../config/data.json')
+        data_key = 'test'
+        config = all_conf[data_key]
+        encoder_config = config['encoder']
+        output_csv = config['output_csv'].replace('{name}', data_key)
+
+        if os.path.exists(output_csv):
+            os.remove(output_csv)
+
+        ds = TCREpitopeSentenceDataset.from_key(data_key)
+
+        self.assertTrue(os.path.exists(output_csv))
+        self.assertEqual(data_key, ds.config['name'])
+        self.assertEqual(encoder_config['max_len'], ds.max_len)
+        self.assertEqual(output_csv, ds.output_csv)
+        self.assertTrue(len(ds) > 0)
+
+        self._test_get_item(ds)
+
+    def _test_get_item(self, ds):
         for i in range(len(ds)):
-            sent, label = ds[i]
-            self.assertEqual(self.max_len, len(sent))
-            self.assertTrue(label in [0, 1])
+            source_row = ds.df_enc.iloc[i]
+            sentence_ids, label = ds[i]
+            sentence_ids = sentence_ids.tolist()
+            label = label.item()
 
+            self.assertEqual(ds.max_len, len(sentence_ids))
+            epitope, cdr3b = ds.encoder.decode(sentence_ids)
+            self.assertEqual(source_row[CN.epitope], epitope)
+            self.assertEqual(source_row[CN.cdr3b], cdr3b)
+            self.assertEqual(source_row[CN.label], label)
+
+    def test_train_test_split(self):
+        data_key = 'test'
+        ds = TCREpitopeSentenceDataset.from_key(data_key)
+
+        train_ds, test_ds = ds.train_test_split(test_size=0.2)
+
+
+        self.assertEqual(ds.name, train_ds.name)
+        self.assertEqual(ds.max_len, train_ds.max_len)
+
+        self.assertEqual(ds.name, test_ds.name)
+        self.assertEqual(ds.max_len, test_ds.max_len)
+
+        self.assertEqual(len(ds), len(train_ds) + len(test_ds))
+        self.assertTrue(len(train_ds) > len(test_ds))
+
+        self.assertTrue(all(train_ds.df_enc.index.map(lambda x: x in ds.df_enc.index)))
+        self.assertTrue(all(test_ds.df_enc.index.map(lambda x: x in ds.df_enc.index)))
+        self.assertTrue(all(test_ds.df_enc.index.map(lambda x: x not in train_ds.df_enc.index)))
+
+        self._test_get_item(train_ds)
+        self._test_get_item(test_ds)
 
 if __name__ == '__main__':
     unittest.main()

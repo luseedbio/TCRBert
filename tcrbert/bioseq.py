@@ -1,6 +1,7 @@
 import re
 import unittest
 from enum import Enum
+import numpy as np
 
 from commons import BaseTest
 
@@ -70,6 +71,13 @@ def is_valid_aaseq(seq, allow_gap=False):
     return found is not None
     # return all([(aa in aas) for aa in seq])
 
+def rand_aaseqs(N=10, seq_len=9, aa_probs=None):
+    return [rand_aaseq(seq_len, aa_probs=aa_probs) for i in range(N)]
+
+def rand_aaseq(seq_len=9, aa_probs=None):
+    aas = np.asarray(AMINO_ACID.codes())
+    indices = np.random.choice(aas.shape[0], seq_len, p=aa_probs)
+    return ''.join(aas[indices])
 
 class BioSeqTest(BaseTest):
     def test_amino_acid(self):
@@ -87,6 +95,12 @@ class BioSeqTest(BaseTest):
         self.assertFalse(is_valid_aaseq('ARNDCQEGHILK\t'))
         self.assertFalse(is_valid_aaseq('ARNDCQ EGHILK'))
         self.assertFalse(is_valid_aaseq('ARNDCQ\EGHILK'))
+
+    def test_rand_aaseq(self):
+        seq_len = 15
+        seq = rand_aaseq(seq_len=seq_len)
+        self.assertTrue(is_valid_aaseq(seq))
+        self.assertEqual(seq_len, len(seq))
 
 if __name__ == '__main__':
     unittest.main()

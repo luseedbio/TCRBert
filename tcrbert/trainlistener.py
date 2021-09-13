@@ -1,21 +1,12 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from sklearn.model_selection import train_test_split
 from torch.optim import Adam
-from torch.utils.data import TensorDataset, DataLoader
-from torch.autograd import Variable
+from torch.utils.data import DataLoader
 import logging.config
 import collections
 import numpy as np
-import glob
 import os
-import pandas as pd
-from datetime import datetime
 
-from tcrbert.torchutils import collection_to
-from tcrbert.commons import BaseTest, TypeUtils
+from tcrbert.commons import TypeUtils
 from tcrbert.model import BertTCREpitopeModel, BaseModelTest
 
 # Logger
@@ -31,7 +22,6 @@ class EvalScoreRecoder(BertTCREpitopeModel.TrainListener):
 
         self.train_score_map = self._create_score_map()
         self.val_score_map = self._create_score_map()
-
 
     def on_train_begin(self, model, params):
         self.train_score_map = self._create_score_map()
@@ -250,6 +240,7 @@ class ModelCheckpoint(BertTCREpitopeModel.TrainListener):
     #         infomap = eval(f.read())
     #     return infomap
 
+
 ###
 # Tests
 ###
@@ -272,7 +263,7 @@ class TrainListenerTest(BaseModelTest):
         train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
         test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
 
-        n_epochs = 5
+        n_epochs = 2
         optimizer = Adam(self.model.parameters())
 
         self.model.fit(train_data_loader=train_data_loader,
@@ -297,7 +288,7 @@ class TrainListenerTest(BaseModelTest):
         train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
         test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
 
-        n_epochs = 20
+        n_epochs = 10
         optimizer = Adam(self.model.parameters())
 
         self.model.fit(train_data_loader=train_data_loader,
@@ -327,7 +318,7 @@ class TrainListenerTest(BaseModelTest):
         train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
         test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
 
-        n_epochs = 20
+        n_epochs = 10
         optimizer = Adam(self.model.parameters())
 
         self.model.fit(train_data_loader=train_data_loader,
@@ -349,3 +340,5 @@ class TrainListenerTest(BaseModelTest):
         self.assertIsNotNone(mc.best_chk)
         self.assertEqual(expected_fnchk, mc.best_chk)
         self.assertTrue(os.path.exists(mc.best_chk))
+
+

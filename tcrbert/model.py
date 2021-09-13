@@ -159,8 +159,15 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         params['evaluator'] = evaluator
         params['metrics'] = metrics
         params['n_epochs'] = n_epochs
-        params['train.n_data'] = len(train_data_loader.dataset)
-        params['test.n_data'] = len(test_data_loader.dataset)
+
+        params['train_ds.n_data'] = len(train_data_loader.dataset)
+        params['train_ds.name'] = train_data_loader.dataset.name
+        params['train_ds.max_len'] = train_data_loader.dataset.max_len
+
+        params['test_ds.n_data'] = len(test_data_loader.dataset)
+        params['test_ds.name'] = test_data_loader.dataset.name
+        params['test_ds.max_len'] = test_data_loader.dataset.max_len
+
         params['train.batch_size'] = train_data_loader.batch_size
         params['test.batch_size'] = test_data_loader.batch_size
 
@@ -208,6 +215,96 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         logger.info('End training...')
         logger.info('======================')
 
+    def predict(self, data_loader=None, metrics=['accuracy'], use_cuda=False):
+        evaluator = self.evaluator(metrics)
+        model = self
+        device = torch.device("cuda:0" if use_cuda else "cpu")
+        model.to(device)
+
+        # if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
+        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
+        #     model.data_parallel()
+
+        model.eval()
+
+        # scores_map = OrderedDict({metric: [] for metric in metrics})
+        # input_labels = []
+        # output_labels = []
+        # output_probs = []
+
+        params = OrderedDict()
+        params['use_cuda'] = use_cuda
+        params['device'] = device
+        params['model'] = model
+        params['evaluator'] = evaluator
+        params['metrics'] = metrics
+        params['dataset.name'] = data_loader.dataset.name
+        params['dataset.max_len'] = data_loader.dataset.max_len
+        params['dataset.n_data'] = len(data_loader.dataset)
+        params['batch_size'] = data_loader.batch_size
+
+        logger.info('======================')
+        logger.info('Begin predict...')
+        logger.info('use_cuda, device: %s, %s' % (use_cuda, str(device)))
+        logger.info('model: %s' % model)
+        logger.info('n_data: %s' % len(data_loader.dataset))
+        logger.info('batch_size: %s' % data_loader.batch_size)
+
+        self._fire_predict_begin(params)
+        n_batches = round(len(data_loader.dataset) / data_loader.batch_size)
+
+        for bi, (inputs, targets) in enumerate(data_loader):
+            inputs  = collection_to(inputs, device) if TypeUtils.is_collection(inputs) else inputs.to(device)
+            targets = collection_to(targets, device) if TypeUtils.is_collection(targets) else targets.to(device)
+
+            params['batch_index'] = bi
+            params['inputs'] = inputs
+            params['targets'] = targets
+
+            self._fire_pred_batch_begin(params)
+
+            logger.info('Begin %s/%s prediction batch' % (bi, n_batches))
+            logger.debug('inputs: %s' % inputs)
+            logger.debug('targets: %s' % targets)
+
+            with torch.no_grad():
+                outputs = model(inputs)
+
+                score_map = evaluator.score_map(outputs, targets)
+                logger.debug('outputs: %s' % str(outputs))
+                logger.debug('score_map: %s' % score_map)
+
+                output_labels, output_probs = evaluator.output_labels(outputs)
+                logger.debug('Batch %s: output_labels: %s, output_probs: %s' % (bi, output_labels, output_probs))
+
+                params['outputs'] = outputs
+                params['score_map'] = score_map
+                params['output_labels'] = output_labels
+                params['output_probs'] = output_probs
+
+                self._fire_pred_batch_end(params)
+
+            logger.info('End %s/%s prediction batch' % (bi, n_batches))
+
+        self._fire_predict_end(params)
+
+        logger.info('Done to predict...')
+        logger.info('======================')
+
+    def forward(self, input_ids, input_mask=None):
+        logger.debug('[BertTCREpitopeModel.forward]: input_ids: %s(%s)' % (input_ids,
+                                                                          str(input_ids.shape) if input_ids is not None else 'None'))
+        # bert_out: # sequence_output, pooled_output, (hidden_states), (attentions)
+        bert_out = self.bert(input_ids, input_mask=input_mask)
+        # sequence_out.shape: (batch_size, seq_len, hidden_size), pooled_out.shape: (batch_size, hidden_size)
+        sequence_out, pooled_out = bert_out[:2]
+
+        logits = F.log_softmax(self.classifier(pooled_out), dim=-1)
+        outputs = (logits,) + bert_out[2:]
+        # logits: batch_size x num_labels, (hidden_states: n_layers x seq_len x hidden_size),
+        # (attentions: n_layers x seq_len x seq_len)
+        return outputs
+
     def data_parallel(self):
         self.bert = nn.DataParallel(self.bert)
         return self
@@ -243,7 +340,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         device = params['device']
         batch_size = params['train.batch_size'] if phase == 'train' else params['test.batch_size']
 
-        n_data = params['train.n_data'] if phase == 'train' else params['test.n_data']
+        n_data = params['train_ds.n_data'] if phase == 'train' else params['test_ds.n_data']
         n_batches = round(n_data / batch_size)
 
         if phase == 'train':
@@ -393,105 +490,11 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         for listener in self.pred_listeners:
             listener.on_batch_end(self, params)
 
-    def predict(self, data_loader=None, metrics=['accuracy'], use_cuda=False):
-        evaluator = self.evaluator(metrics)
-        model = self
-        device = torch.device("cuda:0" if use_cuda else "cpu")
-        model.to(device)
-
-        # if not model.is_data_parallel() and use_cuda and torch.cuda.device_count() > 1:
-        #     logger.info('Using %d GPUS for training DataParallel model' % torch.cuda.device_count())
-        #     model.data_parallel()
-
-        model.eval()
-
-        # scores_map = OrderedDict({metric: [] for metric in metrics})
-        # input_labels = []
-        # output_labels = []
-        # output_probs = []
-
-        params = OrderedDict()
-        params['use_cuda'] = use_cuda
-        params['device'] = device
-        params['model'] = model
-        params['evaluator'] = evaluator
-        params['metrics'] = metrics
-        params['n_data'] = len(data_loader.dataset)
-        params['batch_size'] = data_loader.batch_size
-
-        logger.info('======================')
-        logger.info('Begin predict...')
-        logger.info('use_cuda, device: %s, %s' % (use_cuda, str(device)))
-        logger.info('model: %s' % model)
-        logger.info('n_data: %s' % len(data_loader.dataset))
-        logger.info('batch_size: %s' % data_loader.batch_size)
-
-        self._fire_predict_begin(params)
-        n_batches = round(len(data_loader.dataset) / data_loader.batch_size)
-
-        for bi, (inputs, targets) in enumerate(data_loader):
-            inputs  = collection_to(inputs, device) if TypeUtils.is_collection(inputs) else inputs.to(device)
-            targets = collection_to(targets, device) if TypeUtils.is_collection(targets) else targets.to(device)
-
-            params['batch_index'] = bi
-            params['inputs'] = inputs
-            params['targets'] = targets
-
-            self._fire_pred_batch_begin(params)
-
-            logger.info('Begin %s/%s prediction batch' % (bi, n_batches))
-            logger.debug('inputs: %s' % inputs)
-            logger.debug('targets: %s' % targets)
-
-            with torch.no_grad():
-                outputs = model(inputs)
-
-                score_map = evaluator.score_map(outputs, targets)
-                logger.debug('outputs: %s' % str(outputs))
-                logger.debug('score_map: %s' % score_map)
-
-                output_labels, output_probs = evaluator.output_labels(outputs)
-                logger.debug('Batch %s: output_labels: %s, output_probs: %s' % (bi, output_labels, output_probs))
-
-                params['outputs'] = outputs
-                params['score_map'] = score_map
-                params['output_labels'] = output_labels
-                params['output_probs'] = output_probs
-
-                self._fire_pred_batch_end(params)
-
-            logger.info('End %s/%s prediction batch' % (bi, n_batches))
-
-        self._fire_predict_end(params)
-
-        logger.info('Done to predict...')
-        logger.info('======================')
-
-    def forward(self, input_ids, input_mask=None):
-        logger.debug('[BertTCREpitopeModel.forward]: input_ids: %s(%s)' % (input_ids,
-                                                                          str(input_ids.shape) if input_ids is not None else 'None'))
-        # bert_out: # sequence_output, pooled_output, (hidden_states), (attentions)
-        bert_out = self.bert(input_ids, input_mask=input_mask)
-        # sequence_out.shape: (batch_size, seq_len, hidden_size), pooled_out.shape: (batch_size, hidden_size)
-        sequence_out, pooled_out = bert_out[:2]
-
-        logits = F.log_softmax(self.classifier(pooled_out), dim=-1)
-        outputs = (logits,) + bert_out[2:]
-        # logits: batch_size x num_labels, (hidden_states: n_layers x seq_len x hidden_size),
-        # (attentions: n_layers x seq_len x seq_len)
-        return outputs
-
-
 class BaseModelTest(BaseTest):
 
     def setUp(self):
-        df = TCREpitopeSentenceDataset.load_df(fn='../data/train.sample.csv')
 
-        train_df, test_df = train_test_split(df, test_size=0.2, shuffle=True, stratify=df[CN.label].values)
-
-        self.train_ds = TCREpitopeSentenceDataset(df=train_df)
-        self.test_ds = TCREpitopeSentenceDataset(df=test_df)
-
+        self.train_ds, self.test_ds = TCREpitopeSentenceDataset.from_key('test').train_test_split(test_size=0.2)
         self.use_cuda = torch.cuda.is_available()
         self.batch_size = 10
         self.device = torch.device("cuda:0" if self.use_cuda else "cpu")
@@ -518,10 +521,6 @@ class BaseModelTest(BaseTest):
 from unittest.mock import MagicMock
 
 class BertTCREpitopeModelTest(BaseModelTest):
-    @classmethod
-    def setUpClass(cls):
-        logger.setLevel(logging.INFO)
-
     def test_forward(self):
         self.model.data_parallel()
 
@@ -571,10 +570,9 @@ class BertTCREpitopeModelTest(BaseModelTest):
             self.assertTrue(score >= 0)
 
     def test_fit(self):
-        self.model.data_parallel()
-
         logger.setLevel(logging.INFO)
 
+        self.model.data_parallel()
         embedding = copy.deepcopy(self.model.bert_embeddings.word_embeddings)
         inputs, targets = self.get_batch()
         outputs = self.model(inputs)
