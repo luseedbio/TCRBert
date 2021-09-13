@@ -1,7 +1,0 @@
-,epitope,epitope_gene,epitope_species,species,cdr3b,mhc,source,label,sentence
-YLQPRTFLL_CASWAETVNTGELFF,YLQPRTFLL,Spike,SARS-CoV-2,HomoSapiens,CASWAETVNTGELFF,HLA-A*02,Control,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 26, 5, 9, 23, 25, 17, 23, 11, 9, 15, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CSARDSVAVNTGELFF,YLQPRTFLL,Spike,SARS-CoV-2,HomoSapiens,CSARDSVAVNTGELFF,HLA-A*02,Shomuradova,1,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 22, 5, 21, 8, 22, 25, 5, 25, 17, 23, 11, 9, 15, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CAGDYLNTGELFF,YLQPRTFLL,Spike,SARS-CoV-2,HomoSapiens,CAGDYLNTGELFF,HLA-A*02,Shomuradova,1,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 11, 8, 28, 15, 17, 23, 11, 9, 15, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSAGGQLNTEAFF,YLQPRTFLL,Spike,SARS-CoV-2,HomoSapiens,CASSAGGQLNTEAFF,HLA-A*02,Control,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 5, 11, 11, 20, 15, 17, 23, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASTPGGLQETQYF,YLQPRTFLL,Spike,SARS-CoV-2,HomoSapiens,CASTPGGLQETQYF,HLA-A*02,Control,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 23, 19, 11, 11, 15, 20, 9, 23, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSPNDGVLSPLHF,YLQPRTFLL,Spike,SARS-CoV-2,HomoSapiens,CASSPNDGVLSPLHF,HLA-A*02,Control,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 19, 17, 8, 11, 25, 15, 22, 19, 15, 12, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"

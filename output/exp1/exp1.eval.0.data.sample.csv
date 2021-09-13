@@ -1,9 +1,0 @@
-,epitope,epitope_gene,epitope_species,species,cdr3b,mhc,source,label,sentence
-YLQPRTFLL_CASSLSTNSYEQYF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSLSTNSYEQYF,,ImmuneCODE,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 15, 22, 23, 17, 22, 28, 9, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSIGSGGTQPQHF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSIGSGGTQPQHF,,ImmuneCODE,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 13, 11, 22, 11, 11, 23, 20, 19, 20, 12, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSFDVEAFF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSFDVEAFF,,ImmuneCODE,1,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 10, 8, 25, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSQTGTGDYNEQFF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSQTGTGDYNEQFF,,ImmuneCODE,1,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 20, 23, 11, 23, 11, 8, 28, 17, 9, 20, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSLGQAFISGANVLTF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSLGQAFISGANVLTF,,ImmuneCODE,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 15, 11, 20, 5, 10, 13, 22, 11, 5, 17, 25, 15, 23, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSADIEAFF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSADIEAFF,,ImmuneCODE,1,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 5, 8, 13, 9, 5, 10, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSFGRETQYF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSFGRETQYF,,ImmuneCODE,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 10, 11, 21, 9, 23, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-YLQPRTFLL_CASSLVGSGRADTQYF,YLQPRTFLL,Spike,SARS-CoV-2,human,CASSLVGSGRADTQYF,,ImmuneCODE,0,"[2, 28, 15, 20, 19, 21, 23, 10, 15, 15, 3, 2, 7, 5, 22, 22, 15, 25, 11, 22, 11, 21, 5, 8, 23, 20, 28, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"

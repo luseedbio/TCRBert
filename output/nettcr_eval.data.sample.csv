@@ -1,7 +1,0 @@
-,epitope,epitope_gene,epitope_species,species,cdr3b,mhc,source,label,sentence
-GILGFVFTL_KTTYGTGDSNQPQHF,GILGFVFTL,,,human,KTTYGTGDSNQPQHF,HLA-A*02:01,NetTCR,1,"[2, 11, 13, 15, 11, 10, 25, 10, 23, 15, 3, 2, 14, 23, 23, 28, 11, 23, 11, 8, 22, 17, 20, 19, 20, 12, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-GLCTLVAML_ASSYVTGSSYEQY,GLCTLVAML,,,human,ASSYVTGSSYEQY,HLA-A*02:01,NetTCR,1,"[2, 11, 15, 7, 23, 15, 25, 5, 16, 15, 3, 2, 5, 22, 22, 28, 25, 23, 11, 22, 22, 28, 9, 20, 28, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-GILGFVFTL_ASNYYRGITDTQY,GILGFVFTL,,,human,ASNYYRGITDTQY,HLA-A*02:01,NetTCR,0,"[2, 11, 13, 15, 11, 10, 25, 10, 23, 15, 3, 2, 5, 22, 17, 28, 28, 21, 11, 13, 23, 8, 23, 20, 28, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-GLCTLVAML_ASSQALAGRGDNEQF,GLCTLVAML,,,human,ASSQALAGRGDNEQF,HLA-A*02:01,NetTCR,0,"[2, 11, 15, 7, 23, 15, 25, 5, 16, 15, 3, 2, 5, 22, 22, 20, 5, 15, 5, 11, 21, 11, 8, 17, 9, 20, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-GILGFVFTL_ASSQGGQYNEKLF,GILGFVFTL,,,human,ASSQGGQYNEKLF,HLA-A*02:01,NetTCR,0,"[2, 11, 13, 15, 11, 10, 25, 10, 23, 15, 3, 2, 5, 22, 22, 20, 11, 11, 20, 28, 17, 9, 14, 15, 10, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"
-GLCTLVAML_ASSASGISNYGYT,GLCTLVAML,,,human,ASSASGISNYGYT,HLA-A*02:01,NetTCR,0,"[2, 11, 15, 7, 23, 15, 25, 5, 16, 15, 3, 2, 5, 22, 22, 5, 22, 11, 13, 22, 17, 28, 11, 28, 23, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]"

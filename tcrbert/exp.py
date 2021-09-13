@@ -5,17 +5,18 @@ from datetime import datetime
 
 import torch
 import json
+import numpy as np
 
 from sklearn.model_selection import train_test_split
 from tape import ProteinConfig
 from torch.optim import Adam, SGD
 from torch.utils.data import DataLoader
 
-from tcrbert.commons import BaseTest, FileUtils
+from tcrbert.commons import BaseTest, FileUtils, NumUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.jsonutils import NumpyEncoder
-from tcrbert.predlistener import PredResultRecoder
 from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
+from tcrbert.predlistener import PredResultRecoder
 from tcrbert.model import BertTCREpitopeModel
 from tcrbert.optimizer import NoamOptimizer
 
@@ -33,28 +34,23 @@ class Experiment(object):
 
     def train(self):
         begin = datetime.now()
+        logger.info('======================')
+        logger.info('Begin train at %s' % begin)
+        model = self.load_pretrained_model()
+
         train_conf = self.exp_conf['train']
         n_rounds = len(train_conf['rounds'])
+
         logger.info('Start %s train rounds of %s at %s' % (n_rounds, self.exp_conf['title'], begin))
         logger.info('train_conf: %s' % train_conf)
 
-        # model = BertTCREpitopeModel.from_pretrained(train_conf['pretrain_model_location'])
-        model = self._load_pretrained_model(train_conf['pretrained_model'])
-
-        if use_cuda and train_conf['data_parallel']:
-            logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
-            model.data_parallel()
-
         for ir, round_conf in enumerate(train_conf['rounds']):
-            logger.info('Start %s train round, round_conf: %s' % (ir, round_conf))
-
-            train_csv = round_conf['data']['result']['output_csv']
+            data_key  = round_conf['data']
             test_size = round_conf['test_size']
-            df = TCREpitopeSentenceDataset.load_df(fn=train_csv)
-            train_df, test_df = train_test_split(df, test_size=test_size, shuffle=True, stratify=df[CN.label].values)
+            logger.info('Start %s train round using data: %s, round_conf: %s' % (ir, data_key, round_conf))
 
-            train_ds = TCREpitopeSentenceDataset(df=train_df)
-            test_ds = TCREpitopeSentenceDataset(df=test_df)
+            train_ds, test_ds = TCREpitopeSentenceDataset.from_key(data_key).train_test_split(test_size=test_size,
+                                                                                              shuffle=True)
 
             batch_size = round_conf['batch_size']
             n_workers = round_conf['n_workers']
@@ -127,24 +123,17 @@ class Experiment(object):
         logger.info('End of %s train rounds of %s, collapsed: %s' % (n_rounds,
                                                                      self.exp_conf['title'],
                                                                      end - begin))
+        logger.info('======================')
 
     def evaluate(self):
         logger.info('Start evaluate for best model...')
+        model = self.load_eval_model()
+
         train_conf = self.exp_conf['train']
         eval_conf = self.exp_conf['eval']
-
         logger.info('train_conf: %s' % train_conf)
         logger.info('eval_conf: %s' % eval_conf)
         logger.info('use_cuda: %s' % use_cuda)
-
-        model = self._create_model()
-        fn_chk = eval_conf.get('pretrained_chk', self._get_train_besk_chk(train_conf))
-        logger.info('Loading the pretrained model from %s' % (fn_chk))
-        model.load_state_dict(fnchk=fn_chk, use_cuda=use_cuda)
-
-        if eval_conf['data_parallel']:
-            logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
-            model.data_parallel()
 
         batch_size = eval_conf['batch_size']
         n_workers = eval_conf['n_workers']
@@ -154,14 +143,13 @@ class Experiment(object):
         model.add_pred_listener(result_recoder)
 
         for i, test_coonf in enumerate(eval_conf['tests']):
-            data_key = test_coonf['data']['key']
-            logger.info('Start %s test for %s, test_conf: %s' % (i, data_key, test_coonf))
-            eval_csv = test_coonf['data']['result']['output_csv']
-            eval_df = TCREpitopeSentenceDataset.load_df(eval_csv)
-            logger.info('Loaded test data, df.shape: %s' % str(eval_df.shape))
+            data_key = test_coonf['data']
+            logger.info('Start %s test for data: %s, test_conf: %s' % (i, data_key, test_coonf))
 
-            eval_ds = TCREpitopeSentenceDataset(df=eval_df)
-            eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=True, num_workers=n_workers)
+            eval_ds = TCREpitopeSentenceDataset.from_key(data_key)
+            logger.info('Loaded test data for %s len(eval_ds): %s' % (data_key, len(eval_ds)))
+
+            eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=False, num_workers=n_workers)
 
             model.predict(data_loader=eval_data_loader, metrics=metrics)
 
@@ -169,9 +157,23 @@ class Experiment(object):
             with open(fn_result, 'w') as f:
                 json.dump(result_recoder.result_map, cls=NumpyEncoder, fp=f)
 
-            logger.info('Done to test data: %s, saved to %s' % (eval_csv, fn_result))
+            logger.info('Done to test data: %s, saved to %s' % (data_key, fn_result))
 
         logger.info('Dont to evaluate for %s tests' % len(eval_conf['tests']))
+
+    def load_eval_model(self):
+        train_conf = self.exp_conf['train']
+        eval_conf = self.exp_conf['eval']
+
+        model = self._create_model()
+        fn_chk = eval_conf.get('pretrained_chk', self._get_train_best_chk(train_conf))
+        logger.info('Loading the eval model from %s' % (fn_chk))
+        model.load_state_dict(fnchk=fn_chk, use_cuda=use_cuda)
+        if eval_conf['data_parallel']:
+            logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
+            model.data_parallel()
+
+        return model
 
     @classmethod
     def from_key(cls, key=None):
@@ -184,22 +186,24 @@ class Experiment(object):
                 cls._exp_confs = json.load(f)
 
         exp_conf = cls._exp_confs[key]
-        train_conf = exp_conf['train']
-        eval_conf = exp_conf['eval']
-        with open('../config/data.json', 'r') as f:
-            data_conf = json.load(f)
 
-            for round_conf in train_conf['rounds']:
-                data_key = round_conf['data']
-                round_conf['data'] = copy.deepcopy(data_conf[data_key])
-                round_conf['data']['key'] = data_key
-                round_conf['data']['result'] = FileUtils.json_load(round_conf['data']['result'])
-
-            for test_conf in eval_conf['tests']:
-                data_key = test_conf['data']
-                test_conf['data'] = copy.deepcopy(data_conf[data_key])
-                test_conf['data']['key'] = data_key
-                test_conf['data']['result'] = FileUtils.json_load(test_conf['data']['result'])
+        # train_conf = exp_conf['train']
+        # eval_conf = exp_conf['eval']
+        #
+        # with open('../config/data.json', 'r') as f:
+        #     data_conf = json.load(f)
+        #
+        #     for round_conf in train_conf['rounds']:
+        #         data_key = round_conf['data']
+        #         round_conf['data'] = copy.deepcopy(data_conf[data_key])
+        #         round_conf['data']['key'] = data_key
+        #         round_conf['data']['result'] = FileUtils.json_load(round_conf['data']['result'])
+        #
+        #     for test_conf in eval_conf['tests']:
+        #         data_key = test_conf['data']
+        #         test_conf['data'] = copy.deepcopy(data_conf[data_key])
+        #         test_conf['data']['key'] = data_key
+        #         test_conf['data']['result'] = FileUtils.json_load(test_conf['data']['result'])
 
         logger.info('Loaded exp_conf: %s' % exp_conf)
         return exp_conf
@@ -221,6 +225,15 @@ class Experiment(object):
         config = ProteinConfig.from_pretrained(self.exp_conf['model_config'])
         return BertTCREpitopeModel(config=config)
 
+
+    def load_pretrained_model(self):
+        train_conf = self.exp_conf['train']
+        model = self._load_pretrained_model(train_conf['pretrained_model'])
+        if use_cuda and train_conf['data_parallel']:
+            logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
+            model.data_parallel()
+        return model
+
     def _load_pretrained_model(self, param):
         if param['type'] == 'tape':
             logger.info('Loading the TAPE pretrained model from %s' % (param['location']))
@@ -233,18 +246,103 @@ class Experiment(object):
         else:
             raise ValueError('Unknown pretrained model type: %s' % param['type'])
 
-    def _get_train_besk_chk(self, train_conf):
+    def _get_train_best_chk(self, train_conf):
         last_round = train_conf['rounds'][-1]
         result = FileUtils.json_load(last_round['result'])
         return result['best_chk']
 
+import os
+import glob
 
 class ExperimentTest(BaseTest):
-    def test_init_exp(self):
-        exp = Experiment.from_key('testexp')
-        self.assertIsNotNone(exp.exp_conf)
-        self.assertTrue('train' in exp.exp_conf)
 
+    def setUp(self) -> None:
+        self.exp = Experiment.from_key('testexp')
+        self.exp_conf = self.exp.exp_conf
+        self.train_conf = self.exp_conf['train']
+        self.eval_conf = self.exp_conf['eval']
+
+    def delete_train_results(self):
+        for ir, round_conf in enumerate(self.train_conf['rounds']):
+            fn_chk = round_conf['model_checkpoint']['chk']
+            for fn in glob.glob(fn_chk.replace('{epoch}', '*')):
+                os.remove(fn)
+
+            fn_result = round_conf['result']
+            if os.path.exists(fn_result):
+                os.remove(fn_result)
+
+    def test_train(self):
+        logger.setLevel(logging.INFO)
+        self.delete_train_results()
+
+        self.exp.train()
+
+        for ir, round_conf in enumerate(self.train_conf['rounds']):
+            fn_chk = round_conf['model_checkpoint']['chk']
+            fn_chks = glob.glob(fn_chk.replace('{epoch}', '*'))
+            self.assertTrue(len(fn_chks) > 0)
+
+            fn_result = round_conf['result']
+            self.assertTrue(os.path.exists(fn_result))
+
+            result = FileUtils.json_load(fn_result)
+            self.assertIsNotNone(result['metrics'])
+            self.assertIsNotNone(result['train.score'])
+            self.assertIsNotNone(result['val.score'])
+            self.assertIsNotNone(result['n_epochs'])
+            self.assertIsNotNone(result['stopped_epoch'])
+            self.assertIsNotNone(result['monitor'])
+            self.assertIsNotNone(result['best_epoch'])
+            self.assertIsNotNone(result['best_score'])
+            self.assertIsNotNone(result['best_chk'])
+
+            train_scores = result['train.score'][result['monitor']]
+            val_scores = result['val.score'][result['monitor']]
+            stopped_epoch = result['stopped_epoch']
+            self.assertEqual(stopped_epoch + 1, len(train_scores))
+            self.assertEqual(stopped_epoch + 1, len(val_scores))
+            self.assertTrue(result['best_chk'] in fn_chks)
+            self.assertEqual(fn_chk.replace('{epoch}', '%s' % result['best_epoch']), result['best_chk'])
+
+    def test_evaluate(self):
+        logger.setLevel(logging.INFO)
+
+        self.exp.evaluate()
+
+        for test_conf in self.eval_conf['tests']:
+            ds = TCREpitopeSentenceDataset.from_key(test_conf['data'])
+            n_data = len(ds)
+
+            fn_result = test_conf['result']
+            self.assertTrue(os.path.exists(fn_result))
+            result = FileUtils.json_load(fn_result)
+
+            metrics = result['metrics']
+            score_map = result['score_map']
+            for metric in metrics:
+                score = score_map[metric]
+                self.assertTrue(NumUtils.is_numeric_value(score))
+
+            input_labels = result['input_labels']
+            self.assertEqual(n_data, len(input_labels))
+            self.assertTrue(all(list(map(lambda x: x in [0, 1], input_labels))))
+
+            output_labels = result['output_labels']
+            self.assertEqual(n_data, len(output_labels))
+            self.assertTrue(all(list(map(lambda x: x in [0, 1], output_labels))))
+
+            output_probs = result['output_probs']
+            self.assertEqual(n_data, len(output_probs))
+            self.assertTrue(all([prob >= 0 and prob <= 1 for prob in output_probs]))
+
+            if self.eval_conf['output_attentions']:
+                attentions = result['attentions']
+                model_conf = FileUtils.json_load(self.exp_conf['model_config'] + 'config.json')
+                expected = (n_data, model_conf['num_attention_heads'],
+                            ds.max_len, ds.max_len)
+                self.assertEqual(model_conf['num_hidden_layers'], len(attentions))
+                self.assertTrue(all(expected == np.asarray(attn).shape for attn in attentions))
 
 if __name__ == '__main__':
     unittest.main()
