@@ -1,0 +1,265 @@
+{
+  "testexp": {
+    "title": "testexp",
+    "description": "testexp",
+    "paper": "testexp",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "tape",
+        "location": "../config/bert-base/"
+      },
+      "data_parallel": false,
+      "rounds": [
+        {
+          "data": "test",
+          "test_size": 0.2,
+          "batch_size": 32,
+          "n_epochs": 3,
+          "n_workers": 2,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.00001
+          },
+          "train_bert_encoders": [-4, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 1
+          },
+          "model_checkpoint": {
+            "chk": "../output/testexp/train.0.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+          },
+          "result": "../output/testexp/train.0.result.json"
+        }
+      ]
+    },
+    "eval": {
+      "data_parallel": false,
+      "batch_size": 32,
+      "n_workers": 2,
+      "metrics": ["accuracy", "f1", "roc_auc"],
+      "output_attentions": false,
+      "tests": [
+        {"data": "test", "result": "../output/testexp/eval.test.result.json"}
+      ]
+    }
+  },
+  "exp1": {
+    "title": "exp1",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>IEDB SARS-2 데이터로 말단 6개 encoder와 classifier 학습",
+    "paper": "exp1",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "local",
+        "location": "../output/exp1/exp1.train_0.model_37.chk"
+      },
+      "data_parallel": false,
+      "rounds": [{
+        "data": "shomuradova",
+        "test_size": 0.2,
+        "batch_size": 32,
+        "n_epochs": 100,
+        "n_workers": 12,
+        "metrics": ["accuracy"],
+        "optimizer": {
+          "name": "adam",
+          "lr": 0.00001
+        },
+        "train_bert_encoders": [-4, null],
+        "early_stopper": {
+          "monitor": "accuracy",
+          "patience": 10
+        },
+        "model_checkpoint": {
+          "chk": "../output/exp1/exp1.train.1.model_{epoch}.chk",
+          "monitor": "accuracy",
+          "save_best_only": true,
+          "period": 1
+        },
+        "result": "../output/exp1/exp1.train.1.result.json"
+      }]
+    },
+    "eval": {
+      "data_parallel": false,
+      "data": "immunecode",
+      "batch_size": 128,
+      "n_workers": 12,
+      "metrics": ["accuracy", "f1"],
+      "result": "../output/exp1/exp1.eval.result.json"
+    }
+  },
+  "exp2": {
+    "title": "exp2",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>IEDB SARS-2 데이터로 말단 6개 encoder와 classifier 학습",
+    "paper": "exp2",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "tape",
+        "location": "../config/bert-base/"
+      },
+      "data_parallel": false,
+      "rounds": [{
+          "data": "dash_vdjdb_mcpas",
+          "test_size": 0.2,
+          "batch_size": 128,
+          "n_epochs": 100,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.0001
+          },
+          "train_bert_encoders": [-10, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 10
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp2/train.0.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+          },
+          "result": "../output/exp2/train.0.result.json"
+        },
+        {
+          "data": "iedb_sars2",
+          "test_size": 0.2,
+          "batch_size": 128,
+          "n_epochs": 100,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.00001
+          },
+          "train_bert_encoders": [-6, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 10
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp2/train.1.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+        },
+        "result": "../output/exp2/train.1.result.json"
+      }]
+    },
+    "eval": {
+      "data_parallel": false,
+      "batch_size": 128,
+      "n_workers": 12,
+      "metrics": ["accuracy", "f1", "roc_auc"],
+      "output_attentions": false,
+      "tests": [
+        {"data": "shomuradova", "result": "../output/exp7/eval.shomuradova.result.json"},
+        {"data": "immunecode", "result": "../output/exp7/eval.immunecode.result.json"}
+      ]
+    }
+  },
+  "exp7": {
+    "title": "exp7",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>IEDB SARS-2 데이터로 말단 6개 encoder와 classifier 학습",
+    "paper": "exp7",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "local",
+        "location": "../output/exp1/exp1.train_0.model_37.chk"
+      },
+      "data_parallel": false,
+      "rounds": [
+        {
+          "data": "iedb_sars2",
+          "test_size": 0.2,
+          "batch_size": 128,
+          "n_epochs": 100,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "adam",
+            "lr": 0.0001
+          },
+          "train_bert_encoders": [-6, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 10
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp7/train.1.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+        },
+        "result": "../output/exp7/train.1.result.json"
+      }]
+    },
+    "eval": {
+      "data_parallel": false,
+      "batch_size": 128,
+      "n_workers": 12,
+      "metrics": ["accuracy", "f1", "roc_auc"],
+      "output_attentions": false,
+      "tests": [
+        {"data": "shomuradova", "result": "../output/exp7/eval.shomuradova.result.json"},
+        {"data": "immunecode", "result": "../output/exp7/eval.immunecode.result.json"}
+      ]
+    }
+  },
+  "exp8": {
+    "title": "exp8",
+    "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>NetTCR 훈련 데이터로 말단 6개 encoder와 classifier 학습",
+    "paper": "exp8",
+    "model_config": "../config/bert-base/",
+    "train": {
+      "pretrained_model": {
+        "type": "local",
+        "location": "../output/exp1/exp1.train_0.model_37.chk"
+      },
+      "data_parallel": false,
+      "rounds": [
+        {
+          "data": "nettcr_train",
+          "test_size": 0.2,
+          "batch_size": 128,
+          "n_epochs": 200,
+          "n_workers": 12,
+          "metrics": ["accuracy"],
+          "optimizer": {
+            "name": "noam",
+            "lr": 0.0001
+          },
+          "train_bert_encoders": [-8, null],
+          "early_stopper": {
+            "monitor": "accuracy",
+            "patience": 20
+          },
+          "model_checkpoint": {
+            "chk": "../output/exp8/train.0.model_{epoch}.chk",
+            "monitor": "accuracy",
+            "save_best_only": true,
+            "period": 1
+        },
+        "result": "../output/exp8/train.0.result.json"
+      }]
+    },
+    "eval": {
+      "data_parallel": false,
+      "batch_size": 64,
+      "n_workers": 12,
+      "metrics": ["accuracy", "f1", "roc_auc"],
+      "tests": [
+        {"data": "nettcr_eval", "result": "../output/exp8/eval.nettcr_eval.result.json"}
+      ]
+    }
+  }
+
+}
