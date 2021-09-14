@@ -149,7 +149,7 @@ class Experiment(object):
             eval_ds = TCREpitopeSentenceDataset.from_key(data_key)
             logger.info('Loaded test data for %s len(eval_ds): %s' % (data_key, len(eval_ds)))
 
-            eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=False, num_workers=n_workers)
+            eval_data_loader = DataLoader(eval_ds, batch_size=batch_size, shuffle=True, num_workers=n_workers)
 
             model.predict(data_loader=eval_data_loader, metrics=metrics)
 
