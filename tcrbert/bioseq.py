@@ -79,6 +79,18 @@ def rand_aaseq(seq_len=9, aa_probs=None):
     indices = np.random.choice(aas.shape[0], seq_len, p=aa_probs)
     return ''.join(aas[indices])
 
+def write_fa(fn, seqs, headers=None):
+    with open(fn, 'w') as fh:
+        fh.write(format_fa(seqs, headers))
+
+def format_fa(seqs, headers=None):
+    return '\n'.join(
+        map(lambda h, seq: '>%s\n%s' % (h, seq), range(1, len(seqs) + 1) if headers is None else headers, seqs))
+
+def write_seqs(fn, seqs, sep='\n'):
+    with open(fn, 'w') as fh:
+        fh.write(sep.join(seqs))
+
 class BioSeqTest(BaseTest):
     def test_amino_acid(self):
         self.assertEqual('ARNDCQEGHILKMFPOSUTWYVBZXJ', ''.join(AMINO_ACID.codes()))
