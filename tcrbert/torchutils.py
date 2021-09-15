@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from tcrbert.commons import BaseTest
 
 # Logger
-logger = logging.getLogger('epidab')
+logger = logging.getLogger('tcrbert')
 
 use_cuda = torch.cuda.is_available()
 

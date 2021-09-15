@@ -1,14 +1,15 @@
 import unittest
 from collections import OrderedDict
+import logging
 
 import numpy as np
 from torch.utils.data import DataLoader
-
 from tcrbert.model import BertTCREpitopeModel, BaseModelTest
+from tcrbert.torchutils import to_numpy
 
-if __name__ == '__main__':
-    unittest.main()
 
+# Logger
+logger = logging.getLogger('tcrbert')
 
 class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
     def __init__(self, output_attentions=False):
@@ -33,6 +34,9 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
         for metric in params['metrics']:
             self.result_map['score_map'][metric] = np.mean(self.scores_map[metric])
 
+        if self.output_attentions:
+            self.result_map['attentions'] = np.asarray(self.result_map['attentions'])
+
     def on_batch_end(self, model, params):
         bi = params['batch_index']
         score_map = params['score_map']
@@ -48,12 +52,12 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
 
         if self.output_attentions:
             if self.result_map['attentions'] is None:
-                self.result_map['attentions'] = list(params['outputs'][2])
+                # params['outputs'][2] is tuple of attentions with shape (n_data, n_heads, max_len, max_len)
+                self.result_map['attentions'] = [to_numpy(lay_attns) for lay_attns in params['outputs'][2]]
             else:
                 for li, lay_attentions in enumerate(params['outputs'][2]):
                     self.result_map['attentions'][li] = np.concatenate((self.result_map['attentions'][li],
                                                                         lay_attentions), axis=0)
-
 
 class PredictionListenerTest(BaseModelTest):
     def test_pred_result_recoder(self):
@@ -83,7 +87,9 @@ class PredictionListenerTest(BaseModelTest):
 
         if output_attentions:
             attentions = result['attentions']
-            expected = (n_data, self.model.config.num_attention_heads,
+            expected = (self.model.config.num_hidden_layers, n_data, self.model.config.num_attention_heads,
                         self.test_ds.max_len, self.test_ds.max_len)
-            self.assertEqual(self.model.config.num_hidden_layers, len(attentions))
-            self.assertTrue(all(expected == attn.shape for attn in attentions))
+            self.assertEqual(expected, attentions.shape)
+
+if __name__ == '__main__':
+    unittest.main()
