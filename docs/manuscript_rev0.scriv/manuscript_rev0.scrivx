@@ -1,0 +1,1231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrivenerProject Identifier="D19DF462-781E-4071-AB8D-7F3D1DB8B6F2" Version="2.0" Creator="SCRMAC-3.2.2-14633" Device="Youngmahnui-iMac" Author="Han Youngmahn" Modified="2021-09-22 19:24:08 +0900" ModID="0FA32266-6623-40D9-9764-1A481EE693CE">
+    <Binder>
+        <BinderItem UUID="E079FA85-3146-4B03-9369-03A4739801E4" Type="DraftFolder" Created="2020-01-09 19:23:28 +0900" Modified="2021-09-22 18:20:56 +0900">
+            <Title>Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings</Title>
+            <MetaData>
+                <IncludeInCompile>Yes</IncludeInCompile>
+            </MetaData>
+            <CorkboardAndOutliner>
+                <SelectedSubdocumentUUIDs>EDDF805F-DEB3-40A9-95D6-C6269D9CCF73</SelectedSubdocumentUUIDs>
+            </CorkboardAndOutliner>
+            <Children>
+                <BinderItem UUID="ECE93083-6494-448F-9274-7E28C927375D" Type="Text" Created="2020-01-09 19:23:28 +0900" Modified="2020-01-09 19:30:13 +0900">
+                    <Title>Introduction</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="D1ED545E-FA3B-4A3F-A4D1-3F1F4E6E6E13" Type="Text" Created="2020-01-09 19:30:15 +0900" Modified="2021-05-12 18:21:48 +0900">
+                            <Title>적응면역시스템에서의 T-cell의 중요성</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>188,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="5DB05CFD-5D6F-4897-A706-E74DD4D542F0" Type="Text" Created="2021-05-12 18:21:05 +0900" Modified="2021-06-30 15:40:39 +0900">
+                            <Title>T-cell 면역유도에서 TCR의 역할 및 중요성</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>1138,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="3735F4CE-B61A-47F4-BB52-5CAAFF9E42DD" Type="Text" Created="2021-05-12 19:47:35 +0900" Modified="2021-07-01 17:39:26 +0900">
+                            <Title>Epitope-specific TCR 식별의 어려움</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>1700,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="C1021751-BA69-4227-885F-C6DEFD0E8D29" Type="Text" Created="2021-07-01 17:38:26 +0900" Modified="2021-07-01 20:28:12 +0900">
+                            <Title>Epitope specificity 예측의 필요성</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,190</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="F7BDF1C9-45ED-4DF3-A627-5C2F1DFC783A" Type="Text" Created="2021-05-12 19:48:35 +0900" Modified="2021-07-01 20:57:54 +0900">
+                            <Title>NGS, Database, machine learning methods</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>557,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="A0F37104-9E1B-4A2A-8BF0-323AAEF06C7A" Type="Text" Created="2021-05-12 20:04:41 +0900" Modified="2021-07-01 21:03:48 +0900">
+                            <Title>기존방법의 한계점</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>324,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="55C83DD3-D3F6-4816-8A1B-ECC0ED7E9CE1" Type="Text" Created="2021-05-12 20:05:50 +0900" Modified="2021-07-07 18:23:16 +0900">
+                            <Title>Supervised pretraining in NLP, BERT</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>88,52</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="A13CDD87-D5DE-4999-8044-B83E1DE4111F" Type="Text" Created="2021-05-12 20:06:40 +0900" Modified="2021-07-08 16:36:04 +0900">
+                            <Title>Bioinformatics에서의 사례, TAPE, BERTMHC</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>559,24</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="CCCD2E8B-0001-4373-A143-32874E76AC92" Type="Text" Created="2021-05-13 11:10:12 +0900" Modified="2021-07-08 20:05:22 +0900">
+                            <Title>말하고자 하는 것들</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="D902C088-6B06-4815-98D9-BF1BA3336783" Type="Text" Created="2021-05-12 20:16:02 +0900" Modified="2021-05-12 20:16:19 +0900">
+                    <Title>Materials and Methods</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="DA18EADC-F821-4854-98F1-6CBAA9EA69E9" Type="Text" Created="2021-07-08 20:06:33 +0900" Modified="2021-08-03 16:53:48 +0900">
+                            <Title>Overall training process</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>608,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="4E7F7C0E-EFED-47E0-B573-F2239B3C4964" Type="Text" Created="2021-07-09 18:19:12 +0900" Modified="2021-07-14 16:03:06 +0900">
+                            <Title>Model architecture</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>484,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="ECFB98D7-197A-469D-AB04-62DA64EA8F41" Type="Text" Created="2021-05-12 20:17:27 +0900" Modified="2021-05-12 20:17:32 +0900">
+                            <Title>Datasets</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="5D7401F2-26EC-4813-AE73-8E683D948602" Type="Text" Created="2021-05-12 20:17:33 +0900" Modified="2021-07-12 17:12:16 +0900">
+                                    <Title>Fine-tuning datasets</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>0,0</TextSelection>
+                                    </TextSettings>
+                                    <Children>
+                                        <BinderItem UUID="CCC18EA0-028E-48BD-B119-E36928977BD7" Type="Text" Created="2021-05-13 20:07:30 +0900" Modified="2021-07-12 14:23:57 +0900">
+                                            <Title>Positive datasets</Title>
+                                            <MetaData>
+                                                <IncludeInCompile>Yes</IncludeInCompile>
+                                            </MetaData>
+                                            <TextSettings>
+                                                <TextSelection>796,99</TextSelection>
+                                            </TextSettings>
+                                        </BinderItem>
+                                        <BinderItem UUID="1DAADC60-C206-4147-9C2A-282CE4D1BE98" Type="Text" Created="2021-05-13 20:07:43 +0900" Modified="2021-07-12 14:32:54 +0900">
+                                            <Title>Negative examples</Title>
+                                            <MetaData>
+                                                <IncludeInCompile>Yes</IncludeInCompile>
+                                            </MetaData>
+                                            <TextSettings>
+                                                <TextSelection>408,0</TextSelection>
+                                            </TextSettings>
+                                        </BinderItem>
+                                    </Children>
+                                </BinderItem>
+                                <BinderItem UUID="BAE7C2A7-FA27-47DA-B731-55CD47958273" Type="Text" Created="2021-05-12 20:17:45 +0900" Modified="2021-07-30 15:39:01 +0900">
+                                    <Title>Evaluation datasets</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>275,253</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                        <BinderItem UUID="BD4A845F-4272-484B-AEF7-9EBF19F309CB" Type="Text" Created="2021-05-12 20:31:41 +0900" Modified="2021-07-14 17:23:37 +0900">
+                            <Title>Finetuning the model</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>190,3</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="309B27F9-950F-4526-AA34-912B23342F53" Type="Text" Created="2021-05-12 20:33:04 +0900" Modified="2021-07-15 14:46:46 +0900">
+                            <Title>Evaluatiing the model</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>85,28</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="C99E1258-9B51-4531-AD60-36E78CEE60B3" Type="Text" Created="2021-09-22 18:34:43 +0900" Modified="2021-09-22 19:24:08 +0900">
+                            <Title>Interpreting position-specific attention weights</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>90,1</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="061EEA07-833D-4E40-BAFD-A51E8784031D" Type="Text" Created="2021-05-12 20:33:27 +0900" Modified="2021-07-15 19:41:46 +0900">
+                    <Title>Results and Discussion</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="41A49D52-FD76-4156-8552-441B274BADED" Type="Text" Created="2021-05-12 20:33:42 +0900" Modified="2021-07-15 20:06:35 +0900">
+                            <Title>Finetuning results</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>757,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="8C6D75BE-6C76-4828-9540-B0D93B916DDB" Type="Text" Created="2021-05-12 20:33:51 +0900" Modified="2021-07-30 16:06:02 +0900">
+                            <Title>Evaluation results</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>209,11</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="E6A5AABD-E0A5-42BF-9A7D-E6A6A46936BB" Type="Text" Created="2021-09-22 18:21:08 +0900" Modified="2021-09-22 18:21:21 +0900">
+                            <Title>Attention analysis</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="EDDF805F-DEB3-40A9-95D6-C6269D9CCF73" Type="Text" Created="2021-05-12 20:35:07 +0900" Modified="2021-07-15 19:41:58 +0900">
+                    <Title>Conclusion</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+            </Children>
+        </BinderItem>
+        <BinderItem UUID="098ECBCA-570A-486D-9432-2EFEAEE510EA" Type="ResearchFolder" Created="2020-01-09 19:23:28 +0900" Modified="2020-01-09 19:23:56 +0900">
+            <Title>참고자료</Title>
+            <MetaData>
+                <IncludeInCompile>Yes</IncludeInCompile>
+            </MetaData>
+            <CorkboardAndOutliner>
+                <SelectedSubdocumentUUIDs>95384325-4873-420F-AE94-3C7E0A8FF5DD</SelectedSubdocumentUUIDs>
+            </CorkboardAndOutliner>
+            <Children>
+                <BinderItem UUID="95384325-4873-420F-AE94-3C7E0A8FF5DD" Type="WebArchive" Created="2020-01-13 11:08:01 +0900" Modified="2020-01-13 11:08:01 +0900">
+                    <Title>The Illustrated BERT, ELMo, and co. (How NLP Cracked Transfer Learning) – Jay Alammar – Visualizing machine learning one concept at a time</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>webarchive</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <OriginalURL>http://jalammar.github.io/illustrated-bert/</OriginalURL>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="DC1448AA-AC33-4695-BAEB-8E8BE85AA8DA" Type="WebArchive" Created="2020-01-30 11:43:42 +0900" Modified="2020-01-30 11:43:42 +0900">
+                    <Title>Google AI Blog: Open Sourcing BERT: State-of-the-Art Pre-training for Natural Language Processing</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>webarchive</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <OriginalURL>https://ai.googleblog.com/2018/11/open-sourcing-bert-state-of-art-pre.html</OriginalURL>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="C8F98E66-7AC6-4300-B250-87783EE31C61" Type="PDF" Created="2019-07-19 18:02:29 +0900" Modified="2020-02-28 16:45:36 +0900">
+                    <Title>BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>pdf</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <CurrentPDFPage>1</CurrentPDFPage>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="13E839A7-03D8-484E-A943-7441773DAE39" Type="PDF" Created="2021-04-27 19:30:40 +0900" Modified="2021-05-13 20:26:43 +0900">
+                    <Title>NetTCR: sequence-based prediction of TCR binding
+to peptide-MHC complexes using convolutional
+neural networks</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>pdf</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <CurrentPDFPage>0</CurrentPDFPage>
+                    </MediaSettings>
+                    <Bookmarks>
+                        <Bookmark BinderUUID="1DAADC60-C206-4147-9C2A-282CE4D1BE98"/>
+                    </Bookmarks>
+                </BinderItem>
+                <BinderItem UUID="74B43ABE-8B53-4697-B5B1-84A069120F8A" Type="PDF" Created="2021-04-27 19:37:57 +0900" Modified="2021-05-13 20:27:56 +0900">
+                    <Title>Predicting recognition between T cell receptors and epitopes with TCRGP</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>pdf</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <CurrentPDFPage>26</CurrentPDFPage>
+                    </MediaSettings>
+                    <Bookmarks>
+                        <Bookmark BinderUUID="1DAADC60-C206-4147-9C2A-282CE4D1BE98"/>
+                    </Bookmarks>
+                </BinderItem>
+                <BinderItem UUID="83C6512A-9411-4103-B7E5-BDEAC4230634" Type="PDF" Created="2020-10-22 20:17:13 +0900" Modified="2021-05-13 20:32:05 +0900">
+                    <Title>Predicting antigen specificity of single T cells based on TCR CDR3 regions</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>pdf</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <CurrentPDFPage>9</CurrentPDFPage>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="4ECF2D4A-9F04-4E46-ACFA-A4C334545EBA" Type="PDF" Created="2021-04-27 19:24:01 +0900" Modified="2021-05-13 20:33:57 +0900">
+                    <Title>Prediction of Specific TCR-Peptide Binding From Large Dictionaries of TCR-Peptide Pairs</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>pdf</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <CurrentPDFPage>6</CurrentPDFPage>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="C9C0CDC2-1BC0-4397-B489-57919C672AC8" Type="PDF" Created="2020-10-22 11:08:13 +0900" Modified="2021-07-08 19:31:33 +0900">
+                    <Title>Deep_convolutional_neural_networks_for_pan-specifi</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>pdf</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <CurrentPDFPage>0</CurrentPDFPage>
+                    </MediaSettings>
+                </BinderItem>
+            </Children>
+        </BinderItem>
+        <BinderItem UUID="9304B2B5-9A4E-4EC1-A39A-FB381183F734" Type="TrashFolder" Created="2020-01-09 19:23:28 +0900" Modified="2020-01-09 19:23:28 +0900">
+            <Title>휴지통</Title>
+            <MetaData>
+                <IncludeInCompile>Yes</IncludeInCompile>
+            </MetaData>
+            <Children>
+                <BinderItem UUID="79DE2CBE-A5F2-4DCD-AF2B-2DE5B7FECBD5" Type="Text" Created="2020-01-09 19:35:00 +0900" Modified="2020-01-09 19:35:15 +0900">
+                    <Title>기존의 예측방법들</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="7137F6B7-8ECF-4B97-84B6-1D2930871F1F" Type="Text" Created="2020-01-09 19:35:17 +0900" Modified="2020-01-30 10:25:28 +0900">
+                            <Title>Classical methods</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>39,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="D12B2365-D2DE-46C4-8888-189EE79914C4" Type="Text" Created="2020-01-09 19:36:21 +0900" Modified="2021-04-26 16:42:26 +0900">
+                            <Title>Deep learning methods</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>12,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="2149A706-900B-401D-8B2A-35F27D7482D2" Type="Text" Created="2020-01-30 11:28:28 +0900" Modified="2020-01-30 11:28:56 +0900">
+                    <Title>기존예측 방법의 한계</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="82400414-9ECB-454D-8F62-CF43D1F96576" Type="Text" Created="2020-01-29 20:29:26 +0900" Modified="2020-02-10 10:58:46 +0900">
+                            <Title>Not all binding peptides are presented on the cell</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>483,0</NotesTextSelection>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>199,35</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="AF59BA5F-BC3F-48C5-8575-E3638F32A08C" Type="Text" Created="2020-02-04 11:37:42 +0900" Modified="2020-02-22 15:37:15 +0900">
+                            <Title>MS-based immunopeptidome studies</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>778,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="8435D019-B9B9-4615-8BDC-F7783789006D" Type="Text" Created="2020-02-04 13:57:18 +0900" Modified="2020-02-04 14:52:25 +0900">
+                            <Title>ML/DL using MS peptidome data</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>40,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="9C3C3F8E-5925-4B65-A744-0C2551B9E41C" Type="Text" Created="2020-02-04 14:52:02 +0900" Modified="2020-02-04 14:52:14 +0900">
+                            <Title>ML/DL 방법의 한계점</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="C5CAFA7A-9BA8-408E-8306-C5640C771104" Type="Text" Created="2020-02-04 14:52:32 +0900" Modified="2020-02-10 11:00:09 +0900">
+                                    <Title>NetMHCPan40</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>287,4</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                                <BinderItem UUID="A4DA0DF3-3A08-4501-B2F8-F256AFDE0392" Type="Text" Created="2020-02-05 10:42:28 +0900" Modified="2020-02-07 17:28:28 +0900">
+                                    <Title>MHCflurry</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>207,8</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                                <BinderItem UUID="E66782ED-6E85-453B-A16B-53D3BB790792" Type="Text" Created="2020-02-05 10:42:34 +0900" Modified="2020-02-05 17:43:01 +0900">
+                                    <Title>DeepLigand</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>1514,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="25E226DF-1E4D-42B8-8FE9-3AFFCB744D7D" Type="Text" Created="2020-01-09 19:36:41 +0900" Modified="2020-02-05 18:54:17 +0900">
+                    <Title>BERT?</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <ShowSynopsisImage Fit="h">Yes</ShowSynopsisImage>
+                        <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>163,46</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="211FB603-98F0-43EF-8F6C-4C6550579C7E" Type="Text" Created="2020-01-09 20:01:24 +0900" Modified="2020-02-22 15:43:20 +0900">
+                    <Title>Research idea</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="5F1DFC67-3910-462D-8AD4-E971113A7409" Type="Text" Created="2020-01-13 11:39:53 +0900" Modified="2020-02-07 18:26:45 +0900">
+                            <Title>양방향 자기주목을 통한 pMHC 결합패턴 학습</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="A69C96B8-4902-42F8-B1CF-586004916454" Type="Text" Created="2020-01-13 11:38:49 +0900" Modified="2020-02-22 16:50:02 +0900">
+                            <Title>BERT-based 전이학습을 통해 데이터 수 한계 극복이 가능</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>307,0</NotesTextSelection>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="AE43CA13-604F-4FE8-BCA5-A78AD76A79D6" Type="Text" Created="2020-01-09 20:30:10 +0900" Modified="2020-02-22 17:10:45 +0900">
+                    <Title>말하고자 하는 연구내용</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <NotesTextSelection>7,200</NotesTextSelection>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>192,138</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="0886F03E-89E1-4BC8-929A-E22A5358E7CF" Type="Text" Created="2020-01-09 19:32:29 +0900" Modified="2020-01-10 10:31:52 +0900">
+                    <Title>Materials and Methods</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                        <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="B6C91DB2-8FC4-45CC-8695-8AC6F5F8DD23" Type="Text" Created="2020-01-09 20:35:02 +0900" Modified="2020-02-22 17:16:41 +0900">
+                            <Title>전체 학습과정</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>533,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="11E2714D-70B1-4ED2-8E9C-68CA5123FC7B" Type="Text" Created="2020-01-09 20:41:40 +0900" Modified="2020-01-29 20:27:25 +0900">
+                            <Title>Datasets</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>470,0</NotesTextSelection>
+                                <ShowSynopsisImage Fit="h">Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>326,236</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="F25E8FE3-01A8-4ADB-9DDC-D28576DC73AF" Type="Text" Created="2020-01-09 20:41:51 +0900" Modified="2020-01-29 19:26:56 +0900">
+                                    <Title>Pre-training datasets</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                        <NotesTextSelection>487,0</NotesTextSelection>
+                                        <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                        <IndexCardImageFileExtension>jpg</IndexCardImageFileExtension>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>0,0</TextSelection>
+                                    </TextSettings>
+                                    <Children>
+                                        <BinderItem UUID="1AEBABF5-F65C-436C-BA17-638A66B51D0C" Type="Text" Created="2020-01-29 17:33:43 +0900" Modified="2020-04-10 15:45:26 +0900">
+                                            <Title>Source</Title>
+                                            <MetaData>
+                                                <IncludeInCompile>Yes</IncludeInCompile>
+                                                <NotesTextSelection>370,28</NotesTextSelection>
+                                            </MetaData>
+                                            <TextSettings>
+                                                <TextSelection>741,0</TextSelection>
+                                            </TextSettings>
+                                        </BinderItem>
+                                        <BinderItem UUID="E3957CE4-B02A-4243-BD36-CB9CAFAFDC7A" Type="Text" Created="2020-01-29 17:36:19 +0900" Modified="2020-04-10 19:12:36 +0900">
+                                            <Title>Data preprocessing</Title>
+                                            <MetaData>
+                                                <IncludeInCompile>Yes</IncludeInCompile>
+                                                <NotesTextSelection>2379,0</NotesTextSelection>
+                                            </MetaData>
+                                            <TextSettings>
+                                                <TextSelection>2090,0</TextSelection>
+                                            </TextSettings>
+                                        </BinderItem>
+                                        <BinderItem UUID="3A58E4B4-D4C2-4AB4-9BF4-3C7D9376D4C8" Type="Text" Created="2020-01-29 17:36:47 +0900" Modified="2020-03-31 18:41:36 +0900">
+                                            <Title>Exploring datasets</Title>
+                                            <MetaData>
+                                                <IncludeInCompile>Yes</IncludeInCompile>
+                                                <NotesTextSelection>599,0</NotesTextSelection>
+                                            </MetaData>
+                                            <TextSettings>
+                                                <TextSelection>52,0</TextSelection>
+                                            </TextSettings>
+                                        </BinderItem>
+                                    </Children>
+                                </BinderItem>
+                                <BinderItem UUID="3AF7D8EA-0A64-417D-8A1D-432B6272B8AB" Type="Text" Created="2020-01-09 20:42:23 +0900" Modified="2020-04-02 10:28:44 +0900">
+                                    <Title>Fine-tuning and evaluation datasets</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                        <NotesTextSelection>236,293</NotesTextSelection>
+                                        <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                        <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>916,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                        <BinderItem UUID="14C67731-9074-4B0E-9FAE-499B79D20F44" Type="Text" Created="2020-01-09 20:45:47 +0900" Modified="2020-04-01 19:22:36 +0900">
+                            <Title>Encoding pMHC binding data into a sentence</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>739,0</NotesTextSelection>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>255,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="F95868B2-CAE7-4810-86D9-D5068D18847B" Type="Text" Created="2020-01-09 20:49:34 +0900" Modified="2020-02-27 14:37:17 +0900">
+                            <Title>Model Architecture</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>849,0</NotesTextSelection>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>302,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="0A607A33-4230-4BAE-B938-85C6E2483EBB" Type="Text" Created="2020-01-10 19:23:34 +0900" Modified="2020-07-20 20:49:50 +0900">
+                            <Title>Input Embedding</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>1491,0</NotesTextSelection>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>597,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="3C7848E8-8DE4-4FDC-88D7-B655EAC58A0A" Type="Text" Created="2020-01-09 20:44:07 +0900" Modified="2020-02-28 15:04:30 +0900">
+                            <Title>Pre-traing model</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <NotesTextSelection>0,2157</NotesTextSelection>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>188,0</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="CE130A60-033E-4A6B-8FE8-FD96F2C91CED" Type="Text" Created="2020-01-10 10:34:55 +0900" Modified="2020-04-13 19:12:40 +0900">
+                                    <Title>Masked LM for adding prior knowledge</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                        <NotesTextSelection>3054,0</NotesTextSelection>
+                                        <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                        <IndexCardImageFileExtension>jpeg</IndexCardImageFileExtension>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>754,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                                <BinderItem UUID="E2DAB33D-D631-4965-AF2C-57DD005088AF" Type="Text" Created="2020-01-17 17:19:21 +0900" Modified="2020-03-02 17:01:10 +0900">
+                                    <Title>Binding Affinity Prediction</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                        <NotesTextSelection>155,0</NotesTextSelection>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>241,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                        <BinderItem UUID="06054169-6534-4549-B459-CF3477B02344" Type="Text" Created="2020-01-09 20:44:58 +0900" Modified="2020-04-01 19:24:44 +0900">
+                            <Title>Fine-tuning and evaluating the model</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>968,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="3B20F4A6-3400-4B9C-8591-A326AF8F616B" Type="Text" Created="2020-01-09 19:34:15 +0900" Modified="2020-01-09 19:34:23 +0900">
+                    <Title>Result and Discussion</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="B9FA15E2-3288-4BA5-B3E1-A85D3789FFD7" Type="Text" Created="2020-03-02 16:58:06 +0900" Modified="2020-03-02 17:03:35 +0900">
+                            <Title>Pre-training the model</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>11,0</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="8B672601-17EB-4F96-9EF3-D558685F6AB5" Type="Text" Created="2020-03-02 16:59:15 +0900" Modified="2020-03-02 17:04:53 +0900">
+                                    <Title>Loss curve in Masked LM</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>1,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                                <BinderItem UUID="EAC34DAC-B9D9-4622-A2C8-A702C718BF69" Type="Text" Created="2020-03-02 17:00:39 +0900" Modified="2020-03-02 17:05:28 +0900">
+                                    <Title>Loss curve in Binding Affinity Prediction</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>1,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                        <BinderItem UUID="E310FC17-2D4D-44CE-A230-875564BC8D32" Type="Text" Created="2020-03-02 17:08:40 +0900" Modified="2020-03-02 17:21:05 +0900">
+                            <Title>Fine-tuning pre-trained model</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>24,13</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="D2170201-5D37-4BE8-98B7-D495653C3F95" Type="Text" Created="2020-03-10 13:58:50 +0900" Modified="2020-03-10 13:59:22 +0900">
+                                    <Title>Five-fold CV results</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                    </MetaData>
+                                    <TextSettings>
+                                        <TextSelection>0,0</TextSelection>
+                                    </TextSettings>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                        <BinderItem UUID="4429E692-D772-4F9B-BBCA-D39AC2CA5791" Type="Text" Created="2020-03-10 13:59:35 +0900" Modified="2020-03-10 14:04:08 +0900">
+                            <Title>Independent validation results</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>214,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="EDBBFFF7-D55D-4894-BACA-EBA8D8E76836" Type="Text" Created="2020-01-09 19:34:24 +0900" Modified="2020-01-09 19:34:39 +0900">
+                    <Title>Conclusions</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="4B3ACD70-F7D5-4C83-834B-227BAD730C73" Type="WebArchive" Created="2020-01-20 13:57:53 +0900" Modified="2020-01-20 13:57:53 +0900">
+                    <Title>BERT 논문정리</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>webarchive</FileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <OriginalURL>https://tmaxai.github.io/post/BERT/</OriginalURL>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="0F61C527-EEA6-4954-BC9D-5527562FE504" Type="Text" Created="2020-01-23 13:49:33 +0900" Modified="2020-01-23 20:13:30 +0900">
+                    <Title>Datasets</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <NotesTextSelection>1,0</NotesTextSelection>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="7574218D-766E-40BB-A6A5-45FA31BA9A98" Type="Text" Created="2020-01-23 20:09:20 +0900" Modified="2020-01-29 20:23:48 +0900">
+                            <Title>IEDB binding affinity</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>20,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="45F6EB93-C4E9-4497-B7C9-F29817494DFF" Type="Text" Created="2020-01-23 20:10:18 +0900" Modified="2020-01-29 20:23:48 +0900">
+                            <Title>BD2013</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>17,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="22D1321D-0D74-4189-83E8-87583C00EC81" Type="Text" Created="2020-01-23 20:10:47 +0900" Modified="2020-01-29 20:23:37 +0900">
+                            <Title>Abelin2017</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,642</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="4E75867E-0DCE-4D8A-817E-C298ABE9B6DE" Type="Text" Created="2020-01-23 20:11:22 +0900" Modified="2020-01-29 20:23:29 +0900">
+                            <Title>SysteMHC</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,1481</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="88903A84-890C-4361-B7C3-9EE59018EC3E" Type="Text" Created="2020-01-23 20:11:47 +0900" Modified="2020-01-29 20:23:22 +0900">
+                            <Title>BassaniSternberg2015</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>68,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="CD00FFE0-BB2D-4BD4-8B53-C899C3A0A22E" Type="Text" Created="2020-01-23 20:15:15 +0900" Modified="2020-01-23 20:23:29 +0900">
+                            <Title>Ott2017</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>106,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="D745CF75-4F0B-478C-A4A7-730300A5E22C" Type="Text" Created="2020-01-23 20:24:29 +0900" Modified="2020-01-23 20:29:26 +0900">
+                            <Title>BassaniSternberg2016</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,387</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="33AE285F-A332-4989-A3FB-A8810C82BEEA" Type="Text" Created="2020-01-23 20:44:29 +0900" Modified="2020-01-28 16:54:34 +0900">
+                            <Title>BulikSullivan2018</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>193,0</TextSelection>
+                            </TextSettings>
+                            <Children>
+                                <BinderItem UUID="DE8931AE-4127-4DC0-88EA-461B5027C118" Type="Other" Created="2018-12-05 22:50:58 +0900" Modified="2020-01-23 20:50:22 +0900">
+                                    <Title>full_ms_model(EDGE)</Title>
+                                    <MetaData>
+                                        <IncludeInCompile>Yes</IncludeInCompile>
+                                        <FileExtension>py</FileExtension>
+                                    </MetaData>
+                                </BinderItem>
+                            </Children>
+                        </BinderItem>
+                        <BinderItem UUID="C796E5F0-8538-4CBA-ADE6-26BB129254FB" Type="WebArchive" Created="2020-02-24 17:29:02 +0900" Modified="2020-02-24 17:29:18 +0900">
+                            <Title>NetMHCpan4.0</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <FileExtension>webarchive</FileExtension>
+                            </MetaData>
+                            <MediaSettings>
+                                <OriginalURL>http://www.cbs.dtu.dk/suppl/immunology/NetMHCpan-4.0/</OriginalURL>
+                            </MediaSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="9736EDCF-B577-4C0D-ABB3-66C1EAE01F7C" Type="WebArchive" Created="2020-01-31 18:47:18 +0900" Modified="2020-01-31 18:47:18 +0900">
+                    <Title>Hi-TIDe : Immunopeptidomics - DOF</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>webarchive</FileExtension>
+                        <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                        <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                    </MetaData>
+                    <MediaSettings>
+                        <OriginalURL>https://www.unil.ch/dof/en/home/menuinst/our-research-groups/bassani-hi-tide.html</OriginalURL>
+                    </MediaSettings>
+                </BinderItem>
+                <BinderItem UUID="394FE7AE-392D-48B6-A54C-AA1FBE421B44" Type="Folder" Created="2020-02-05 11:07:25 +0900" Modified="2020-02-05 11:07:37 +0900">
+                    <Title>전이학습</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="FACD0E37-678A-4AD1-9779-CBDE56EDB804" Type="WebArchive" Created="2020-02-05 11:09:42 +0900" Modified="2020-02-05 11:09:42 +0900">
+                            <Title>딥러닝 3단계: 머신러닝 프로젝트 구조화하기 &gt; 다중 작업 학습(Multitask Learning) : edwith</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <FileExtension>webarchive</FileExtension>
+                            </MetaData>
+                            <MediaSettings>
+                                <OriginalURL>http://edwith.org/deeplearningai3/lecture/34892/</OriginalURL>
+                            </MediaSettings>
+                        </BinderItem>
+                        <BinderItem UUID="276EF430-6B2B-4746-86BD-CDCB7B06F16F" Type="WebArchive" Created="2020-02-05 11:08:13 +0900" Modified="2020-02-05 11:08:13 +0900">
+                            <Title>An Overview of Multi-Task Learning in Deep Neural Networks∗ – TensorMSA</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <FileExtension>webarchive</FileExtension>
+                            </MetaData>
+                            <MediaSettings>
+                                <OriginalURL>https://hugrypiggykim.com/2018/08/28/an-overview-of-multi-task-learning-in-deep-neural-networks%E2%88%97/</OriginalURL>
+                            </MediaSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="FC045630-47F5-4117-BD12-2A682CEE275A" Type="Other" Created="2020-02-24 17:30:35 +0900" Modified="2020-02-24 17:30:36 +0900">
+                    <Title>NIHMS905283-supplement-1</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>xlsx</FileExtension>
+                    </MetaData>
+                </BinderItem>
+                <BinderItem UUID="4DF57EC0-4186-4549-9E41-A4CAAB17DE4A" Type="Other" Created="2020-01-15 14:52:21 +0900" Modified="2020-01-15 14:53:59 +0900">
+                    <Title>sydney_comb_smm</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>xls</FileExtension>
+                        <NotesTextSelection>197,0</NotesTextSelection>
+                    </MetaData>
+                </BinderItem>
+                <BinderItem UUID="B7EFF44C-3867-4AA1-B15B-9C6148485B03" Type="Other" Created="2020-01-15 17:53:22 +0900" Modified="2020-01-15 17:53:22 +0900">
+                    <Title>datasets</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                        <FileExtension>xlsx</FileExtension>
+                    </MetaData>
+                </BinderItem>
+                <BinderItem UUID="CCCBB00B-7B66-4774-84C7-428957054D8F" Type="Text" Created="2021-05-13 20:21:21 +0900" Modified="2021-05-13 20:21:23 +0900">
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="C4A65FAB-1FED-4DDE-9A5F-9ADB49BD7C94" Type="Text" Created="2021-05-03 19:51:10 +0900" Modified="2021-06-28 16:47:46 +0900">
+                    <Title>T-cell 면역대응이 유도되는 과정과 TCR의 핵심적인 역할</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="EB12DB0F-66F9-4C99-913B-F320D2CF17EF" Type="Text" Created="2021-07-01 16:33:47 +0900" Modified="2021-07-01 16:40:29 +0900">
+                    <Title>Enormous TCR diversity</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>428,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="D9258C60-3AAA-4A58-A50C-BFDAFB4890E1" Type="Text" Created="2021-07-01 16:34:14 +0900" Modified="2021-07-01 17:00:20 +0900">
+                    <Title>Prediction of epitope specificity</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>909,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="FFE94667-FA04-40A3-B535-5E2BAD1571F5" Type="Text" Created="2021-05-12 20:14:13 +0900" Modified="2021-05-12 20:14:23 +0900">
+                    <Title>Protein Emdedding</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="8E8C7847-F3D5-4A8C-8E41-44ADD00F4A80" Type="Text" Created="2021-05-12 20:14:34 +0900" Modified="2021-05-12 20:15:19 +0900">
+                    <Title>Supervised pretrained protein embedding, TABE</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="1AA48FE0-2A82-491D-84F8-53642D499202" Type="Text" Created="2021-05-12 20:15:20 +0900" Modified="2021-05-12 20:15:23 +0900">
+                    <Title>BERTMHC</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="ACBED460-6627-4A0C-98AF-C1919F11DCC3" Type="Text" Created="2021-07-08 20:06:19 +0900" Modified="2021-07-08 20:06:19 +0900">
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="7266B95C-B76F-4EE4-81A3-7B72F1341DC5" Type="Text" Created="2021-07-12 13:29:07 +0900" Modified="2021-07-12 13:44:31 +0900">
+                    <Title>Second fine-tuning round</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>1,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="FDC57CC5-64C9-4AB4-B489-B3377B58EEB1" Type="Text" Created="2021-07-12 13:40:22 +0900" Modified="2021-07-12 13:43:17 +0900">
+                    <Title>Final fine-tuning datasets</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,83</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="E565E835-E394-476B-BB3F-5795B5149310" Type="Text" Created="2021-07-10 16:12:44 +0900" Modified="2021-07-10 16:13:50 +0900">
+                    <Title>First fine-tuning</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="D6F68732-F39D-41FB-B6D0-5DE17F63F045" Type="Text" Created="2021-05-12 20:16:20 +0900" Modified="2021-07-09 18:28:17 +0900">
+                    <Title>Pretrained protein BERT model</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>597,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="96A675F7-14B4-4E8A-85DA-523C87E2420B" Type="Text" Created="2021-07-10 15:30:25 +0900" Modified="2021-07-10 15:30:40 +0900">
+                    <Title>Input representation</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="CBAEBBAD-D3D0-4A9D-95C9-5786D015408D" Type="Text" Created="2021-05-12 20:34:15 +0900" Modified="2021-05-12 20:34:24 +0900">
+                    <Title>Discussion</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="D954E4DC-2133-4243-B1DB-B92FC8CEE257" Type="Folder" Created="2021-07-30 14:45:22 +0900" Modified="2021-07-30 14:45:22 +0900">
+                    <Title>새로운 폴더</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                    <Children>
+                        <BinderItem UUID="8E4C53B5-8A5C-46B4-ABC4-2DC00176319F" Type="Text" Created="2021-07-30 14:45:26 +0900" Modified="2021-07-30 14:45:26 +0900">
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>0,0</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                    </Children>
+                </BinderItem>
+                <BinderItem UUID="DD412833-B736-4C1B-A0DB-380ED3237EFD" Type="Text" Created="2021-08-02 11:25:14 +0900" Modified="2021-08-02 11:25:43 +0900">
+                    <Title>sda</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="1CDDBE2E-EEDC-4CC8-9ECF-DE5FE35DAE02" Type="Text" Created="2021-08-03 17:22:37 +0900" Modified="2021-08-03 20:27:27 +0900">
+                    <Title>Pre-training the initial model</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>1903,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="A566450C-00EA-428C-870B-DF5554D8C33C" Type="Text" Created="2021-08-03 18:22:13 +0900" Modified="2021-08-03 20:18:13 +0900">
+                    <Title>Fine-tuning the pre-trained model</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>229,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="D370B833-377D-4E02-908A-748C54666386" Type="Text" Created="2021-08-03 18:25:03 +0900" Modified="2021-08-03 18:25:32 +0900">
+                    <Title>Performance evaluation of the fine-tuned models</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+                <BinderItem UUID="3BF3D60B-CD52-460B-A6EB-84A48DF20D50" Type="Folder" Created="2021-09-06 13:40:00 +0900" Modified="2021-09-06 13:40:00 +0900">
+                    <Title>새로운 폴더</Title>
+                    <MetaData>
+                        <IncludeInCompile>Yes</IncludeInCompile>
+                    </MetaData>
+                    <TextSettings>
+                        <TextSelection>0,0</TextSelection>
+                    </TextSettings>
+                </BinderItem>
+            </Children>
+        </BinderItem>
+    </Binder>
+    <Collections>
+        <Collection Type="Binder" ID="22DCA343-4C57-4997-B867-41E6DAEBEF8D" Color="1.0 1.0 1.0">
+            <Title>바인더</Title>
+        </Collection>
+        <Collection Type="RecentSearch" ID="AF3048DF-9457-45AE-98EB-58270E14ADEB" Color="0.922176 0.818589 0.999618">
+            <Title>검색 결과</Title>
+        </Collection>
+    </Collections>
+    <SectionTypes>
+        <TypeDefinitions>
+            <Type ID="8366AFCB-810D-466B-B807-48E1AC808DE7">헤딩</Type>
+            <Type ID="04ED9E34-EA5D-46E0-BEC1-2F166007E285">부제</Type>
+            <Type ID="A29DB41A-F924-4E3F-8B12-58E2F0BB6015">섹션</Type>
+        </TypeDefinitions>
+        <LevelTypes>
+            <Folders>
+                <Type>8366AFCB-810D-466B-B807-48E1AC808DE7</Type>
+            </Folders>
+            <Containers>
+                <Type>A29DB41A-F924-4E3F-8B12-58E2F0BB6015</Type>
+            </Containers>
+            <Files>
+                <Type>A29DB41A-F924-4E3F-8B12-58E2F0BB6015</Type>
+            </Files>
+        </LevelTypes>
+    </SectionTypes>
+    <LabelSettings>
+        <Title>라벨</Title>
+        <DefaultLabelID>-1</DefaultLabelID>
+        <Labels>
+            <Label ID="-1">라벨 없음</Label>
+            <Label ID="0" Color="0.993495 0.701207 0.732587">적색</Label>
+            <Label ID="1" Color="0.995418 0.790946 0.652385">오렌지</Label>
+            <Label ID="2" Color="0.997722 0.89273 0.652569">황색</Label>
+            <Label ID="3" Color="0.715855 0.948712 0.697692">녹색</Label>
+            <Label ID="4" Color="0.702319 0.888276 0.974252">블루</Label>
+            <Label ID="5" Color="0.957566 0.766747 0.999616">자주색</Label>
+        </Labels>
+    </LabelSettings>
+    <StatusSettings>
+        <Title>상태</Title>
+        <DefaultStatusID>-1</DefaultStatusID>
+        <StatusItems>
+            <Status ID="-1">상태 없음</Status>
+            <Status ID="0">할 일</Status>
+            <Status ID="1">진행 중</Status>
+            <Status ID="2">최초 드래프트</Status>
+            <Status ID="3">수정된 드래프트</Status>
+            <Status ID="4">최종 드래프트</Status>
+            <Status ID="5">완료</Status>
+        </StatusItems>
+    </StatusSettings>
+    <ProjectTargets Notify="No">
+        <DraftTarget Type="Words" CountIncludedOnly="Yes" CurrentCompileGroupOnly="No" Deadline="2020-01-09 19:23:27 +0900" IgnoreDeadline="Yes">0</DraftTarget>
+        <SessionTarget Type="Words" CountDraftOnly="Yes" AllowNegatives="Yes" NextResetDate="2021-09-23 00:00:00 +0900" ResetType="Time" ResetTime="00:00" DeterminedFromDeadline="No" WritingDays="" CanWriteOnDeadlineDate="No">0</SessionTarget>
+        <PreviousSession Words="15" Characters="91" Date="2021-09-22 16:43:58 +0900"/>
+    </ProjectTargets>
+    <RecentWritingHistory Date="2021-09-22 00:00:00 +0900">
+        <DraftWordCount>15</DraftWordCount>
+        <DraftCharCount>91</DraftCharCount>
+        <OtherWordCount>0</OtherWordCount>
+        <OtherCharCount>0</OtherCharCount>
+    </RecentWritingHistory>
+    <PrintSettings PaperSize="595.275561,841.889771" LeftMargin="72.0" RightMargin="72.0" TopMargin="90.0" BottomMargin="90.0" PaperType="iso-a4" Orientation="Portrait" HorizontalPagination="Clip" VerticalPagination="Auto" ScaleFactor="1.0" HorizontallyCentered="Yes" VerticallyCentered="Yes" Collates="Yes" PagesAcross="1" PagesDown="1"/>
+</ScrivenerProject>
