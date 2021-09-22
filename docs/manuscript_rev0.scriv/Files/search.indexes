@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SearchIndexes Version="1.0">
     <Documents>
-        <Document ID="7266B95C-B76F-4EE4-81A3-7B72F1341DC5">
-            <Title>Second fine-tuning round</Title>
+        <Document ID="41A49D52-FD76-4156-8552-441B274BADED">
+            <Title>Finetuning results</Title>
+            <Text>As shown in Figure 3, the final validation accuracies were 0.784 and 0.944 in two fine-tuning rounds, respectively. In first fine-tuning round, the validation accuracy was relatively low and the difference between training and validation scores was larger due to more general training dataset and more trainable encoding layers. On the other hand, in the second fine-tuning round, due to more specific training dataset and less trainable encoding layers, the validation accuracy was significantly high, and the difference between the training and validation scores was reduced. This fine-tuning strategy of the pre-trained model could allow us to generate a final model with high predictive performance for a specific task, while avoiding model overfitting.</Text>
         </Document>
         <Document ID="C9C0CDC2-1BC0-4397-B489-57919C672AC8">
             <Title>Deep_convolutional_neural_networks_for_pan-specifi</Title>
@@ -1467,6 +1468,10 @@ A modified mean squared error (MSE) loss function that supports data with inequa
 
 where n is the total number of measurements, and ybi and yi are the predicted and measured values for measurement i, respectively. Quantitative affinity data is associated with an inequality of (=). For qualitative affinity data, we assigned the following inequalities and measurement values: positive-high, &lt; 100 nM; positive, &lt; 500 nM, positive-intermediate, &lt; 1,000 nM; positive-low, &lt; 5,000 nM; negative, &gt; 5,000 nM. In the MHCflurry (train-MS) variant, MS-identified ligands are assigned the value ‘‘&lt; 500 nM.’’ 
 </Notes>
+        </Document>
+        <Document ID="C99E1258-9B51-4531-AD60-36E78CEE60B3">
+            <Title>Interpreting position-specific attention weights</Title>
+            <Text>COVID-19 epitope(YLQPRTFLL)의 TCR 인지에 있어서 epitope-TCR CDRbeta 서열에서의 아미노산 위치별 기여도를 알아내기 위하여, </Text>
         </Document>
         <Document ID="13E839A7-03D8-484E-A943-7441773DAE39">
             <Title>NetTCR: sequence-based prediction of TCR binding
@@ -2954,6 +2959,9 @@ NLP Language Representation transformer 고급
 © 2019 Tmaxdata. All right reserved.
  </Text>
         </Document>
+        <Document ID="E079FA85-3146-4B03-9369-03A4739801E4">
+            <Title>Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings</Title>
+        </Document>
         <Document ID="EDBBFFF7-D55D-4894-BACA-EBA8D8E76836">
             <Title>Conclusions</Title>
         </Document>
@@ -2984,6 +2992,9 @@ NLP Language Representation transformer 고급
         </Document>
         <Document ID="0886F03E-89E1-4BC8-929A-E22A5358E7CF">
             <Title>Materials and Methods</Title>
+        </Document>
+        <Document ID="E6A5AABD-E0A5-42BF-9A7D-E6A6A46936BB">
+            <Title>Interpreting position-specific attention weights</Title>
         </Document>
         <Document ID="4E7F7C0E-EFED-47E0-B573-F2239B3C4964">
             <Title>Model architecture</Title>
@@ -4371,9 +4382,8 @@ Decoy(negative) 데이터는 임의로 생성하였다(?). NetMHCpan, MHCflurry 
 Training for fine-tuning the pre-trained model was carried out in standard 5-fold cross-validation. The training dataset were split into 5 equal sized subset in 5-fold cross-validation. For each CV round, a single subset was retained as the validation data for testing current model, and the remaining subsets were used for training current model. In a single cross-validation round, training-validation was repeated for maximum of 200 epochs. The training and validation losses were measured for each epoch, and the training process was stopped early at the epoch in which the validation loss had not been decreased for 15 consecutive epochs [{Prechelt:2012ct}]. Training proceeds with the Adam optimizer[{Kingma:2014us}] using a minibatch size of 128.
 </Text>
         </Document>
-        <Document ID="41A49D52-FD76-4156-8552-441B274BADED">
-            <Title>Finetuning results</Title>
-            <Text>As shown in Figure 3, the final validation accuracies were 0.784 and 0.944 in two fine-tuning rounds, respectively. In first fine-tuning round, the validation accuracy was relatively low and the difference between training and validation scores was larger due to more general training dataset and more trainable encoding layers. On the other hand, in the second fine-tuning round, due to more specific training dataset and less trainable encoding layers, the validation accuracy was significantly high, and the difference between the training and validation scores was reduced. This fine-tuning strategy of the pre-trained model could allow us to generate a final model with high predictive performance for a specific task, while avoiding model overfitting.</Text>
+        <Document ID="7266B95C-B76F-4EE4-81A3-7B72F1341DC5">
+            <Title>Second fine-tuning round</Title>
         </Document>
     </Documents>
 </SearchIndexes>

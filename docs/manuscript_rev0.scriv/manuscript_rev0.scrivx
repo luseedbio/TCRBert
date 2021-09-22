@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ScrivenerProject Identifier="D19DF462-781E-4071-AB8D-7F3D1DB8B6F2" Version="2.0" Creator="SCRMAC-3.2.2-14633" Device="Youngmahnui-iMac" Author="Han Youngmahn" Modified="2021-09-19 17:43:44 +0900" ModID="DB34FE1A-C703-4B97-B597-884B3F3E7F7D">
+<ScrivenerProject Identifier="D19DF462-781E-4071-AB8D-7F3D1DB8B6F2" Version="2.0" Creator="SCRMAC-3.2.2-14633" Device="Youngmahnui-iMac" Author="Han Youngmahn" Modified="2021-09-22 19:24:08 +0900" ModID="0FA32266-6623-40D9-9764-1A481EE693CE">
     <Binder>
-        <BinderItem UUID="E079FA85-3146-4B03-9369-03A4739801E4" Type="DraftFolder" Created="2020-01-09 19:23:28 +0900" Modified="2021-05-03 14:54:11 +0900">
-            <Title>TCR-epitope binding predictions using pretrained protein embeddings</Title>
+        <BinderItem UUID="E079FA85-3146-4B03-9369-03A4739801E4" Type="DraftFolder" Created="2020-01-09 19:23:28 +0900" Modified="2021-09-22 18:20:56 +0900">
+            <Title>Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings</Title>
             <MetaData>
                 <IncludeInCompile>Yes</IncludeInCompile>
             </MetaData>
@@ -27,7 +27,7 @@
                                 <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
                             </MetaData>
                             <TextSettings>
-                                <TextSelection>269,0</TextSelection>
+                                <TextSelection>188,0</TextSelection>
                             </TextSettings>
                         </BinderItem>
                         <BinderItem UUID="5DB05CFD-5D6F-4897-A706-E74DD4D542F0" Type="Text" Created="2021-05-12 18:21:05 +0900" Modified="2021-06-30 15:40:39 +0900">
@@ -211,7 +211,16 @@
                                 <IncludeInCompile>Yes</IncludeInCompile>
                             </MetaData>
                             <TextSettings>
-                                <TextSelection>205,0</TextSelection>
+                                <TextSelection>85,28</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="C99E1258-9B51-4531-AD60-36E78CEE60B3" Type="Text" Created="2021-09-22 18:34:43 +0900" Modified="2021-09-22 19:24:08 +0900">
+                            <Title>Interpreting position-specific attention weights</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>90,1</TextSelection>
                             </TextSettings>
                         </BinderItem>
                     </Children>
@@ -238,6 +247,17 @@
                         </BinderItem>
                         <BinderItem UUID="8C6D75BE-6C76-4828-9540-B0D93B916DDB" Type="Text" Created="2021-05-12 20:33:51 +0900" Modified="2021-07-30 16:06:02 +0900">
                             <Title>Evaluation results</Title>
+                            <MetaData>
+                                <IncludeInCompile>Yes</IncludeInCompile>
+                                <ShowSynopsisImage>Yes</ShowSynopsisImage>
+                                <IndexCardImageFileExtension>png</IndexCardImageFileExtension>
+                            </MetaData>
+                            <TextSettings>
+                                <TextSelection>209,11</TextSelection>
+                            </TextSettings>
+                        </BinderItem>
+                        <BinderItem UUID="E6A5AABD-E0A5-42BF-9A7D-E6A6A46936BB" Type="Text" Created="2021-09-22 18:21:08 +0900" Modified="2021-09-22 18:21:21 +0900">
+                            <Title>Attention analysis</Title>
                             <MetaData>
                                 <IncludeInCompile>Yes</IncludeInCompile>
                                 <ShowSynopsisImage>Yes</ShowSynopsisImage>
@@ -1198,14 +1218,14 @@ neural networks</Title>
     </StatusSettings>
     <ProjectTargets Notify="No">
         <DraftTarget Type="Words" CountIncludedOnly="Yes" CurrentCompileGroupOnly="No" Deadline="2020-01-09 19:23:27 +0900" IgnoreDeadline="Yes">0</DraftTarget>
-        <SessionTarget Type="Words" CountDraftOnly="Yes" AllowNegatives="Yes" NextResetDate="2021-09-20 00:00:00 +0900" ResetType="Time" ResetTime="00:00" DeterminedFromDeadline="No" WritingDays="" CanWriteOnDeadlineDate="No">0</SessionTarget>
-        <PreviousSession Words="0" Characters="0" Date="2021-09-19 17:43:42 +0900"/>
+        <SessionTarget Type="Words" CountDraftOnly="Yes" AllowNegatives="Yes" NextResetDate="2021-09-23 00:00:00 +0900" ResetType="Time" ResetTime="00:00" DeterminedFromDeadline="No" WritingDays="" CanWriteOnDeadlineDate="No">0</SessionTarget>
+        <PreviousSession Words="15" Characters="91" Date="2021-09-22 16:43:58 +0900"/>
     </ProjectTargets>
-    <RecentWritingHistory Date="2021-09-19 00:00:00 +0900">
-        <DraftWordCount>0</DraftWordCount>
-        <DraftCharCount>0</DraftCharCount>
+    <RecentWritingHistory Date="2021-09-22 00:00:00 +0900">
+        <DraftWordCount>15</DraftWordCount>
+        <DraftCharCount>91</DraftCharCount>
         <OtherWordCount>0</OtherWordCount>
         <OtherCharCount>0</OtherCharCount>
     </RecentWritingHistory>
-    <PrintSettings PaperSize="595.275557,841.889771" LeftMargin="72.0" RightMargin="72.0" TopMargin="90.0" BottomMargin="90.0" PaperType="iso-a4" Orientation="Portrait" HorizontalPagination="Clip" VerticalPagination="Auto" ScaleFactor="1.0" HorizontallyCentered="Yes" VerticallyCentered="Yes" Collates="Yes" PagesAcross="1" PagesDown="1"/>
+    <PrintSettings PaperSize="595.275561,841.889771" LeftMargin="72.0" RightMargin="72.0" TopMargin="90.0" BottomMargin="90.0" PaperType="iso-a4" Orientation="Portrait" HorizontalPagination="Clip" VerticalPagination="Auto" ScaleFactor="1.0" HorizontallyCentered="Yes" VerticallyCentered="Yes" Collates="Yes" PagesAcross="1" PagesDown="1"/>
 </ScrivenerProject>

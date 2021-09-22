@@ -486,6 +486,11 @@
 			<key>Row</key>
 			<integer>-1</integer>
 		</dict>
+		<key>C99E1258-9B51-4531-AD60-36E78CEE60B3</key>
+		<dict>
+			<key>Row</key>
+			<integer>-1</integer>
+		</dict>
 		<key>C9C0CDC2-1BC0-4397-B489-57919C672AC8</key>
 		<dict>
 			<key>Row</key>
@@ -602,6 +607,11 @@
 			<integer>-1</integer>
 		</dict>
 		<key>E66782ED-6E85-453B-A16B-53D3BB790792</key>
+		<dict>
+			<key>Row</key>
+			<integer>-1</integer>
+		</dict>
+		<key>E6A5AABD-E0A5-42BF-9A7D-E6A6A46936BB</key>
 		<dict>
 			<key>Row</key>
 			<integer>-1</integer>
@@ -746,7 +756,7 @@
 		<real>1.25</real>
 	</dict>
 	<key>mainWindowFrame</key>
-	<string>0 107 1353 1308 0 0 2560 1415 </string>
+	<string>1205 105 1353 1308 0 0 2560 1415 </string>
 	<key>supportingDocumentEditor.PDFAutoScales</key>
 	<false/>
 	<key>supportingDocumentEditor.PDFScale</key>
