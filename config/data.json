@@ -4,6 +4,7 @@
     "n_cdr3b_cutoff": 1,
     "generate_negatives": false,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -16,6 +17,7 @@
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -27,6 +29,7 @@
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -39,6 +42,7 @@
     "generate_negatives": true,
     "query": "(epitope_species == 'SARS-CoV2') and (epitope != 'YLQPRTFLL') and (epitope.str.len() <= 15)",
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -51,6 +55,7 @@
     "query": "(epitope != 'RLQSLQTYV')",
     "generate_negatives": true,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -63,6 +68,7 @@
     "n_cdr3b_cutoff": null,
     "generate_negatives": false,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -74,6 +80,7 @@
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -85,6 +92,7 @@
     "n_cdr3b_cutoff": 10,
     "generate_negatives": false,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -96,6 +104,7 @@
     "n_cdr3b_cutoff": 10,
     "generate_negatives": false,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },
@@ -107,6 +116,7 @@
     "n_cdr3b_cutoff": 10,
     "generate_negatives": false,
     "encoder": {
+      "type": "nosep",
       "vocab": "iupac",
       "max_len": 40
     },

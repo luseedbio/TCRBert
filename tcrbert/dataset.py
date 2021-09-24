@@ -496,17 +496,51 @@ class TCREpitopeSentenceEncoder(object):
         self.max_len = max_len
 
     def encode(self, epitope, cdr3b):
-        pass
+        token_ids = [self.start_token_id] + self._encode(epitope, cdr3b) + [self.stop_token_id]
 
-    def decode(self, sentence_ids):
-        pass
+        n_tokens = len(token_ids)
+        if n_tokens > self.max_len:
+            raise ValueError('Too long tokens: %s > %s' % (n_tokens, self.max_len))
+
+        n_pads = self.max_len - n_tokens
+        if n_pads > 0:
+            token_ids = token_ids + [self.pad_token_id] * n_pads
+
+        return token_ids
+
+    def _encode(self, epitope, cdr3b):
+        raise NotImplementedError()
+
+    # def decode(self, sentence_ids):
+    #     raise NotImplementedError()
 
     def is_valid_sentence(self, sentence_ids):
-        pass
+        if len(sentence_ids) != self.max_len:
+            return False
+
+        start_loc = 0
+        pad_loc = sentence_ids.index(self.pad_token_id)
+        stop_loc = pad_loc - 1
+
+        if (sentence_ids[start_loc] != self.start_token_id) or (sentence_ids[stop_loc] != self.stop_token_id):
+            return False
+
+        pad_ids = sentence_ids[pad_loc:]
+        if any([tid != self.pad_token_id for tid in pad_ids]):
+            return False
+
+        return self._is_valid_sentence(sentence_ids[start_loc+1:stop_loc])
+
+    def _is_valid_sentence(self, sentence_ids):
+        raise NotImplementedError()
 
     @property
     def pad_token(self):
         return '<pad>'
+
+    @property
+    def pad_token_id(self):
+        return self.tokenizer.vocab[self.pad_token]
 
     @property
     def start_token(self):
@@ -548,31 +582,28 @@ class TCREpitopeSentenceEncoder(object):
 
 class DefaultTCREpitopeSentenceEncoder(TCREpitopeSentenceEncoder):
     def __init__(self, tokenizer=None, max_len=None):
-        super(DefaultTCREpitopeSentenceEncoder, self).__init__(tokenizer=tokenizer, max_len=max_len)
+        super().__init__(tokenizer=tokenizer, max_len=max_len)
 
-    def encode(self, epitope, cdr3b):
-        tokens = [self.start_token] + list(epitope) + [self.sep_token] + list(cdr3b) + [self.stop_token]
-        n_tokens = len(tokens)
-        if n_tokens > self.max_len:
-            raise ValueError('Too long tokens: %s > %s, %s' % (n_tokens, self.max_len, tokens))
-
-        n_pads = self.max_len - n_tokens
-        if n_pads > 0:
-            tokens = tokens + [self.pad_token] * n_pads
-
+    def _encode(self, epitope, cdr3b):
+        tokens = list(epitope) + [self.sep_token] + list(cdr3b)
         return self.to_token_ids(tokens)
 
-    def decode(self, sentence_ids):
+    def _is_valid_sentence(self, sentence_ids):
         sep_loc = sentence_ids.index(self.sep_token_id)
-        epitope_ids = sentence_ids[1:sep_loc]
-        stop_loc = sentence_ids[sep_loc+1:].index(self.stop_token_id)
-        cdr3b_ids = sentence_ids[sep_loc+1:sep_loc+stop_loc+1]
+        epitope_ids = sentence_ids[:sep_loc]
+        cdr3b_ids = sentence_ids[sep_loc+1:]
+        return is_valid_aaseq(''.join(self.to_tokens(epitope_ids + cdr3b_ids)))
 
-        return ''.join(self.to_tokens(epitope_ids)), ''.join(self.to_tokens(cdr3b_ids))
+class NoSepTCREpitopeSentenceEncoder(TCREpitopeSentenceEncoder):
+    def __init__(self, tokenizer=None, max_len=None):
+        super().__init__(tokenizer=tokenizer, max_len=max_len)
 
-    def is_valid_sentence(self, sentence_ids):
-        epitope, cdr3b = self.decode(sentence_ids)
-        return is_valid_aaseq(epitope + cdr3b)
+    def _encode(self, epitope, cdr3b):
+        return self.to_token_ids(list(epitope + cdr3b))
+
+    def _is_valid_sentence(self, sentence_ids):
+        seq = ''.join(self.to_tokens(sentence_ids))
+        return is_valid_aaseq(seq)
 
 class TCREpitopeSentenceDataset(Dataset):
 
@@ -629,8 +660,7 @@ class TCREpitopeSentenceDataset(Dataset):
         config = cls._get_data_conf(data_key)
         config['name'] = data_key
         encoder_config = config['encoder']
-        encoder = DefaultTCREpitopeSentenceEncoder(tokenizer=TAPETokenizer(vocab=encoder_config['vocab']),
-                                                   max_len=encoder_config['max_len'])
+        encoder = cls._create_encoder(encoder_config)
         output_csv = config['output_csv'].format(**config)
         df = None
         if not os.path.exists(output_csv) or config['overwrite']:
@@ -643,6 +673,21 @@ class TCREpitopeSentenceDataset(Dataset):
 
         config['output_csv'] = output_csv
         return cls(config=config, df_enc=df, encoder=encoder)
+
+    @classmethod
+    def _create_encoder(cls, config):
+        encoder_type = config.get('type', 'default')
+        encoder = None
+        if encoder_type == 'default':
+            encoder = DefaultTCREpitopeSentenceEncoder(tokenizer=TAPETokenizer(vocab=config['vocab']),
+                                                       max_len=config['max_len'])
+        elif encoder_type == 'nosep':
+            encoder = NoSepTCREpitopeSentenceEncoder(tokenizer=TAPETokenizer(vocab=config['vocab']),
+                                                     max_len=config['max_len'])
+        else:
+            raise ValueError('Unknown encoder type: %s' % encoder_type)
+
+        return encoder
 
     # @classmethod
     # def load_df(cls, fn):
@@ -840,20 +885,20 @@ class TCREpitopeSentenceEncoderTest(BaseTest):
     def setUp(self):
         self.max_len = 40
         self.tokenizer = TAPETokenizer(vocab='iupac')
-        self.encoders = [DefaultTCREpitopeSentenceEncoder(tokenizer=self.tokenizer, max_len=self.max_len)]
+        self.encoders = [DefaultTCREpitopeSentenceEncoder(self.tokenizer, self.max_len),
+                         NoSepTCREpitopeSentenceEncoder(self.tokenizer, self.max_len)]
 
-    def test_encode_decode(self):
+    def test_encoders(self):
         for encoder in self.encoders:
-            self._test_encode_decode(encoder)
+            self._test_encode(encoder)
             self._test_long_sentence(encoder)
 
-    def _test_encode_decode(self, encoder):
+    def _test_encode(self, encoder):
         epitope = 'YLQPRTFLL'
         cdr3b = 'CAKGLANTGELFF'
         sentence_ids = encoder.encode(epitope, cdr3b)
         self.assertTrue(encoder.is_valid_sentence(sentence_ids))
-        self.assertTrue(len(sentence_ids), encoder.max_len)
-        self.assertEqual((epitope, cdr3b), encoder.decode(sentence_ids))
+        # self.assertTrue(len(sentence_ids), encoder.max_len)
 
     def _test_long_sentence(self, encoder):
         epitope = 'YLQPRTFLL'
@@ -892,10 +937,11 @@ class TCREpitopeSentenceDatasetTest(BaseTest):
             sentence_ids = sentence_ids.tolist()
             label = label.item()
 
-            self.assertEqual(ds.max_len, len(sentence_ids))
-            epitope, cdr3b = ds.encoder.decode(sentence_ids)
-            self.assertEqual(source_row[CN.epitope], epitope)
-            self.assertEqual(source_row[CN.cdr3b], cdr3b)
+            self.assertTrue(ds.encoder.is_valid_sentence(sentence_ids))
+            # self.assertEqual(ds.max_len, len(sentence_ids))
+            # epitope, cdr3b = ds.encoder.decode(sentence_ids)
+            # self.assertEqual(source_row[CN.epitope], epitope)
+            # self.assertEqual(source_row[CN.cdr3b], cdr3b)
             self.assertEqual(source_row[CN.label], label)
 
     def test_train_test_split(self):
