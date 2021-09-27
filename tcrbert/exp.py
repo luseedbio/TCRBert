@@ -208,6 +208,22 @@ class Experiment(object):
         logger.info('Loaded exp_conf: %s' % exp_conf)
         return exp_conf
 
+    @property
+    def n_train_rounds(self):
+        train_conf = self.exp_conf['train']
+        return len(train_conf['rounds'])
+
+    def get_train_result(self, round):
+        train_conf = self.exp_conf['train']
+        train_rounds = train_conf['rounds']
+        fn_result = train_rounds[round]['result']
+        result = FileUtils.json_load(fn_result)
+        return result
+
+    def get_final_train_result(self):
+        n_rounds = self.n_train_rounds
+        return self.get_train_result(n_rounds - 1)
+
     def _create_optimizer(self, model, param):
         name = param.pop('name')
         if name == 'sgd':
@@ -343,6 +359,14 @@ class ExperimentTest(BaseTest):
                             ds.max_len, ds.max_len)
                 self.assertEqual(model_conf['num_hidden_layers'], len(attentions))
                 self.assertTrue(all(expected == np.asarray(attn).shape for attn in attentions))
+
+    def test_get_train_result(self):
+        logger.setLevel(logging.INFO)
+        result = self.exp.get_train_result(0)
+        self.assertIsNotNone(result)
+        self.assertTrue(result['best_epoch'] >= 0)
+        self.assertTrue(result['best_score'] > 0)
+        self.assertTrue(os.path.exists(result['best_chk']))
 
 if __name__ == '__main__':
     unittest.main()
