@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ScrivenerProject Identifier="D19DF462-781E-4071-AB8D-7F3D1DB8B6F2" Version="2.0" Creator="SCRMAC-3.2.2-14633" Device="Youngmahnui-iMac" Author="Han Youngmahn" Modified="2021-09-22 19:24:08 +0900" ModID="0FA32266-6623-40D9-9764-1A481EE693CE">
+<ScrivenerProject Identifier="D19DF462-781E-4071-AB8D-7F3D1DB8B6F2" Version="2.0" Creator="SCRMAC-3.2.2-14633" Device="Youngmahnui-iMac" Author="Han Youngmahn" Modified="2021-09-27 15:16:30 +0900" ModID="A8764608-55D1-4114-9476-CC17E7636D1E">
     <Binder>
         <BinderItem UUID="E079FA85-3146-4B03-9369-03A4739801E4" Type="DraftFolder" Created="2020-01-09 19:23:28 +0900" Modified="2021-09-22 18:20:56 +0900">
             <Title>Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings</Title>
@@ -191,7 +191,7 @@
                                         <IncludeInCompile>Yes</IncludeInCompile>
                                     </MetaData>
                                     <TextSettings>
-                                        <TextSelection>275,253</TextSelection>
+                                        <TextSelection>298,3</TextSelection>
                                     </TextSettings>
                                 </BinderItem>
                             </Children>
@@ -1218,12 +1218,12 @@ neural networks</Title>
     </StatusSettings>
     <ProjectTargets Notify="No">
         <DraftTarget Type="Words" CountIncludedOnly="Yes" CurrentCompileGroupOnly="No" Deadline="2020-01-09 19:23:27 +0900" IgnoreDeadline="Yes">0</DraftTarget>
-        <SessionTarget Type="Words" CountDraftOnly="Yes" AllowNegatives="Yes" NextResetDate="2021-09-23 00:00:00 +0900" ResetType="Time" ResetTime="00:00" DeterminedFromDeadline="No" WritingDays="" CanWriteOnDeadlineDate="No">0</SessionTarget>
-        <PreviousSession Words="15" Characters="91" Date="2021-09-22 16:43:58 +0900"/>
+        <SessionTarget Type="Words" CountDraftOnly="Yes" AllowNegatives="Yes" NextResetDate="2021-09-28 00:00:00 +0900" ResetType="Time" ResetTime="00:00" DeterminedFromDeadline="No" WritingDays="" CanWriteOnDeadlineDate="No">0</SessionTarget>
+        <PreviousSession Words="0" Characters="0" Date="2021-09-27 15:16:26 +0900"/>
     </ProjectTargets>
-    <RecentWritingHistory Date="2021-09-22 00:00:00 +0900">
-        <DraftWordCount>15</DraftWordCount>
-        <DraftCharCount>91</DraftCharCount>
+    <RecentWritingHistory Date="2021-09-27 00:00:00 +0900">
+        <DraftWordCount>0</DraftWordCount>
+        <DraftCharCount>0</DraftCharCount>
         <OtherWordCount>0</OtherWordCount>
         <OtherCharCount>0</OtherCharCount>
     </RecentWritingHistory>
