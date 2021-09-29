@@ -66,8 +66,11 @@ class Experiment(object):
                 logger.info('All bert encoders are trained')
                 model.melt_bert()
 
-            # EvalScoreRecoder
             metrics = round_conf['metrics']
+            n_epochs = round_conf['n_epochs']
+            optimizer = self._create_optimizer(model, round_conf['optimizer'])
+
+            # EvalScoreRecoder
             score_recoder = EvalScoreRecoder(metrics=metrics)
             model.add_train_listener(score_recoder)
 
@@ -93,8 +96,6 @@ class Experiment(object):
                                  period=period)
             model.add_train_listener(mc)
 
-            n_epochs = round_conf['n_epochs']
-            optimizer = self._create_optimizer(model, round_conf['optimizer'])
 
             model.fit(train_data_loader=train_data_loader,
                       test_data_loader=test_data_loader,
