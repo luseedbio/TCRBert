@@ -22,6 +22,12 @@
           "lr": 0.0001
         },
         "train_bert_encoders": [-8, null],
+          "lr_scheduler": {
+            "type": "reduce_on_plateau",
+            "monitor": "accuracy",
+            "patience": 2
+          },
+
         "early_stopper": {
           "monitor": "accuracy",
           "patience": 2

@@ -15,7 +15,7 @@ from torch.utils.data import DataLoader
 from tcrbert.commons import BaseTest, FileUtils, NumUtils
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.jsonutils import NumpyEncoder
-from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint
+from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoint, ReduceLROnPlateauWrapper
 from tcrbert.predlistener import PredResultRecoder
 from tcrbert.model import BertTCREpitopeModel
 from tcrbert.optimizer import NoamOptimizer
@@ -66,15 +66,22 @@ class Experiment(object):
                 logger.info('All bert encoders are trained')
                 model.melt_bert()
 
+            # EvalScoreRecoder
             metrics = round_conf['metrics']
             score_recoder = EvalScoreRecoder(metrics=metrics)
             model.add_train_listener(score_recoder)
 
+            # LR scheduler
+            lr_scheduler = self._create_lr_scheduler(optimizer, score_recoder, round_conf['lr_scheduler'])
+            model.add_train_listener(lr_scheduler)
+
+            # EarlyStopper
             monitor = round_conf['early_stopper']['monitor']
             patience = round_conf['early_stopper']['patience']
             stopper = EarlyStopper(score_recoder, monitor=monitor, patience=patience)
             model.add_train_listener(stopper)
 
+            # ModelCheckpoint
             fn_chk = round_conf['model_checkpoint']['chk']
             monitor = round_conf['model_checkpoint']['monitor']
             save_best_only = round_conf['model_checkpoint']['save_best_only']
@@ -225,7 +232,7 @@ class Experiment(object):
         return self.get_train_result(n_rounds - 1)
 
     def _create_optimizer(self, model, param):
-        name = param.pop('name')
+        name = param.pop('type')
         if name == 'sgd':
             return SGD(model.parameters(), **param)
         elif name == 'adam':
@@ -235,6 +242,13 @@ class Experiment(object):
             return NoamOptimizer(model.parameters(), d_model=d_model, **param)
         else:
             raise ValueError('Unknown optimizer name: %s' % name)
+
+    def _create_lr_scheduler(self, optimizer, score_recoder, param):
+        tname = param.pop('type')
+        if tname == 'reduce_on_plateau':
+            return ReduceLROnPlateauWrapper(optimizer, score_recoder, **param)
+        else:
+            raise ValueError('Unknown lr_scheduler: %s' % tname)
 
     def _create_model(self):
         logger.info('Create TAPE model using config: %s' % self.exp_conf['model_config'])

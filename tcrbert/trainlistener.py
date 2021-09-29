@@ -1,5 +1,6 @@
 import torch
 from torch.optim import Adam
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 import logging.config
 import collections
@@ -118,6 +119,7 @@ class EarlyStopper(BertTCREpitopeModel.TrainListener):
     def on_epoch_end(self, model, params):
         epoch = params['epoch']
         n_epochs = params['n_epochs']
+
         # Check the last score in validation phase
         current = self.score_recoder.val_score_map[self.monitor][-1]
 
@@ -240,6 +242,17 @@ class ModelCheckpoint(BertTCREpitopeModel.TrainListener):
     #         infomap = eval(f.read())
     #     return infomap
 
+class ReduceLROnPlateauWrapper(BertTCREpitopeModel.TrainListener):
+    def __init__(self, optimizer=None, score_recoder=None, monitor=None, factor=0.1, patience=None):
+        self.score_recoder = score_recoder
+        self.monitor = monitor
+        mode = 'min' if 'loss' in self.monitor else 'max'
+        self.lr_scheduler = ReduceLROnPlateau(optimizer, mode=mode, factor=factor, patience=patience)
+
+    def on_epoch_end(self, model, params):
+        current = self.score_recoder.val_score_map[self.monitor][-1]
+        logger.info('[ReduceLROnPlateauWrapper]: Step with current %s score: %s' % (self.monitor, current))
+        self.lr_scheduler.step(current)
 
 ###
 # Tests
@@ -305,7 +318,6 @@ class TrainListenerTest(BaseModelTest):
             self.assertTrue(all(map(lambda x: TypeUtils.is_numeric_value(x), score_recoder.train_score_map[key])))
             self.assertTrue(all(map(lambda x: TypeUtils.is_numeric_value(x), score_recoder.val_score_map[key])))
 
-
     def test_model_checkpoint(self):
         score_recoder = EvalScoreRecoder(metrics=self.metrics)
         self.model.add_train_listener(score_recoder)
@@ -341,4 +353,28 @@ class TrainListenerTest(BaseModelTest):
         self.assertEqual(expected_fnchk, mc.best_chk)
         self.assertTrue(os.path.exists(mc.best_chk))
 
+    def test_reduce_on_plateau(self):
+        score_recoder = EvalScoreRecoder(metrics=self.metrics)
+        self.model.add_train_listener(score_recoder)
 
+        lr = 1e-3
+        optimizer = Adam(self.model.parameters(), lr=lr)
+        monitor = 'accuracy'
+        lr_scheduler = ReduceLROnPlateauWrapper(optimizer=optimizer, score_recoder=score_recoder, monitor=monitor, patience=1)
+        self.model.add_train_listener(lr_scheduler)
+
+        train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
+        test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
+
+        n_epochs = 3
+
+        all([pg['lr'] == lr for pg in optimizer.param_groups])
+
+        self.model.fit(train_data_loader=train_data_loader,
+                       test_data_loader=test_data_loader,
+                       optimizer=optimizer,
+                       metrics=self.metrics,
+                       n_epochs=n_epochs,
+                       use_cuda=use_cuda)
+
+        all([pg['lr'] < lr for pg in optimizer.param_groups])
