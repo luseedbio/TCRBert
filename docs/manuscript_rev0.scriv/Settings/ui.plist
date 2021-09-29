@@ -756,7 +756,7 @@
 		<real>1.25</real>
 	</dict>
 	<key>mainWindowFrame</key>
-	<string>1205 105 1353 1308 0 0 2560 1415 </string>
+	<string>20 107 1353 1308 0 0 2560 1415 </string>
 	<key>supportingDocumentEditor.PDFAutoScales</key>
 	<false/>
 	<key>supportingDocumentEditor.PDFScale</key>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SearchIndexes Version="1.0">
     <Documents>
-        <Document ID="41A49D52-FD76-4156-8552-441B274BADED">
-            <Title>Finetuning results</Title>
-            <Text>As shown in Figure 3, the final validation accuracies were 0.784 and 0.944 in two fine-tuning rounds, respectively. In first fine-tuning round, the validation accuracy was relatively low and the difference between training and validation scores was larger due to more general training dataset and more trainable encoding layers. On the other hand, in the second fine-tuning round, due to more specific training dataset and less trainable encoding layers, the validation accuracy was significantly high, and the difference between the training and validation scores was reduced. This fine-tuning strategy of the pre-trained model could allow us to generate a final model with high predictive performance for a specific task, while avoiding model overfitting.</Text>
+        <Document ID="7266B95C-B76F-4EE4-81A3-7B72F1341DC5">
+            <Title>Second fine-tuning round</Title>
+            <Text>
+</Text>
         </Document>
         <Document ID="C9C0CDC2-1BC0-4397-B489-57919C672AC8">
             <Title>Deep_convolutional_neural_networks_for_pan-specifi</Title>
@@ -466,10 +467,6 @@ You can also read our paper "BERT: Pre-training of Deep Bidirectional Transforme
         <Document ID="ECFB98D7-197A-469D-AB04-62DA64EA8F41">
             <Title>Datasets</Title>
         </Document>
-        <Document ID="A0F37104-9E1B-4A2A-8BF0-323AAEF06C7A">
-            <Title>기존방법의 한계점</Title>
-            <Text>현재까지 큐레이트된 데이터베이스에서 보고된 TCR-epitope interactions 데이터의 수는 매우 제한적이다: VDJdb[{Bagaev:2019hf}] and McPAS-TCR[{Tickotsky:2017bo}] databases contain ~20k and ~55k epitope-specific TCR sequences  as of October 2019, respectively. 특히, 최근의 딥러닝 기반의 방법들은 predictive power를 높이기 위해서 비교적 많은 수의 학습데이터를 필요로 하기 때문에 신뢰성 높은 예측 모델을 구축하는데 한계가 있다.</Text>
-        </Document>
         <Document ID="C796E5F0-8538-4CBA-ADE6-26BB129254FB">
             <Title>NetMHCpan4.0</Title>
             <Text>
@@ -532,6 +529,10 @@ This file was last modified Sunday 27th 2019f October 2019 13:08:50 GMT
 
 
 </Text>
+        </Document>
+        <Document ID="A0F37104-9E1B-4A2A-8BF0-323AAEF06C7A">
+            <Title>기존방법의 한계점</Title>
+            <Text>현재까지 큐레이트된 데이터베이스에서 보고된 TCR-epitope interactions 데이터의 수는 매우 제한적이다: VDJdb[{Bagaev:2019hf}] and McPAS-TCR[{Tickotsky:2017bo}] databases contain ~20k and ~55k epitope-specific TCR sequences  as of October 2019, respectively. 특히, 최근의 딥러닝 기반의 방법들은 predictive power를 높이기 위해서 비교적 많은 수의 학습데이터를 필요로 하기 때문에 신뢰성 높은 예측 모델을 구축하는데 한계가 있다.</Text>
         </Document>
         <Document ID="3B20F4A6-3400-4B9C-8591-A326AF8F616B">
             <Title>Result and Discussion</Title>
@@ -2418,13 +2419,6 @@ ShopIsle powered by WordPress
             <Title>Finetuning the model</Title>
             <Text>We performed fine-tuning the pre-trained model in two rounds, switching the freezing layers. In the first fine-tuning round, the model was trained while freezing the embedding layer and top two encoding layers, where the weights of the layers were not updated. The freezing layers was extended to top six encoding layers in the second fine-tuning round. In each fine-tuning round, training-validation was repeated for maximum of 200 epochs. The training and validation losses were measured for each epoch, and the training process was stopped early at the epoch in which the validation loss had not been decreased for 15 consecutive epochs[{Prechelt:2012 }].  We used the Adam optimizer[{Kingma D:2014}] with learning rate 0.0001 and 128 batch size in all epochs. PyTorch deep learning library(https://pytorch.org) were used for implementing our model.</Text>
         </Document>
-        <Document ID="E2DAB33D-D631-4965-AF2C-57DD005088AF">
-            <Title>Binding Affinity Prediction</Title>
-            <Text>In training the binding affinity prediction model with mean square error loss, the pMHC-I binding affinity values were transformed using 1-log(a)/log(50,000), where a is the measured binding affinity to scale between 0 and 1[Nielsen, 2003]. </Text>
-            <Notes>1.	Nielsen, M. et al. Reliable prediction of T-cell epitopes using neural networks with novel sequence representations. Protein Sci. 12, 1007–1017 (2003).
-
-the output values used in the training and testing of the neural networks on a scale between 0 and 1. The transformation is defined as 1-log(a)/log(50,000), where a is the measured binding affinity. In this transformation high binding peptides, with a mea- sured affinity stronger than 50 nM, are assigned an output value above 0.638, intermediate binding peptides, with an affinity stron- ger than 500 nM, an output value above 0.426, and peptides, with an affinity weaker than 500 nM, an output value below 0.426. Peptides that have an affinity weaker than 50,000 nM are assigned an output value of 0.0.</Notes>
-        </Document>
         <Document ID="AE43CA13-604F-4FE8-BCA5-A78AD76A79D6">
             <Title>말하고자 하는 연구내용</Title>
             <Text>본 논문에서는  MHC-bound 후보 (neo-)peptide의 예측을 위한 BERT를 도용한 전이학습(semi-supervised?) 방법을 제안한다. 
@@ -2445,6 +2439,13 @@ Neopeptide language model에게 입력 펩타이드-MHC 서열들을 선행 학�
 
 
 펩타이드-MHC 결합에서의 서열을 20개 아미노산이 단어로 표현되는 문장으로 인코딩하여 </Notes>
+        </Document>
+        <Document ID="E2DAB33D-D631-4965-AF2C-57DD005088AF">
+            <Title>Binding Affinity Prediction</Title>
+            <Text>In training the binding affinity prediction model with mean square error loss, the pMHC-I binding affinity values were transformed using 1-log(a)/log(50,000), where a is the measured binding affinity to scale between 0 and 1[Nielsen, 2003]. </Text>
+            <Notes>1.	Nielsen, M. et al. Reliable prediction of T-cell epitopes using neural networks with novel sequence representations. Protein Sci. 12, 1007–1017 (2003).
+
+the output values used in the training and testing of the neural networks on a scale between 0 and 1. The transformation is defined as 1-log(a)/log(50,000), where a is the measured binding affinity. In this transformation high binding peptides, with a mea- sured affinity stronger than 50 nM, are assigned an output value above 0.638, intermediate binding peptides, with an affinity stron- ger than 500 nM, an output value above 0.426, and peptides, with an affinity weaker than 500 nM, an output value below 0.426. Peptides that have an affinity weaker than 50,000 nM are assigned an output value of 0.0.</Notes>
         </Document>
         <Document ID="5DB05CFD-5D6F-4897-A706-E74DD4D542F0">
             <Title>T-cell 면역유도에서 TCR의 역할 및 중요성</Title>
@@ -2499,17 +2500,6 @@ Table1에서 전체적인 성능은 our model이 좋았다. 특히, HLA-A*31:01 
  - Data: http://www.iedb.org/doc/mhc_ligand_full.zip 
 </Text>
         </Document>
-        <Document ID="D9258C60-3AAA-4A58-A50C-BFDAFB4890E1">
-            <Title>Prediction of epitope specificity</Title>
-            <Text>이러한 TCR diversity에도 불구하고 최근의 연구들은 특정한 공통 target epitope은 TCRs는 종종 공통적인 서열 특징들을 공유한다는 것을 제시하였고 결과적으로 epitope specificity을 예측할 수 있는 모델을 구축할 수 있는 가능성을 제시하였다.
- 신뢰성있는 예측모델을 구축하기 위해서는 특정 에피토프와 결합하는 TCR 서열데이터 확보가 
-Nevertheless, profiling of epitope-specific TCRs remains exhaustive as they  require sample-consuming experiments with distinct pMHC-multimers for each epitope of  interest. Therefore, there is a great need for models that examine which epitopes a TCR can  recognize or to which TCRs an epitope can bind to [15]
-TCRs binding the same MHC-peptide  may share similarities. Thus, while for public clones the task of  deciphering the relation between a peptide and the TCR binding  is based on tallying the candidate public TCR, for most highly  cross-reactive TCRs, a probabilistic approach is required.
- Given the fact that  different individuals have different TCR repertoires, in theory,  epitope immunogenicity should differ between individuals.  However, there are several examples of immunodominant  epitopes that are targeted by the adaptive immunity of different  individuals (11–15). Indeed, immunodominant epitopes have  already been clinically utilized, for example, in the interferon-  gamma release assay, a clinically available peripheral blood  assay to determine if the subject has previously been sensitized  by Mycobacterium tuberculosis (Mtb) (16, 17). To explain  this phenomenon, it is plausible to hypothesize that those  immunodominant epitopes share some intrinsic patterns which  render them more prone to be recognized by the T cell immunity  of multiple individuals. Because TCR-epitope interaction is  governed by the physicochemical principles like other protein-  protein interactions, more immunodominant epitopes are  expected to have a higher chance of stronger interaction  when scanned by a large set of TCRs. In this scenario,  we could utilize TCR sequences as “baits” to probe highly  immunodominant epitopes.
- Despite this potential diversity, TCRs from T cells that recognize the same pMHC epitope often share conserved sequence features, suggesting that it may be possible to predictively model epitope specificity. 
-Growing evidence   suggests that T cell receptors specific to a common target share common properties (17, 18).   Increasing amounts of data are now available linking TCR sequences to their cognate targets.   The predictive power of the model proposed here is in line with these observations. 
-</Text>
-        </Document>
         <Document ID="EDDF805F-DEB3-40A9-95D6-C6269D9CCF73">
             <Title>Conclusion</Title>
         </Document>
@@ -2540,6 +2530,17 @@ In May 2017, ∼29.5 million MS/MS spectra were searched using a uniform and wel
   -Data:  https://systemhcatlas.org/Builds_for_download/180409_master_final.tgz
 </Text>
         </Document>
+        <Document ID="D9258C60-3AAA-4A58-A50C-BFDAFB4890E1">
+            <Title>Prediction of epitope specificity</Title>
+            <Text>이러한 TCR diversity에도 불구하고 최근의 연구들은 특정한 공통 target epitope은 TCRs는 종종 공통적인 서열 특징들을 공유한다는 것을 제시하였고 결과적으로 epitope specificity을 예측할 수 있는 모델을 구축할 수 있는 가능성을 제시하였다.
+ 신뢰성있는 예측모델을 구축하기 위해서는 특정 에피토프와 결합하는 TCR 서열데이터 확보가 
+Nevertheless, profiling of epitope-specific TCRs remains exhaustive as they  require sample-consuming experiments with distinct pMHC-multimers for each epitope of  interest. Therefore, there is a great need for models that examine which epitopes a TCR can  recognize or to which TCRs an epitope can bind to [15]
+TCRs binding the same MHC-peptide  may share similarities. Thus, while for public clones the task of  deciphering the relation between a peptide and the TCR binding  is based on tallying the candidate public TCR, for most highly  cross-reactive TCRs, a probabilistic approach is required.
+ Given the fact that  different individuals have different TCR repertoires, in theory,  epitope immunogenicity should differ between individuals.  However, there are several examples of immunodominant  epitopes that are targeted by the adaptive immunity of different  individuals (11–15). Indeed, immunodominant epitopes have  already been clinically utilized, for example, in the interferon-  gamma release assay, a clinically available peripheral blood  assay to determine if the subject has previously been sensitized  by Mycobacterium tuberculosis (Mtb) (16, 17). To explain  this phenomenon, it is plausible to hypothesize that those  immunodominant epitopes share some intrinsic patterns which  render them more prone to be recognized by the T cell immunity  of multiple individuals. Because TCR-epitope interaction is  governed by the physicochemical principles like other protein-  protein interactions, more immunodominant epitopes are  expected to have a higher chance of stronger interaction  when scanned by a large set of TCRs. In this scenario,  we could utilize TCR sequences as “baits” to probe highly  immunodominant epitopes.
+ Despite this potential diversity, TCRs from T cells that recognize the same pMHC epitope often share conserved sequence features, suggesting that it may be possible to predictively model epitope specificity. 
+Growing evidence   suggests that T cell receptors specific to a common target share common properties (17, 18).   Increasing amounts of data are now available linking TCR sequences to their cognate targets.   The predictive power of the model proposed here is in line with these observations. 
+</Text>
+        </Document>
         <Document ID="3A58E4B4-D4C2-4AB4-9BF4-3C7D9376D4C8">
             <Title>Exploring datasets</Title>
             <Text>Final dataset은 구성되었다. 총 0000, 000 alleles, % binders</Text>
@@ -2551,11 +2552,23 @@ In May 2017, ∼29.5 million MS/MS spectra were searched using a uniform and wel
         <Document ID="CCC18EA0-028E-48BD-B119-E36928977BD7">
             <Title>Positive datasets</Title>
             <Text>For the first fine-tuning round, the positive dataset containing epitope-specific TCR CDR3beta sequences was compiled from three data sources on May 2021: Dash et al[{Dash:2017go}] containing epitope-specific paired TCRα and TCRβ chains for  three epitopes from humans and for seven epitopes from mice, two manually curated databases that contains pathology-associated TCR sequences, such as VDJdb[{Bagaev:2019hf}](https://vdjdb.cdr3.net) and McPAS-TCR[{Tickotsky:2017bo}](http://friedmanlab.weizmann.ac.il/McPAS-TCR/).  Every entry in VDJdb has been given a confidence score between 0  and 3 (0: critical information missing, 1: medium confidence, 2: high confidence, 3: very high  confidence). We selected all VDJdb entries with a confidence score at least 1.  For the second fine-tuning round, COVID-19 epitope-specific CDR3beta sequence data was collected from Immune Epitope Database[{Vita:2015}](https://iedb.org) on June 2021.
-After selecting all epitopes that have at least 20 CDR3beta sequences and removing duplicates with the same {epitope, CDR3beta} from each fine-tuning dataset, two datasets contained 12,619 positive data points covering 80 epitopes and 49,273 positive data points covering 145 epitopes, respectively.
+After selecting all epitopes that have at least 20 CDR3beta sequences and removing duplicates with the same {epitope, CDR3beta} from each fine-tuning dataset, two datasets contained 12,569 positive data points covering 78 epitopes and 49,282 positive data points covering 145 epitopes, respectively.
 
 
 
 
+</Text>
+        </Document>
+        <Document ID="CD00FFE0-BB2D-4BD4-8B53-C899C3A0A22E">
+            <Title>Ott2017</Title>
+            <Text>An immunogenic personal neoantigen vaccine for patients with melanoma 
+ 
+- {Ott:2017ft}
+#
+
+#
+
+- Data: N/A
 </Text>
         </Document>
         <Document ID="EB12DB0F-66F9-4C99-913B-F320D2CF17EF">
@@ -2576,18 +2589,6 @@ T cells are defined by a heterodimeric surface receptor, the T cell receptor (TC
 
 </Text>
         </Document>
-        <Document ID="CD00FFE0-BB2D-4BD4-8B53-C899C3A0A22E">
-            <Title>Ott2017</Title>
-            <Text>An immunogenic personal neoantigen vaccine for patients with melanoma 
- 
-- {Ott:2017ft}
-#
-
-#
-
-- Data: N/A
-</Text>
-        </Document>
         <Document ID="D954E4DC-2133-4243-B1DB-B92FC8CEE257">
             <Title>새로운 폴더</Title>
         </Document>
@@ -2598,14 +2599,6 @@ T cells are defined by a heterodimeric surface receptor, the T cell receptor (TC
         </Document>
         <Document ID="D370B833-377D-4E02-908A-748C54666386">
             <Title>Performance evaluation of the fine-tuned models</Title>
-        </Document>
-        <Document ID="8E8C7847-F3D5-4A8C-8E41-44ADD00F4A80">
-            <Title>Supervised pretrained protein embedding, TABE</Title>
-        </Document>
-        <Document ID="B9FA15E2-3288-4BA5-B3E1-A85D3789FFD7">
-            <Title>Pre-training the model</Title>
-            <Text>Loss curves in Masked LM and Binding Affinity Prediction training epochs
-</Text>
         </Document>
         <Document ID="E3957CE4-B02A-4243-BD36-CB9CAFAFDC7A">
             <Title>Data preprocessing</Title>
@@ -2647,8 +2640,17 @@ Our previously published data for 16 HLA-A and -B alleles were removed from the 
 After selecting peptides of length 8-15 and dropping alleles with fewer than 25 measurements, the curated IEDB dataset consisted of 0000 measurements for 0000 HLA-I alleles.  
 </Notes>
         </Document>
+        <Document ID="B9FA15E2-3288-4BA5-B3E1-A85D3789FFD7">
+            <Title>Pre-training the model</Title>
+            <Text>Loss curves in Masked LM and Binding Affinity Prediction training epochs
+</Text>
+        </Document>
+        <Document ID="8E8C7847-F3D5-4A8C-8E41-44ADD00F4A80">
+            <Title>Supervised pretrained protein embedding, TABE</Title>
+        </Document>
         <Document ID="C4A65FAB-1FED-4DDE-9A5F-9ADB49BD7C94">
             <Title>T-cell 면역대응이 유도되는 과정과 TCR의 핵심적인 역할</Title>
+            <Text>                                                                                                                                                                                                                                                                                                 </Text>
         </Document>
         <Document ID="45F6EB93-C4E9-4497-B7C9-F29817494DFF">
             <Title>BD2013</Title>
@@ -2959,22 +2961,19 @@ NLP Language Representation transformer 고급
 © 2019 Tmaxdata. All right reserved.
  </Text>
         </Document>
-        <Document ID="E079FA85-3146-4B03-9369-03A4739801E4">
-            <Title>Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings</Title>
+        <Document ID="BAE7C2A7-FA27-47DA-B731-55CD47958273">
+            <Title>Evaluation datasets</Title>
+            <Text>For evaluating our model, the model was tested using two independent datasets: the dataset contained COVID-19 S-protein269-277(YLQPRTFLL)  with the 352 epitope-specific TCRβs from the recent study of Shomuradova et al. [34](from hereon referred to as Shomuradova dataset) and the dataset contained 415 COVID-19 S-protein269-277-specific TCRs from the ImmuneRACE study launched by Adaptive Biotechnologies and Microsoft (https://immunerace.adaptivebiotech.com, June 10, 2020 dataset, from hereon referred to as ImmuneCODE dataset)(Table S2).</Text>
         </Document>
         <Document ID="EDBBFFF7-D55D-4894-BACA-EBA8D8E76836">
             <Title>Conclusions</Title>
-        </Document>
-        <Document ID="DD412833-B736-4C1B-A0DB-380ED3237EFD">
-            <Title>sda</Title>
         </Document>
         <Document ID="E310FC17-2D4D-44CE-A230-875564BC8D32">
             <Title>Fine-tuning pre-trained model</Title>
             <Text>Training for fine-tuning the pre-trained model was carried out in standard 5-fold cross-validation. </Text>
         </Document>
-        <Document ID="BAE7C2A7-FA27-47DA-B731-55CD47958273">
-            <Title>Evaluation datasets</Title>
-            <Text>For evaluating our model, the model was tested using two independent datasets: the dataset contained COVID-19 S-protein269-277(YLQPRTFLL)  with the 352 epitope-specific TCRβs from the recent study of Shomuradova et al. [34](from hereon referred to as Shomuradova dataset) and the dataset contained 415 COVID-19 S-protein269-277-specific TCRs from the ImmuneRACE study launched by Adaptive Biotechnologies and Microsoft (https://immunerace.adaptivebiotech.com, June 10, 2020 dataset, from hereon referred to as ImmuneCODE dataset)(Table S2).</Text>
+        <Document ID="DD412833-B736-4C1B-A0DB-380ED3237EFD">
+            <Title>sda</Title>
         </Document>
         <Document ID="A566450C-00EA-428C-870B-DF5554D8C33C">
             <Title>Fine-tuning the pre-trained model</Title>
@@ -2990,11 +2989,11 @@ NLP Language Representation transformer 고급
         <Document ID="E565E835-E394-476B-BB3F-5795B5149310">
             <Title>First fine-tuning</Title>
         </Document>
+        <Document ID="E6A5AABD-E0A5-42BF-9A7D-E6A6A46936BB">
+            <Title>Attention analysis</Title>
+        </Document>
         <Document ID="0886F03E-89E1-4BC8-929A-E22A5358E7CF">
             <Title>Materials and Methods</Title>
-        </Document>
-        <Document ID="E6A5AABD-E0A5-42BF-9A7D-E6A6A46936BB">
-            <Title>Interpreting position-specific attention weights</Title>
         </Document>
         <Document ID="4E7F7C0E-EFED-47E0-B573-F2239B3C4964">
             <Title>Model architecture</Title>
@@ -3051,14 +3050,14 @@ In order to train a deep bidirectional representation, we simply mask some perce
 Although this allows us to obtain a bidirectional pre-trained model, a downside is that we are creating a mismatch between pre-training and fine-tuning, since the [MASK] token does not ap- pear during fine-tuning. To mitigate this, we do not always replace “masked” words with the actual [MASK] token. The training data generator chooses 15% of the token positions at random for prediction. If the i-th token is chosen, we replace the i-th token with (1) the [MASK] token 80% of the time (2) a random token 10% of the time (3) the unchanged i-th token 10% of the time. Then, Ti will be used to predict the original token with cross entropy loss. We compare variations of this procedure in Appendix C.2. 
 </Notes>
         </Document>
-        <Document ID="394FE7AE-392D-48B6-A54C-AA1FBE421B44">
-            <Title>전이학습</Title>
-        </Document>
         <Document ID="DA18EADC-F821-4854-98F1-6CBAA9EA69E9">
             <Title>Overall training process</Title>
             <Text>Figure 1 shows the schematic representation of overall training process of our model. The initial model was cloned from the pretrained TAPE model based on BERT, adding a classification layer at the end. First, the initial TAPE model was pre-trained using epitope-TCR CDR3b sequence data while freezing the embedding layer and top two encoding layers. 
 Next, two fine-tuned models were generated from the pre-training model using IEDB epitope-specific TCR CDR3b sequence data and COVID-19 epitope-specific TCR CDR3b sequence data, respectively, while freezing the embedding layer and top six encoding layers.
 </Text>
+        </Document>
+        <Document ID="394FE7AE-392D-48B6-A54C-AA1FBE421B44">
+            <Title>전이학습</Title>
         </Document>
         <Document ID="FC045630-47F5-4117-BD12-2A682CEE275A">
             <Title>NIHMS905283-supplement-1</Title>
@@ -4356,14 +4355,14 @@ where TP, FP, and FN are the numbers of true positives, false positives, and fal
 
 </Text>
         </Document>
-        <Document ID="3BF3D60B-CD52-460B-A6EB-84A48DF20D50">
-            <Title>새로운 폴더</Title>
-        </Document>
         <Document ID="A13CDD87-D5DE-4999-8044-B83E1DE4111F">
             <Title>Bioinformatics에서의 사례, TAPE, BERTMHC</Title>
             <Text>최근에 자기주도 학습 접근방식은 단백질 서열 패턴에 대한 학습모델에도 적용되고 있다[{Rao:2019uu}, {Heinzinger:2019eu}, {Nambiar:2020}]. Tasks Assessing Protein Embeddings(TAPE) 모델은 Pfam 데이터베이스[{Rocklin et al., 2017}]에서의 3,100만개의 unlabeled 단백질 서열을 사용하여 AA contact prediction loss와 remote homology detection loss와 같은 protein-specific loss로 self-supervised하게 사전 학습된 모델이다. TAPE 사전학습 모델은 secondary structure prediction, AA contact prediction, remote homology detection, fluorescence landscape prediction, protein stability landscape prediction 등의 supervised downstream task들에서 유용하다는 것을 증명하였다.
 BERTMHC[{Jun Cheng et al., 2020}]는 펩타이드-MHC class II binding과 presentation 예측을 위해 사전학습된 TAPE 모델을 미세튜닝하여 생성된 BERT-based 모델이다. It has demonstrated that models employing self-supervised pretraining from large corpora of protein sequences can archive better performance in both peptide-MHC-II binding and presentation prediction tasks in case where training data is limited.
 </Text>
+        </Document>
+        <Document ID="3BF3D60B-CD52-460B-A6EB-84A48DF20D50">
+            <Title>새로운 폴더</Title>
         </Document>
         <Document ID="22D1321D-0D74-4189-83E8-87583C00EC81">
             <Title>Abelin2017</Title>
@@ -4382,8 +4381,9 @@ Decoy(negative) 데이터는 임의로 생성하였다(?). NetMHCpan, MHCflurry 
 Training for fine-tuning the pre-trained model was carried out in standard 5-fold cross-validation. The training dataset were split into 5 equal sized subset in 5-fold cross-validation. For each CV round, a single subset was retained as the validation data for testing current model, and the remaining subsets were used for training current model. In a single cross-validation round, training-validation was repeated for maximum of 200 epochs. The training and validation losses were measured for each epoch, and the training process was stopped early at the epoch in which the validation loss had not been decreased for 15 consecutive epochs [{Prechelt:2012ct}]. Training proceeds with the Adam optimizer[{Kingma:2014us}] using a minibatch size of 128.
 </Text>
         </Document>
-        <Document ID="7266B95C-B76F-4EE4-81A3-7B72F1341DC5">
-            <Title>Second fine-tuning round</Title>
+        <Document ID="41A49D52-FD76-4156-8552-441B274BADED">
+            <Title>Finetuning results</Title>
+            <Text>As shown in Figure 3, the final validation accuracies were 0.784 and 0.944 in two fine-tuning rounds, respectively. In first fine-tuning round, the validation accuracy was relatively low and the difference between training and validation scores was larger due to more general training dataset and more trainable encoding layers. On the other hand, in the second fine-tuning round, due to more specific training dataset and less trainable encoding layers, the validation accuracy was significantly high, and the difference between the training and validation scores was reduced. This fine-tuning strategy of the pre-trained model could allow us to generate a final model with high predictive performance for a specific task, while avoiding model overfitting.</Text>
         </Document>
     </Documents>
 </SearchIndexes>
