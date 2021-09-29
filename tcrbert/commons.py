@@ -19,7 +19,7 @@ import torch.nn.functional as F
 logger = logging.getLogger('tcrbert')
 
 # Common constants
-EPS = 0.000001
+EPS = 1e-8
 
 def basename(path, ext=True):
     bn = os.path.basename(path)

@@ -244,6 +244,7 @@ class ModelCheckpoint(BertTCREpitopeModel.TrainListener):
 
 class ReduceLROnPlateauWrapper(BertTCREpitopeModel.TrainListener):
     def __init__(self, optimizer=None, score_recoder=None, monitor=None, factor=0.1, patience=None):
+        self.optimizer = optimizer
         self.score_recoder = score_recoder
         self.monitor = monitor
         mode = 'min' if 'loss' in self.monitor else 'max'
@@ -251,8 +252,18 @@ class ReduceLROnPlateauWrapper(BertTCREpitopeModel.TrainListener):
 
     def on_epoch_end(self, model, params):
         current = self.score_recoder.val_score_map[self.monitor][-1]
-        logger.info('[ReduceLROnPlateauWrapper]: Step with current %s score: %s' % (self.monitor, current))
+
+        old_lrs = self._get_lrs()
+
+        logger.info('[ReduceLROnPlateauWrapper]: Stepping with current %s score: %s' % (self.monitor, current))
         self.lr_scheduler.step(current)
+
+        cur_lrs = self._get_lrs()
+        logger.info('[ReduceLROnPlateauWrapper]: After stepping, old_lrs: %s, cur_lrs: %s' % (old_lrs, cur_lrs))
+
+    def _get_lrs(self):
+        return [pg['lr'] for pg in self.optimizer.param_groups]
+
 
 ###
 # Tests
@@ -366,9 +377,9 @@ class TrainListenerTest(BaseModelTest):
         train_data_loader = DataLoader(self.train_ds, batch_size=self.batch_size)
         test_data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
 
-        n_epochs = 3
+        n_epochs = 5
 
-        all([pg['lr'] == lr for pg in optimizer.param_groups])
+        all([np.equal(pg['lr'], lr) for pg in optimizer.param_groups])
 
         self.model.fit(train_data_loader=train_data_loader,
                        test_data_loader=test_data_loader,
@@ -377,4 +388,4 @@ class TrainListenerTest(BaseModelTest):
                        n_epochs=n_epochs,
                        use_cuda=use_cuda)
 
-        all([pg['lr'] < lr for pg in optimizer.param_groups])
+        all([np.less(pg['lr'], lr) for pg in optimizer.param_groups])
