@@ -72,7 +72,7 @@
           "n_workers": 12,
           "metrics": ["accuracy"],
           "optimizer": {
-            "name": "adam",
+            "type": "adam",
             "lr": 1e-3
           },
           "lr_scheduler": {
@@ -101,7 +101,7 @@
           "n_workers": 12,
           "metrics": ["accuracy"],
           "optimizer": {
-            "name": "adam",
+            "type": "adam",
             "lr": 1e-3
           },
           "lr_scheduler": {
