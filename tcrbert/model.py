@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, r2_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from collections import OrderedDict
-
+from tqdm import tqdm
 from tape.models.modeling_bert import ProteinBertAbstractModel, ProteinBertModel
 from tape.models.modeling_utils import SimpleMLP
 
@@ -26,6 +26,20 @@ from tcrbert.torchutils import collection_to, module_weights_equal, to_numpy, st
 # Logger
 
 logger = logging.getLogger('tcrbert')
+
+# class TqdmLoggingHandler(logging.Handler):
+#     def __init__(self, level=logging.NOTSET):
+#         super().__init__(level)
+#
+#     def emit(self, record):
+#         try:
+#             msg = self.format(record)
+#             tqdm.write(msg)
+#             self.flush()
+#         except Exception:
+#             self.handleError(record)
+#
+# logger.addHandler(TqdmLoggingHandler())
 
 PRED_SCORER_MAP = {
     'accuracy': lambda y_true, y_pred, y_prob: accuracy_score(y_true=y_true, y_pred=y_pred),
@@ -186,30 +200,30 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         self._fire_train_begin(params)
         for epoch in range(n_epochs):
             if not self.stop_training:
-                begin = datetime.now()
-                logger.info('--------------------')
-                logger.info('Begin epoch %s/%s at %s' % (epoch, n_epochs, begin))
+                # begin = datetime.now()
+                # logger.info('--------------------')
+                # logger.info('Begin epoch %s/%s at %s' % (epoch, n_epochs, begin))
                 params['epoch'] = epoch
 
                 self._fire_epoch_begin(params)
 
                 # Train phase
-                logger.info('Begin training phase at epoch %s/%s' % (epoch, n_epochs))
+                # logger.info('Begin training phase at epoch %s/%s' % (epoch, n_epochs))
                 params['phase'] = 'train'
                 self._train_epoch(train_data_loader, params)
-                logger.info('End training phase at epoch %s/%s' % (epoch, n_epochs))
+                # logger.info('End training phase at epoch %s/%s' % (epoch, n_epochs))
 
                 # Validation phase
-                logger.info('Begin validation phase at epoch %s/%s' % (epoch, n_epochs))
+                # logger.info('Begin validation phase at epoch %s/%s' % (epoch, n_epochs))
                 params['phase'] = 'val'
                 self._train_epoch(test_data_loader, params)
-                logger.info('End validation phase at epoch %s/%s' % (epoch, n_epochs))
+                # logger.info('End validation phase at epoch %s/%s' % (epoch, n_epochs))
 
                 self._fire_epoch_end(params)
-                end = datetime.now()
 
-                logger.info('End epoch %s/%s at %s, elapsed: %s' % (epoch, n_epochs, end, (end - begin)))
-                logger.info('--------------------')
+                # end = datetime.now()
+                # logger.info('End epoch %s/%s at %s, elapsed: %s' % (epoch, n_epochs, end, (end - begin)))
+                # logger.info('--------------------')
 
         self._fire_train_end(params)
         logger.info('End training...')
@@ -333,61 +347,65 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         model = params['model']
         optimizer = params['optimizer']
         evaluator = params['evaluator']
-        metrics = params['metrics']
+        # metrics = params['metrics']
         phase = params['phase']
-        epoch = params['epoch']
-        n_epochs = params['n_epochs']
+        # epoch = params['epoch']
+        # n_epochs = params['n_epochs']
         device = params['device']
-        batch_size = params['train.batch_size'] if phase == 'train' else params['test.batch_size']
+        # batch_size = params['train.batch_size'] if phase == 'train' else params['test.batch_size']
 
         n_data = params['train_ds.n_data'] if phase == 'train' else params['test_ds.n_data']
-        n_batches = round(n_data / batch_size)
+        # n_batches = round(n_data / batch_size)
 
         if phase == 'train':
             model.train()
         else:
             model.eval()
 
-        for bi, (inputs, targets) in enumerate(data_loader):
-            inputs  = collection_to(inputs, device) if TypeUtils.is_collection(inputs) else inputs.to(device)
-            targets = collection_to(targets, device) if TypeUtils.is_collection(targets) else targets.to(device)
+        with tqdm(data_loader, unit='batch') as pbar:
+            params['pbar'] = pbar
 
-            params['batch_index'] = bi
-            params['inputs'] = inputs
-            params['targets'] = targets
+            for bi, (inputs, targets) in enumerate(pbar):
+                inputs  = collection_to(inputs, device) if TypeUtils.is_collection(inputs) else inputs.to(device)
+                targets = collection_to(targets, device) if TypeUtils.is_collection(targets) else targets.to(device)
 
-            self._fire_train_batch_begin(params)
+                params['batch_index'] = bi
+                params['inputs'] = inputs
+                params['targets'] = targets
 
-            logger.info('Begin %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
-            logger.debug('inputs: %s' % inputs)
-            logger.debug('targets: %s' % targets)
+                self._fire_train_batch_begin(params)
 
-            outputs = None
-            loss = None
-            if phase == 'train':
-                outputs = model(inputs)
-                loss = evaluator.loss(outputs, targets)
-                optimizer.zero_grad()
+                pbar.set_description('Epoch %s/%s in %s phase' % (params['epoch'], params['n_epochs'], params['phase']))
+                # logger.info('Begin %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
+                logger.debug('inputs: %s' % inputs)
+                logger.debug('targets: %s' % targets)
 
-                # Backpropagation
-                loss.backward()  # Compute gradients
-                optimizer.step()  # Update weights
-            else:
-                with torch.no_grad():
+                outputs = None
+                loss = None
+                if phase == 'train':
                     outputs = model(inputs)
                     loss = evaluator.loss(outputs, targets)
+                    optimizer.zero_grad()
 
-            params['outputs'] = outputs
-            params['loss'] = loss.item()
-            params['score_map'] = evaluator.score_map(outputs, targets)
+                    # Backpropagation
+                    loss.backward()  # Compute gradients
+                    optimizer.step()  # Update weights
+                else:
+                    with torch.no_grad():
+                        outputs = model(inputs)
+                        loss = evaluator.loss(outputs, targets)
 
-            logger.debug('outputs: %s' % str(outputs))
-            logger.debug('loss: %s' % params['loss'])
-            logger.debug('score_map: %s' % params['score_map'])
+                params['outputs'] = outputs
+                params['loss'] = loss.item()
+                params['score_map'] = evaluator.score_map(outputs, targets)
 
-            self._fire_train_batch_end(params)
+                logger.debug('outputs: %s' % str(outputs))
+                logger.debug('loss: %s' % params['loss'])
+                logger.debug('score_map: %s' % params['score_map'])
 
-            logger.info('End %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
+                self._fire_train_batch_end(params)
+
+                # logger.info('End %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
 
     # For freeze and melt bert
     def freeze_bert(self):
