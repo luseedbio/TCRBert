@@ -59,7 +59,7 @@ class Experiment(object):
             test_data_loader = DataLoader(test_ds, batch_size=batch_size, num_workers=n_workers)
 
             # Freeze bert encoders if necessary
-            if round_conf.get('train_bert_encoders'):
+            if 'train_bert_encoders' in round_conf:
                 logger.info('The bert encoders to be trained: %s' % round_conf['train_bert_encoders'])
                 model.train_bert_encoders(round_conf['train_bert_encoders'])
             else:
@@ -75,8 +75,9 @@ class Experiment(object):
             model.add_train_listener(score_recoder)
 
             # LR scheduler
-            lr_scheduler = self._create_lr_scheduler(optimizer, score_recoder, round_conf['lr_scheduler'])
-            model.add_train_listener(lr_scheduler)
+            if 'lr_scheduler' in round_conf:
+                lr_scheduler = self._create_lr_scheduler(optimizer, score_recoder, round_conf['lr_scheduler'])
+                model.add_train_listener(lr_scheduler)
 
             # EarlyStopper
             monitor = round_conf['early_stopper']['monitor']
@@ -86,6 +87,7 @@ class Experiment(object):
 
             # ModelCheckpoint
             fn_chk = round_conf['model_checkpoint']['chk']
+            fn_chk = fn_chk.replace('{round}', '%s' % ir)
             monitor = round_conf['model_checkpoint']['monitor']
             save_best_only = round_conf['model_checkpoint']['save_best_only']
             period = round_conf['model_checkpoint']['period']
@@ -116,13 +118,14 @@ class Experiment(object):
             rd_result['best_chk'] = mc.best_chk
 
             fn_result = round_conf['result']
+            fn_result = fn_result.replace('{round}', '%s' % ir)
             logger.info('%s train round result: %s, writing to %s' % (ir, rd_result, fn_result))
             with open(fn_result, 'w') as f:
                 json.dump(rd_result, f)
 
             logger.info('End of %s train round.' % ir)
             if ir < (n_rounds -1):
-                # Set model states with the best chk
+                # Set model states with the best chk except last round
                 logger.info('Setting model states with the best checkpoint %s' % mc.best_chk)
                 model.load_state_dict(fnchk=mc.best_chk, use_cuda=use_cuda)
                 logger.info('Loaded best model states from %s' % (mc.best_chk))
@@ -296,12 +299,13 @@ class ExperimentTest(BaseTest):
     def delete_train_results(self):
         for ir, round_conf in enumerate(self.train_conf['rounds']):
             fn_chk = round_conf['model_checkpoint']['chk']
-            for fn in glob.glob(fn_chk.replace('{epoch}', '*')):
+            fn_chk = fn_chk.replace('{round}', '*').replace('{epoch}', '*')
+            for fn in glob.glob(fn_chk):
                 os.remove(fn)
 
-            fn_result = round_conf['result']
-            if os.path.exists(fn_result):
-                os.remove(fn_result)
+            fn_result = round_conf['result'].replace('{round}', '*')
+            for fn in glob.glob(fn_result):
+                os.remove(fn)
 
     def test_train(self):
         logger.setLevel(logging.INFO)
@@ -311,10 +315,11 @@ class ExperimentTest(BaseTest):
 
         for ir, round_conf in enumerate(self.train_conf['rounds']):
             fn_chk = round_conf['model_checkpoint']['chk']
+            fn_chk = fn_chk.replace('{round}', '%s' % ir)
             fn_chks = glob.glob(fn_chk.replace('{epoch}', '*'))
             self.assertTrue(len(fn_chks) > 0)
 
-            fn_result = round_conf['result']
+            fn_result = round_conf['result'].replace('{round}', '%s' % ir)
             self.assertTrue(os.path.exists(fn_result))
 
             result = FileUtils.json_load(fn_result)
