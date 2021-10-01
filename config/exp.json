@@ -92,7 +92,7 @@
           "metrics": ["accuracy"],
           "optimizer": {
             "type": "adam",
-            "lr": 1e-5
+            "lr": 1e-4
           },
           "train_bert_encoders": [-6, null],
           "early_stopper": {
