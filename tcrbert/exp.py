@@ -177,9 +177,10 @@ class Experiment(object):
         eval_conf = self.exp_conf['eval']
 
         model = self._create_model()
-        fn_chk = eval_conf.get('pretrained_chk', self._get_train_best_chk(train_conf))
+        fn_chk = eval_conf.get('pretrained_chk', self.get_final_train_result()['best_chk'])
         logger.info('Loading the eval model from %s' % (fn_chk))
         model.load_state_dict(fnchk=fn_chk, use_cuda=use_cuda)
+
         if eval_conf['data_parallel']:
             logger.info('Using DataParallel model with %s GPUs' % torch.cuda.device_count())
             model.data_parallel()
@@ -279,11 +280,6 @@ class Experiment(object):
             return model
         else:
             raise ValueError('Unknown pretrained model type: %s' % param['type'])
-
-    def _get_train_best_chk(self, train_conf):
-        last_round = train_conf['rounds'][-1]
-        result = FileUtils.json_load(last_round['result'])
-        return result['best_chk']
 
 import os
 import glob
@@ -388,6 +384,11 @@ class ExperimentTest(BaseTest):
         self.assertTrue(result['best_epoch'] >= 0)
         self.assertTrue(result['best_score'] > 0)
         self.assertTrue(os.path.exists(result['best_chk']))
+
+    def test_load_eval_model(self):
+        model = self.exp.load_eval_model()
+        print(model)
+        self.assertIsNotNone(model)
 
 if __name__ == '__main__':
     unittest.main()
