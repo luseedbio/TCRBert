@@ -375,7 +375,8 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
                 self._fire_train_batch_begin(params)
 
-                pbar.set_description('Epoch %s/%s in %s phase' % (params['epoch'], params['n_epochs'], params['phase']))
+                pbar.set_description('%s in epoch %s/%s' % (('Training' if params['phase'] == 'train' else 'Validating'),
+                                                            params['epoch'], params['n_epochs']))
                 # logger.info('Begin %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
                 logger.debug('inputs: %s' % inputs)
                 logger.debug('targets: %s' % targets)

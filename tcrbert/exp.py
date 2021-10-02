@@ -227,7 +227,7 @@ class Experiment(object):
     def get_train_result(self, round):
         train_conf = self.exp_conf['train']
         train_rounds = train_conf['rounds']
-        fn_result = train_rounds[round]['result']
+        fn_result = train_rounds[round]['result'].replace('{round}', '%s' % round)
         result = FileUtils.json_load(fn_result)
         return result
 
@@ -383,6 +383,7 @@ class ExperimentTest(BaseTest):
     def test_get_train_result(self):
         logger.setLevel(logging.INFO)
         result = self.exp.get_train_result(0)
+        print(result)
         self.assertIsNotNone(result)
         self.assertTrue(result['best_epoch'] >= 0)
         self.assertTrue(result['best_score'] > 0)
