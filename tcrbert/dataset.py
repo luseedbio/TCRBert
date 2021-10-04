@@ -725,7 +725,7 @@ DATA_LOADERS = OrderedDict({
     'vdjdb':            VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
     'mcpas':            McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),
     'shomuradova':      ShomuradovaTCREpitopeDFLoader('../data/Shomuradova/sars2_tcr.tsv'),
-    'immunecode':       ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg.csv'),
+    'immunecode':       ImmuneCODETCREpitopeDFLoader('../data/ImmuneCODE/sars2_YLQPRTFLL_with_neg_nodup.csv'),
     'immunecode002_1':  ImmuneCODE2TCREpitopeDFLoader('../data/ImmuneCODE-MIRA-Release002.1/peptide-detail-ci.csv'),
     'zhang':            ZhangTCREpitopeDFLoader('../data/Zhang'),
     'iedb_sars2':       IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),

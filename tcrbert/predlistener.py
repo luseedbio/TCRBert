@@ -17,6 +17,7 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
         self.output_attentions = output_attentions
 
     def on_predict_begin(self, model, params):
+        logger.info('[PredResultRecoder]: on_predict_begin...')
         self.result_map = OrderedDict()
         self.result_map['metrics'] = params['metrics']
         self.result_map['score_map'] = OrderedDict()
@@ -31,6 +32,7 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
             self.scores_map[metric] = []
 
     def on_predict_end(self, model, params):
+        logger.info('[PredResultRecoder]: on_predict_end...')
         for metric in params['metrics']:
             self.result_map['score_map'][metric] = np.mean(self.scores_map[metric])
 
@@ -90,6 +92,21 @@ class PredictionListenerTest(BaseModelTest):
             expected = (self.model.config.num_hidden_layers, n_data, self.model.config.num_attention_heads,
                         self.test_ds.max_len, self.test_ds.max_len)
             self.assertEqual(expected, attentions.shape)
+
+    def test_result_map_reassigned(self):
+        output_attentions = True
+        result_recoder = PredResultRecoder(output_attentions=output_attentions)
+        data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
+        n_data = len(self.test_ds)
+
+        self.model.add_pred_listener(result_recoder)
+        self.model.predict(data_loader, metrics=['accuracy'])
+
+        result_map = result_recoder.result_map
+
+        self.model.predict(data_loader, metrics=['accuracy'])
+
+        self.assertTrue(id(result_map) != id(result_recoder.result_map))
 
 if __name__ == '__main__':
     unittest.main()

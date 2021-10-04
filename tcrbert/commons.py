@@ -11,9 +11,6 @@ import os
 from datetime import datetime
 import warnings
 import logging.config
-import torch.nn as nn
-import torch.nn.functional as F
-
 
 # Logger
 logger = logging.getLogger('tcrbert')

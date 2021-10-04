@@ -3,7 +3,7 @@ import unittest
 from enum import Enum
 import numpy as np
 
-from commons import BaseTest
+from tcrbert.commons import BaseTest
 
 class IupacAminoAcid(Enum):
     A = ('A', 'Ala', 'Alanine')
@@ -90,6 +90,92 @@ def format_fa(seqs, headers=None):
 def write_seqs(fn, seqs, sep='\n'):
     with open(fn, 'w') as fh:
         fh.write(sep.join(seqs))
+
+class FastaSeqParser(object):
+    class Listener(object):
+        def on_begin_parse(self):
+            pass
+
+        def on_seq_read(self, header=None, seq=None):
+            pass
+
+        def on_end_parse(self):
+            pass
+
+    def __init__(self):
+        self._listeners = []
+
+    def add_parse_listener(self, listener=None):
+        self._listeners.append(listener)
+
+    def remove_parse_listener(self, listener=None):
+        self._listeners.remove(listener)
+
+    def parse(self, in_stream, decode=None):
+        #         Tracer()()
+        self. _fire_begin_parse()
+        header = None
+        seq = ''
+        for line in in_stream:
+            line = line.strip()
+            if decode is not None:
+                line = decode(line)
+            if line.startswith('>'):
+                if len(seq) > 0:
+                    self._fire_seq_read(header=header, seq=seq)
+
+                header = line[1:]
+                seq = ''
+            else:
+                seq += line
+
+        self._fire_seq_read(header=header, seq=seq)
+        self. _fire_end_parse()
+
+    def _fire_begin_parse(self):
+        for listener in self._listeners:
+            listener.on_begin_parse()
+
+    def _fire_seq_read(self, header=None, seq=None):
+        for listener in self._listeners:
+            listener.on_seq_read(header=header, seq=seq)
+
+    def _fire_end_parse(self):
+        for listener in self._listeners:
+            listener.on_end_parse()
+
+class FastaSeqLoader(FastaSeqParser.Listener):
+    def on_begin_parse(self):
+        self.headers = []
+        self.seqs = []
+
+    def on_seq_read(self, header=None, seq=None):
+        if not is_valid_aaseq(seq, allow_gap=True):
+            raise ValueError('Invaild amino acid sequence: %s' % seq)
+        # lseq = list(seq)
+        # if len(self.seqs) > 0:
+        #     last = self.seqs[-1]
+        #     if len(last) != len(lseq):
+        #         raise ValueError('Current seq is not the same length: %s != %s' % (len(last), len(lseq)))
+        self.headers.append(header)
+        self.seqs.append(seq)
+    #
+    # def load(self, fn_fasta=None):
+    #     with open(fn_fasta, 'r') as f:
+    #         parser = FastaSeqParser()
+    #         parser.add_parse_listener(self)
+    #         parser.parse(f)
+    #
+    #     return self.headers, self.seqs
+
+def read_fa(fn_fasta=None):
+    loader = FastaSeqLoader()
+    with open(fn_fasta, 'r') as f:
+        parser = FastaSeqParser()
+        parser.add_parse_listener(loader)
+        parser.parse(f)
+
+    return loader.headers, loader.seqs
 
 class BioSeqTest(BaseTest):
     def test_amino_acid(self):
