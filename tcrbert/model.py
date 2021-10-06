@@ -549,6 +549,7 @@ class BertTCREpitopeModelTest(BaseModelTest):
         logits, hidden_states, attentions = outputs
 
         self.assertEqual((self.batch_size, self.config.num_labels), logits.shape)
+        # initial embedding + hidden states of encoders
         self.assertEqual(self.config.num_hidden_layers + 1, len(hidden_states))
         expected_shape = (self.batch_size, self.max_len, self.config.hidden_size)
         self.assertTrue(all(map(lambda x: expected_shape == x.shape, hidden_states)))

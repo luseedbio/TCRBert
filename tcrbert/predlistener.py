@@ -12,9 +12,10 @@ from tcrbert.torchutils import to_numpy
 logger = logging.getLogger('tcrbert')
 
 class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
-    def __init__(self, output_attentions=False):
+    def __init__(self, output_attentions=False, output_hidden_states=False):
         self.result_map = None
         self.output_attentions = output_attentions
+        self.output_hidden_states = output_hidden_states
 
     def on_predict_begin(self, model, params):
         logger.info('[PredResultRecoder]: on_predict_begin...')
@@ -27,6 +28,9 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
         if self.output_attentions:
             self.result_map['attentions'] = None
 
+        if self.output_hidden_states:
+            self.result_map['hidden_states'] = None
+
         self.scores_map = OrderedDict()
         for metric in params['metrics']:
             self.scores_map[metric] = []
@@ -38,6 +42,10 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
 
         if self.output_attentions:
             self.result_map['attentions'] = np.asarray(self.result_map['attentions'])
+
+        if self.output_hidden_states:
+            self.result_map['hidden_states'] = np.asarray(self.result_map['hidden_states'])
+
 
     def on_batch_end(self, model, params):
         bi = params['batch_index']
@@ -55,16 +63,27 @@ class PredResultRecoder(BertTCREpitopeModel.PredictionListener):
         if self.output_attentions:
             if self.result_map['attentions'] is None:
                 # params['outputs'][2] is tuple of attentions with shape (n_data, n_heads, max_len, max_len)
-                self.result_map['attentions'] = [to_numpy(lay_attns) for lay_attns in params['outputs'][2]]
+                self.result_map['attentions'] = [to_numpy(l_attns) for l_attns in params['outputs'][2]]
             else:
-                for li, lay_attentions in enumerate(params['outputs'][2]):
+                for li, l_attns in enumerate(params['outputs'][2]):
                     self.result_map['attentions'][li] = np.concatenate((self.result_map['attentions'][li],
-                                                                        lay_attentions), axis=0)
+                                                                        l_attns), axis=0)
+        if self.output_hidden_states:
+            if self.result_map['hidden_states'] is None:
+                # params['outputs'][1] is tuple of hidden_states with shape (n_data, max_len, hidden_size)
+                self.result_map['hidden_states'] = [to_numpy(l_hstates) for l_hstates in params['outputs'][1]]
+            else:
+                for li, l_hstates in enumerate(params['outputs'][1]):
+                    self.result_map['hidden_states'][li] = np.concatenate((self.result_map['hidden_states'][li],
+                                                                           l_hstates), axis=0)
+
 
 class PredictionListenerTest(BaseModelTest):
     def test_pred_result_recoder(self):
         output_attentions = True
-        result_recoder = PredResultRecoder(output_attentions=output_attentions)
+        output_hidden_states = True
+
+        result_recoder = PredResultRecoder(output_attentions=output_attentions, output_hidden_states=output_hidden_states)
         data_loader = DataLoader(self.test_ds, batch_size=self.batch_size)
         n_data = len(self.test_ds)
 
@@ -92,6 +111,11 @@ class PredictionListenerTest(BaseModelTest):
             expected = (self.model.config.num_hidden_layers, n_data, self.model.config.num_attention_heads,
                         self.test_ds.max_len, self.test_ds.max_len)
             self.assertEqual(expected, attentions.shape)
+
+        if output_hidden_states:
+            hidden_states = result['hidden_states']
+            expected = (self.model.config.num_hidden_layers + 1, n_data, self.test_ds.max_len, self.model.config.hidden_size)
+            self.assertEqual(expected, hidden_states.shape)
 
     def test_result_map_reassigned(self):
         output_attentions = True
