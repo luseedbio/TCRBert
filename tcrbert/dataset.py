@@ -967,5 +967,12 @@ class TCREpitopeSentenceDatasetTest(BaseTest):
         self._test_get_item(train_ds)
         self._test_get_item(test_ds)
 
+    def test_df_enc_can_edit(self):
+        ds = TCREpitopeSentenceDataset.from_key('test')
+        self.assertEqual(len(ds), ds.df_enc.shape[0])
+        ds.df_enc = ds.df_enc.iloc[50:]
+        self.assertEqual(len(ds), ds.df_enc.shape[0])
+
+
 if __name__ == '__main__':
     unittest.main()
