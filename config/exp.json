@@ -50,7 +50,7 @@
   },
   "exp1": {
     "title": "exp1",
-    "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>IEDB SARS-2 데이터로 말단 6개 encoder와 classifier 학습",
+    "description": "Fine-tuning of pre-trained TAPE model in a progressively specialized manner",
     "paper": "exp1",
     "model_config": "../config/bert-base/",
     "train": {
