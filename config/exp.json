@@ -85,7 +85,7 @@
         },
 
         {
-          "data": "iedb_sars2",
+          "data": "iedb_sars2_exc_shomuradova",
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 100,
@@ -116,7 +116,7 @@
       "metrics": ["accuracy", "f1", "roc_auc"],
       "output_attentions": false,
       "tests": [
-        {"data": "shomuradova", "result": "../output/exp1/eval.shomuradova.result.json"},
+        {"data": "iedb_sars2_shomuradova", "result": "../output/exp1/eval.shomuradova.result.json"},
         {"data": "immunecode", "result": "../output/exp1/eval.immunecode.result.json"}
       ]
     }
