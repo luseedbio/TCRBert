@@ -30,6 +30,7 @@ class TCREpitopeDFLoader(object):
         cdr3b = auto()
         mhc = auto()
         source = auto()
+        ref_id = auto()
         label = auto()
 
         @classmethod
@@ -171,6 +172,7 @@ class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.species] = df['subject'].map(lambda x: 'human' if 'human' in x else 'mouse')
         df[CN.cdr3b] = df['cdr3b'].str.strip().str.upper()
         df[CN.source] = 'Dash'
+        df[CN.ref_id] = 'PMID:28636592'
         df[CN.label] = 1
 
         logger.debug('Select valid beta CDR3 and epitope sequences')
@@ -218,6 +220,7 @@ class VDJDbTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         # df_enc[CN.mhc] = df_enc['mhc.a'].map(lambda x: MHCAlleleName.sub_name(MHCAlleleName.std_name(x)))
         df[CN.mhc] = df['mhc.a']
         df[CN.source] = 'VDJdb'
+        df[CN.ref_id] = df['reference.id']
         df[CN.label] = 1
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
@@ -264,6 +267,7 @@ class McPASTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.cdr3b] = df['CDR3.beta.aa'].str.strip().str.upper()
         df[CN.mhc] = df['MHC'].str.strip()
         df[CN.source] = 'McPAS'
+        df[CN.ref_id] = df['PubMed.ID'].map(lambda x: '%s:%s' % ('PMID', x))
         df[CN.label] = 1
 
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
@@ -295,6 +299,7 @@ class ShomuradovaTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.cdr3b] = df['CDR3'].str.strip().str.upper()
         df[CN.species] = df['Species']
         df[CN.source] = 'Shomuradova'
+        df[CN.ref_id] = 'PMID:33326767'
         df[CN.label] = 1
 
         logger.debug('Select valid beta CDR3 and epitope sequences')
@@ -322,6 +327,7 @@ class ImmuneCODETCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.cdr3b] = df['cdr3b'].str.strip().str.upper()
         df[CN.species] = 'human'
         df[CN.source] = 'ImmuneCODE'
+        df[CN.ref_id] = 'PMC7418738'
         df[CN.label] = df['subject'].map(lambda x: 0 if x == 'control' else 1)
 
         logger.debug('Select valid beta CDR3 and epitope sequences')
@@ -342,7 +348,7 @@ class ImmuneCODE2TCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         logger.debug('Loading from %s' % fn_source)
         df = pd.read_csv(fn_source)
-        logger.debug('Current df_enc.shape: %s' % str(df.shape))
+        logger.debug('Current df.shape: %s' % str(df.shape))
 
         rows = []
         for i, row in df.iterrows():
@@ -360,8 +366,9 @@ class ImmuneCODE2TCREpitopeDFLoader(FileTCREpitopeDFLoader):
             (df[CN.cdr3b].map(is_valid_aaseq)) &
             (df[CN.epitope].map(is_valid_aaseq))
         ]
-        logger.debug('Current df_enc.shape: %s' % str(df.shape))
 
+        logger.debug('Current df.shape: %s' % str(df.shape))
+        df[CN.ref_id] = 'PMC7418738'
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         return df
 
@@ -401,6 +408,7 @@ class ZhangTCREpitopeDFLoader(FileTCREpitopeDFLoader):
             df[CN.cdr3b] = df['CDR3b'].str.strip().str.upper()
             df[CN.species] = 'human'
             df[CN.source] = 'Zhang'
+            df[CN.ref_id] = 'PMID: 32318072'
             df[CN.label] = label
 
             df.index = df.apply(lambda row: self._make_index(row), axis=1)
@@ -433,6 +441,7 @@ class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.cdr3b] = df['Chain 2 CDR3 Curated'].str.strip().str.upper()
         df[CN.species] = 'human'
         df[CN.source] = 'IEDB'
+        df[CN.ref_id] = df['Reference ID'].map(lambda x: 'IEDB:%s' % x)
         df[CN.label] = 1
 
         logger.debug('Select valid beta CDR3 and epitope sequences')
@@ -462,6 +471,7 @@ class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df[CN.cdr3b] = df['CDR3'].str.strip().str.upper()
         df[CN.species] = 'human'
         df[CN.source] = 'NetTCR'
+        df[CN.ref_id] = 'PMID:34508155'
         df[CN.label] = df['binder']
 
         logger.debug('Select valid beta CDR3 and epitope sequences')

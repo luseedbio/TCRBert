@@ -50,7 +50,7 @@
   },
   "exp1": {
     "title": "exp1",
-    "description": "Dash, VDJdb, McPAS 데이터로 말단 10개의 encoder와 classifier 학습=>IEDB SARS-2 데이터로 말단 6개 encoder와 classifier 학습",
+    "description": "Fine-tuning of pre-trained TAPE model in a progressively specialized manner",
     "paper": "exp1",
     "model_config": "../config/bert-base/",
     "train": {
@@ -83,8 +83,9 @@
           },
           "result": "../output/exp1/train.{round}.result.json"
         },
+
         {
-          "data": "iedb_sars2",
+          "data": "iedb_sars2_exc_shomuradova",
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 100,
@@ -115,7 +116,7 @@
       "metrics": ["accuracy", "f1", "roc_auc"],
       "output_attentions": false,
       "tests": [
-        {"data": "shomuradova", "result": "../output/exp1/eval.shomuradova.result.json"},
+        {"data": "iedb_sars2_shomuradova", "result": "../output/exp1/eval.shomuradova.result.json"},
         {"data": "immunecode", "result": "../output/exp1/eval.immunecode.result.json"}
       ]
     }
