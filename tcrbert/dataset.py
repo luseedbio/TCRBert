@@ -710,10 +710,12 @@ class TCREpitopeSentenceDataset(Dataset):
 
         loaders = [DATA_LOADERS[loader_key] for loader_key in config['loaders']]
         filters = [TCREpitopeDFLoader.NotDuplicateFilter()]
-        if config.get('n_cdr3b_cutoff'):
-            filters.append(TCREpitopeDFLoader.MoreThanCDR3bNumberFilter(cutoff=config['n_cdr3b_cutoff']))
+
         if config.get('query'):
             filters.append(TCREpitopeDFLoader.QueryFilter(query=config['query']))
+
+        if config.get('n_cdr3b_cutoff'):
+            filters.append(TCREpitopeDFLoader.MoreThanCDR3bNumberFilter(cutoff=config['n_cdr3b_cutoff']))
 
         negative_generator = TCREpitopeDFLoader.DefaultNegativeGenerator() if config['generate_negatives'] else None
 
