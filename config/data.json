@@ -40,19 +40,6 @@
     "loaders": ["iedb_sars2"],
     "n_cdr3b_cutoff": 20,
     "generate_negatives": true,
-    "query": "(epitope_species == 'SARS-CoV2') and (epitope.str.len() <= 15)",
-    "encoder": {
-      "type": "nosep",
-      "vocab": "iupac",
-      "max_len": 40
-    },
-    "output_csv": "../output/{name}.data.csv",
-    "overwrite": false
-  },
-  "iedb_sars2_ex_YLQPRTFLL": {
-    "loaders": ["iedb_sars2"],
-    "n_cdr3b_cutoff": 20,
-    "generate_negatives": true,
     "query": "(epitope_species == 'SARS-CoV2') and (epitope != 'YLQPRTFLL') and (epitope.str.len() <= 15)",
     "encoder": {
       "type": "nosep",

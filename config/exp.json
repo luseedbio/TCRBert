@@ -85,7 +85,7 @@
         },
 
         {
-          "data": "iedb_sars2_ex_YLQPRTFLL",
+          "data": "iedb_sars2",
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 100,
