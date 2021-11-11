@@ -4,12 +4,14 @@
     "description": "testexp",
     "paper": "testexp",
     "model_config": "../config/bert-base/",
+    "outdir": "../output/testexp",
     "train": {
       "pretrained_model": {
         "type": "tape",
         "location": "../config/bert-base/"
       },
       "data_parallel": false,
+      "backup": "train.bak.{date}.tar.gz",
       "rounds": [
         {
           "data": "test",
@@ -28,12 +30,12 @@
             "patience": 3
           },
           "model_checkpoint": {
-            "chk": "../output/testexp/train.{round}.model_{epoch}.chk",
+            "chk": "train.{round}.model_{epoch}.chk",
             "monitor": "accuracy",
             "save_best_only": true,
             "period": 1
           },
-          "result": "../output/testexp/train.{round}.result.json"
+          "result": "train.{round}.result.json"
         }
       ]
     },
@@ -44,7 +46,7 @@
       "metrics": ["accuracy", "f1", "roc_auc"],
       "output_attentions": false,
       "tests": [
-        {"data": "test", "result": "../output/testexp/eval.test.result.json"}
+        {"data": "test", "result": "eval.test.result.json"}
       ]
     }
   },
@@ -53,12 +55,14 @@
     "description": "Fine-tuning of pre-trained TAPE model in a progressively specialized manner",
     "paper": "exp1",
     "model_config": "../config/bert-base/",
+    "outdir": "../output/exp1",
     "train": {
       "pretrained_model": {
         "type": "tape",
         "location": "../config/bert-base/"
       },
       "data_parallel": false,
+      "backup": "train.bak.{date}.tar.gz",
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
           "test_size": 0.2,
@@ -76,12 +80,12 @@
             "patience": 15
           },
           "model_checkpoint": {
-            "chk": "../output/exp1/train.{round}.model_{epoch}.chk",
+            "chk": "train.{round}.model_{epoch}.chk",
             "monitor": "accuracy",
             "save_best_only": true,
             "period": 1
           },
-          "result": "../output/exp1/train.{round}.result.json"
+          "result": "train.{round}.result.json"
         },
 
         {
@@ -101,12 +105,12 @@
             "patience": 10
           },
           "model_checkpoint": {
-            "chk": "../output/exp1/train.{round}.model_{epoch}.chk",
+            "chk": "train.{round}.model_{epoch}.chk",
             "monitor": "accuracy",
             "save_best_only": true,
             "period": 1
         },
-        "result": "../output/exp1/train.{round}.result.json"
+        "result": "train.{round}.result.json"
       }]
     },
     "eval": {
@@ -116,8 +120,8 @@
       "metrics": ["accuracy", "f1", "roc_auc"],
       "output_attentions": false,
       "tests": [
-        {"data": "shomuradova", "result": "../output/exp1/eval.shomuradova.result.json"},
-        {"data": "immunecode", "result": "../output/exp1/eval.immunecode.result.json"}
+        {"data": "shomuradova", "result": "eval.shomuradova.result.json"},
+        {"data": "immunecode", "result": "eval.immunecode.result.json"}
       ]
     }
   }

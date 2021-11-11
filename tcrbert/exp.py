@@ -19,7 +19,8 @@ from tcrbert.trainlistener import EvalScoreRecoder, EarlyStopper, ModelCheckpoin
 from tcrbert.predlistener import PredResultRecoder
 from tcrbert.model import BertTCREpitopeModel
 from tcrbert.optimizer import NoamOptimizer
-
+import tarfile
+import time
 
 # Logger
 logger = logging.getLogger('tcrbert')
@@ -37,6 +38,10 @@ class Experiment(object):
         logger.info('======================')
         logger.info('Begin train at %s' % begin)
         model = self.load_pretrained_model()
+
+        outdir = self.exp_conf['outdir']
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
 
         train_conf = self.exp_conf['train']
         n_rounds = len(train_conf['rounds'])
@@ -87,7 +92,7 @@ class Experiment(object):
 
             # ModelCheckpoint
             fn_chk = round_conf['model_checkpoint']['chk']
-            fn_chk = fn_chk.replace('{round}', '%s' % ir)
+            fn_chk = '%s/%s' % (outdir, fn_chk.replace('{round}', '%s' % ir))
             monitor = round_conf['model_checkpoint']['monitor']
             save_best_only = round_conf['model_checkpoint']['save_best_only']
             period = round_conf['model_checkpoint']['period']
@@ -118,7 +123,7 @@ class Experiment(object):
             rd_result['best_chk'] = mc.best_chk
 
             fn_result = round_conf['result']
-            fn_result = fn_result.replace('{round}', '%s' % ir)
+            fn_result = '%s/%s' % (outdir, fn_result.replace('{round}', '%s' % ir))
             logger.info('%s train round result: %s, writing to %s' % (ir, rd_result, fn_result))
             with open(fn_result, 'w') as f:
                 json.dump(rd_result, f)
@@ -140,6 +145,10 @@ class Experiment(object):
         logger.info('Start evaluate for best model...')
         model = self.load_eval_model()
 
+        outdir = self.exp_conf['outdir']
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
+
         train_conf = self.exp_conf['train']
         eval_conf = self.exp_conf['eval']
         logger.info('train_conf: %s' % train_conf)
@@ -153,9 +162,9 @@ class Experiment(object):
         result_recoder = PredResultRecoder(output_attentions=output_attentions)
         model.add_pred_listener(result_recoder)
 
-        for i, test_coonf in enumerate(eval_conf['tests']):
-            data_key = test_coonf['data']
-            logger.info('Start %s test for data: %s, test_conf: %s' % (i, data_key, test_coonf))
+        for i, test_conf in enumerate(eval_conf['tests']):
+            data_key = test_conf['data']
+            logger.info('Start %s test for data: %s, test_conf: %s' % (i, data_key, test_conf))
 
             eval_ds = TCREpitopeSentenceDataset.from_key(data_key)
             logger.info('Loaded test data for %s len(eval_ds): %s' % (data_key, len(eval_ds)))
@@ -164,7 +173,7 @@ class Experiment(object):
 
             model.predict(data_loader=eval_data_loader, metrics=metrics)
 
-            fn_result = test_coonf['result']
+            fn_result = '%s/%s' % (outdir, test_conf['result'])
             with open(fn_result, 'w') as f:
                 json.dump(result_recoder.result_map, cls=NumpyEncoder, fp=f)
 
@@ -227,14 +236,33 @@ class Experiment(object):
 
     def get_train_result(self, round):
         train_conf = self.exp_conf['train']
+        outdir = self.exp_conf['outdir']
         train_rounds = train_conf['rounds']
-        fn_result = train_rounds[round]['result'].replace('{round}', '%s' % round)
+        fn_result = '%s/%s' % (outdir, train_rounds[round]['result'].replace('{round}', '%s' % round))
         result = FileUtils.json_load(fn_result)
         return result
 
     def get_final_train_result(self):
         n_rounds = self.n_train_rounds
         return self.get_train_result(n_rounds - 1)
+
+
+    def backup_train_results(self):
+        outdir = self.exp_conf['outdir']
+        dt = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
+        fn_bak = '%s/%s' % (outdir, self.exp_conf['train']['backup'].replace('{date}', dt))
+        logger.info('Backup train results to %s' % fn_bak)
+        with tarfile.open(fn_bak, 'w:gz') as tar:
+            train_conf = self.exp_conf['train']
+            for i, round in enumerate(train_conf['rounds']):
+                fn_result = '%s/%s' % (outdir, round['result'].replace('{round}', '%s' % i))
+                logger.info('Adding %s to %s' % (fn_result, fn_bak))
+                tar.add(fn_result, os.path.basename(fn_result))
+                result = FileUtils.json_load(fn_result)
+                fn_chk = result['best_chk']
+                logger.info('Adding %s to %s' % (fn_chk, fn_bak))
+                tar.add(fn_chk, os.path.basename(fn_chk))
+        logger.info('Done to backup train results to %s' % fn_bak)
 
     def _create_optimizer(self, model, param):
         name = param.pop('type')
@@ -281,6 +309,8 @@ class Experiment(object):
         else:
             raise ValueError('Unknown pretrained model type: %s' % param['type'])
 
+
+############ Tests
 import os
 import glob
 
@@ -293,29 +323,31 @@ class ExperimentTest(BaseTest):
         self.eval_conf = self.exp_conf['eval']
 
     def delete_train_results(self):
+        outdir = self.exp_conf['outdir']
         for ir, round_conf in enumerate(self.train_conf['rounds']):
             fn_chk = round_conf['model_checkpoint']['chk']
-            fn_chk = fn_chk.replace('{round}', '*').replace('{epoch}', '*')
+            fn_chk = '%s/%s' % (outdir, fn_chk.replace('{round}', '*').replace('{epoch}', '*'))
             for fn in glob.glob(fn_chk):
                 os.remove(fn)
 
-            fn_result = round_conf['result'].replace('{round}', '*')
+            fn_result = '%s/%s' % (outdir, round_conf['result'].replace('{round}', '*'))
             for fn in glob.glob(fn_result):
                 os.remove(fn)
 
     def test_train(self):
         logger.setLevel(logging.INFO)
         self.delete_train_results()
+        outdir = self.exp_conf['outdir']
 
         self.exp.train()
 
         for ir, round_conf in enumerate(self.train_conf['rounds']):
             fn_chk = round_conf['model_checkpoint']['chk']
-            fn_chk = fn_chk.replace('{round}', '%s' % ir)
+            fn_chk = '%s/%s' % (outdir, fn_chk.replace('{round}', '%s' % ir))
             fn_chks = glob.glob(fn_chk.replace('{epoch}', '*'))
             self.assertTrue(len(fn_chks) > 0)
 
-            fn_result = round_conf['result'].replace('{round}', '%s' % ir)
+            fn_result = '%s/%s' % (outdir, round_conf['result'].replace('{round}', '%s' % ir))
             self.assertTrue(os.path.exists(fn_result))
 
             result = FileUtils.json_load(fn_result)
@@ -346,7 +378,7 @@ class ExperimentTest(BaseTest):
             ds = TCREpitopeSentenceDataset.from_key(test_conf['data'])
             n_data = len(ds)
 
-            fn_result = test_conf['result']
+            fn_result = '%s/%s' % (self.exp_conf['outdir'], test_conf['result'])
             self.assertTrue(os.path.exists(fn_result))
             result = FileUtils.json_load(fn_result)
 
@@ -389,6 +421,10 @@ class ExperimentTest(BaseTest):
         model = self.exp.load_eval_model()
         print(model)
         self.assertIsNotNone(model)
+
+    def test_backup_train_results(self):
+        self.exp.backup_train_results()
+
 
 if __name__ == '__main__':
     unittest.main()
