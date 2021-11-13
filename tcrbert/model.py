@@ -188,7 +188,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         logger.info('======================')
         logger.info('Begin training...')
         logger.info('use_cuda, device: %s, %s' % (use_cuda, str(device)))
-        logger.info('model: %s' % model)
+        logger.debug('model: %s' % model)
         logger.info('train.n_data: %s, test.n_data: %s' % (len(train_data_loader.dataset),
                                                            len(test_data_loader.dataset)))
         logger.info('optimizer: %s' % optimizer)
@@ -260,7 +260,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         logger.info('======================')
         logger.info('Begin predict...')
         logger.info('use_cuda, device: %s, %s' % (use_cuda, str(device)))
-        logger.info('model: %s' % model)
+        logger.debug('model: %s' % model)
         logger.info('n_data: %s' % len(data_loader.dataset))
         logger.info('batch_size: %s' % data_loader.batch_size)
 
