@@ -75,6 +75,9 @@ class Experiment(object):
             n_epochs = round_conf['n_epochs']
             optimizer = self._create_optimizer(model, round_conf['optimizer'])
 
+            # Clear train listeners
+            model.clear_train_listeners()
+
             # EvalScoreRecoder
             score_recoder = EvalScoreRecoder(metrics=metrics)
             model.add_train_listener(score_recoder)
