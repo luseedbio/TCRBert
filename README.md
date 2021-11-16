@@ -12,14 +12,14 @@ Sidhom, J. W. & Baras, A. S. (2020). Analysis of SARS-CoV-2 specific T-cell rece
 
 https://www.biorxiv.org/content/10.1101/2020.06.20.160499v1
 
-### Run the notebook for reproducing our works
+### Run the notebook for our works
 #### Install requiremnets
 In python version >= 3.7,
 ```bash
 pip install torch
 pip install tape_proteins
 ```
-Run the jupyter notebook, <a href='notebook/experiment.ipynb'>notebook/experiment.ipynb</a>
+Run the jupyter notebook, <a href='notebook/exp1.ipynb'>notebook/exp1.ipynb</a>
 
 <hr>
 
