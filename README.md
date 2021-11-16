@@ -4,6 +4,7 @@ We developed a predictive model based on the pre-trained <a href='https://arxiv.
 A recent experimental study of SARS-CoV-2 variants has demonstrated that CD8+ T-cells failed to respond to the <b>P272L</b> variant[3]. Our attention-based approach, which can capture all motifs in both the epitope and CDR3β sequences in epitope-specific TCR recognition, can be more useful for predicting immunogenic changes in T-cell epitopes derived from SARS-CoV-2 mutations than MSA-based approaches which depend entirely on TCR sequences. We anticipate that our findings will provide new directions for constructing a reliable data-driven model for predicting the immunogenic T-cell epitopes using limited training data and help accelerate the development of an effective vaccine for the respond to SARS-CoV-2 variants, by identifying critical amino acid positions that are important in epitope-specific TCR recognition.
 
 <hr>
+
 ### Publication
 For full description of analysis and approach, refer to the following manuscript:
 
