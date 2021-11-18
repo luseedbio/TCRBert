@@ -6,11 +6,6 @@ A recent experimental study of SARS-CoV-2 variants has demonstrated that CD8+ T-
 <hr>
 
 ### Publication
-For full description of analysis and approach, refer to the following manuscript:
-
-Sidhom, J. W. & Baras, A. S. (2020). Analysis of SARS-CoV-2 specific T-cell receptors in ImmuneCode reveals cross-reactivity to immunodominant Influenza M1 epitope. bioRxiv, 160499.
-
-https://www.biorxiv.org/content/10.1101/2020.06.20.160499v1
 
 <hr>
 
