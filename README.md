@@ -6,7 +6,11 @@ A recent experimental study of SARS-CoV-2 variants has demonstrated that CD8+ T-
 <hr>
 
 ### Publication
+For full description of analysis and approach, refer to the following manuscript:
 
+Han, Y. & Aeri, L. (2021). Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings, _bioRxiv_ 2021.11.17.468929; doi: https://doi.org/10.1101/2021.11.17.468929
+
+https://www.biorxiv.org/content/10.1101/2021.11.17.468929v1
 <hr>
 
 ### Run the notebook for our works
