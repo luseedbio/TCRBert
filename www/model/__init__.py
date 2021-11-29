@@ -1,1 +1,0 @@
-__all__ = ['aaindex', 'commons', 'msa', 'bdomain', 'aasubst', 'aaprops']

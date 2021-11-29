@@ -25,6 +25,21 @@ Run the jupyter notebook, <a href='notebook/exp1.ipynb'>notebook/exp1.ipynb</a>
 
 <hr>
 
+### Web server
+<img src="notebook/res/fig6.png.png">
+
+<p>
+The main web interface consists of the input form panel (left) and the result list panel (right). 
+Users can submit multiple TCR CDR3β sequences and a specific epitope in the input form panel. 
+Once the prediction process is completed, the user can see a list of the prediction results for the input CDR3β sequences grouped by sequence lengths in the result list panel. 
+For each prediction results by CD3β sequence length, the user can also see the marginalized position-wise attention weights captured by our model for the epitope-specific CDR3β sequence pairs predicted as a binder via a pop-up panel
+</p>
+
+#### Run the web server
+Just run www/
+
+<hr>
+
 ### Reference
 1. Rao, R. et al. Evaluating Protein Transfer Learning with TAPE. Advances in neural information processing systems 32, 9689–9701 (2019).
 2. Jokinen, E., Huuhtanen, J., Mustjoki, S., Heinonen, M. & Lähdesmäki, H. Predicting recognition between T cell receptors and epitopes with TCRGP. PLoS Computational Biology 17, e1008814 (2021). 
