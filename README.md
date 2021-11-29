@@ -26,8 +26,8 @@ Run the jupyter notebook, <a href='notebook/exp1.ipynb'>notebook/exp1.ipynb</a>
 <hr>
 
 ### Web server
-<img src="notebook/res/fig6.png.png">
 
+<img src="notebook/res/fig6.png.png">
 <p>
 The main web interface consists of the input form panel (left) and the result list panel (right). 
 Users can submit multiple TCR CDR3β sequences and a specific epitope in the input form panel. 
@@ -36,8 +36,12 @@ For each prediction results by CD3β sequence length, the user can also see the 
 </p>
 
 #### Run the web server
-Just run www/
+Just run www/main.py as follows:
 
+```bash
+cd www
+python main.py
+```
 <hr>
 
 ### Reference
