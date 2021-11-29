@@ -27,7 +27,7 @@ Run the jupyter notebook, <a href='notebook/exp1.ipynb'>notebook/exp1.ipynb</a>
 
 ### Web server
 
-<img src="notebook/res/fig6.png.png">
+<img src="notebook/res/fig6.png" width="70%">
 <p>
 The main web interface consists of the input form panel (left) and the result list panel (right). 
 Users can submit multiple TCR CDR3β sequences and a specific epitope in the input form panel. 
