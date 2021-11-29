@@ -648,7 +648,7 @@ class TCREpitopeSentenceDataset(Dataset):
 
     @property
     def name(self):
-        return self.config['name']
+        return self.config.get('name', '')
 
     @property
     def max_len(self):
@@ -656,7 +656,7 @@ class TCREpitopeSentenceDataset(Dataset):
 
     @property
     def output_csv(self):
-        return self.config['output_csv']
+        return self.config.get('output_csv', '')
 
     @classmethod
     def from_key(cls, data_key=None):
@@ -685,9 +685,25 @@ class TCREpitopeSentenceDataset(Dataset):
         return cls(config=config, df_enc=df, encoder=encoder)
 
     @classmethod
+    def from_items(cls, items, encoder_config):
+        rows = []
+        encoder = cls._create_encoder(encoder_config)
+
+        for epitope, cdr3b, label in items:
+            try:
+                sent = encoder.encode(epitope=epitope, cdr3b=cdr3b)
+                rows.append([epitope, None, None, None, cdr3b, None, None, None, label, sent])
+            except ValueError as e:
+                logger.waring(e)
+
+        df = pd.DataFrame(rows, columns=CN.values() + [cls.CN_SENTENCE])
+        return cls(config={}, df_enc=df, encoder=encoder)
+
+    @classmethod
     def _create_encoder(cls, config):
-        encoder_type = config.get('type', 'default')
         encoder = None
+        encoder_type = config.get('type', 'default')
+
         if encoder_type == 'default':
             encoder = DefaultTCREpitopeSentenceEncoder(tokenizer=TAPETokenizer(vocab=config['vocab']),
                                                        max_len=config['max_len'])

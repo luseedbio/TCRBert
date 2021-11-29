@@ -1,14 +1,27 @@
 import torch
+import numpy as np
+import pandas as pd
 from flask import Flask, make_response, render_template, request, jsonify, g, json, url_for
 from flask.json import JSONEncoder
 import os
 import logging
 
+from collections import OrderedDict
+from itertools import cycle
+import io
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from tape import ProteinConfig
+from torch.utils.data import DataLoader
+
 from tcrbert.model import BertTCREpitopeModel
+from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.commons import FileUtils
+from tcrbert.bioseq import split_seqs, is_valid_aaseq
 
 # Global context
+from tcrbert.predlistener import PredResultRecoder
+
 app = Flask(__name__)
 use_cuda = torch.cuda.is_available()
 data_parallel = False
@@ -24,7 +37,9 @@ class MyJSONEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, PredictionResult):
             return obj.to_json()
-        return super(MyJSONEncoder, self).default(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
 
 app.json_encoder = MyJSONEncoder
 
@@ -35,26 +50,26 @@ app.json_encoder = MyJSONEncoder
 #     return model
 
 class PredictionResult(object):
-    def __init__(self, allele=None, pep_seq=None, binder_prob=None, binder=None, bind_img=None):
-        self.allele = allele
-        self.pep_seq = pep_seq
-        self.binder_prob = binder_prob
-        self.binder = binder
-        self.bind_img = bind_img
+    def __init__(self, epitope=None, cdr3b=None, label=None):
+        self.epitope = epitope
+        self.cdr3b = cdr3b
+        self.label = label
 
     def to_json(self):
         return {
-            'allele': self.allele,
-            'pep_seq': self.pep_seq,
-            'binder_prob': str(self.binder_prob),
-            'binder': self.binder,
-            'bind_img': (self.bind_img.tolist() if self.bind_img is not None else None)
+            'epitope': self.epitope,
+            'cdr3b': self.cdr3b,
+            'label': self.label,
         }
 
-class PredictionModelWrapper(object):
+class ModelAppContext(object):
     def __init__(self):
-        self._model = self.load_model()
-        self._data  = FileUtils.json_load(data_path)
+        self.basedir = '/tcrbert'
+        self.model = self.load_model()
+        self.data_config  = FileUtils.json_load(data_path)
+        self.pred_recoder = PredResultRecoder(output_attentions=True, output_hidden_states=False)
+        self.model.add_pred_listener(self.pred_recoder)
+
 
         # print 'alleles:', self.alleles
         # self.pep_len = 9
@@ -70,7 +85,23 @@ class PredictionModelWrapper(object):
 
     @property
     def epitopes(self):
-        return self._data['sars2_epitope']
+        return self.data_config['sars2_epitope']
+
+    @property
+    def max_cdr3b(self):
+        return self.data_config['max_cdr3b']
+
+    @property
+    def max_n_cdr3bs(self):
+        return self.data_config['max_n_cdr3bs']
+
+    @property
+    def epitope_range(self):
+        return self.data_config['epitope_range']
+
+    @property
+    def encoder_config(self):
+        return self.data_config['encoder']
 
     def load_model(self):
         logger.info('Loading prediction model from %s' % model_path)
@@ -84,130 +115,153 @@ class PredictionModelWrapper(object):
         logger.info('Done to load prediction model')
         return model
 
-    # def predict(self, allele, pep_seqs, pep_len):
-    #
-    #     X = self.transform_bind_images([(allele, seq) for seq in pep_seqs])
-    #     print 'X.shape:', X.shape, 'X[0].shape:', X[0].shape
-    #
-    #     y_pred = self._model.predict_proba(X, batch_size=16, verbose=0)
-    #     y_pred_cls = np.argmax(y_pred, axis=1)
-    #     y_pred_prob = y_pred[:, 1]
-    #     print 'y_pred:', y_pred_prob, y_pred_cls
-    #
-    #     results = []
-    #     for i in range(X.shape[0]):
-    #         results.append(PredictionResult(allele=allele,
-    #                                         pep_seq=pep_seqs[i],
-    #                                         binder_prob=round(y_pred_prob[i], 4),
-    #                                         binder=y_pred_cls[i],
-    #                                         bind_img=X[i]))
-    #
-    #     return results
 
+#####
+# Request handler
+global ctx
+ctx = ModelAppContext()
 
-    # def transform_bind_images(self, pep_seqs, p_margin=0, h_margin=0):
-    #     ndata = len(pep_seqs)
-    #     print('===>Start to transform. ndata: %s' % (ndata))
-    #     imgs = []
-    #     for i in range(ndata):
-    #         allele = pep_seqs[i][0]
-    #         pep_seq = pep_seqs[i][1]
-    #         img = self.bdomain.binding_image(allele=allele,
-    #                                     pep_seq=pep_seq,
-    #                                     p_margin=p_margin,
-    #                                     h_margin=h_margin,
-    #                                     p_aa_scorer=self.aa_scorer,
-    #                                     h_aa_scorer=self.aa_scorer,
-    #                                     aai_scorer=None)
-    #
-    #         print('Progress==>%s/%s, allele:%s, pep_seq:%s' % ((i + 1), ndata, allele, pep_seq))
-    #         imgs.append(img)
-    #
-    #     print('===>Done to transform.')
-    #     return np.asarray(imgs)
-    #
-    # def find_informative_pixels(self, target_img, binder):
-    #     print 'target_img.shape:', target_img.shape, 'binder:', binder
-    #     dl_imgs = apply_deeplift(self._model, np.expand_dims(target_img, axis=0), class_index=binder)
-    #     print 'dl_imgs.shape:', dl_imgs.shape
-    #     return np.mean(dl_imgs[0], axis=0)
+@app.after_request
+def after_request(r):
+    logger.info('Processing after request')
+    r.headers["Pragma"] = "no-cache"
+    r.headers["Expires"] = "0"
+    r.headers['Cache-Control'] = 'public, max-age=0'
+    return r
 
+def format_range(rng):
+    return '%s-%s' % (rng[0], rng[1])
 
-
-global model
-model = PredictionModelWrapper()
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/tcrbert', methods=['GET', 'POST'])
 def index():
-    global model
-    return render_template('main.html', dm={'epitopes': model.epitopes})
+    global ctx
 
-# @app.route('/predict', methods=['GET', 'POST'])
-# def predict():
-#     global model
-#
-#     seq_txt = request.form.get('peptide_seqs', '', type=str)
-#     # print 'Found newline', seq_txt.find("\r\n")
-#     seq_txt = seq_txt.replace('\r\n', '\n')
-#     allele = request.form.get('allele', '', type=str)
-#     pep_len = request.form.get('peptide_len', '', type=int)
-#     print('allele:%s, seq_text:%s, pep_len:%s' % (allele, seq_txt, pep_len))
-#     try:
-#         seqs = Utils.split_seqs(seq_txt=seq_txt, seq_len=pep_len)
-#         print('sequences:%s' % seqs)
-#
-#         pred_results = model.predict(allele=allele, pep_seqs=seqs, pep_len=pep_len)
-#         print 'Pred results:', pred_results
-#         results = {}
-#         results['pred_results'] = pred_results
-#         return jsonify(results=results)
-#     except Exception as e:
-#         print(traceback.format_exc())
-#         return e.message, 500
-#     # # return json.dumps({'status': 'OK', 'user': user, 'pass': password});
+    dm = OrderedDict()
+    epitopes = ctx.epitopes
+    dm['epitopes'] = epitopes
+    dm['epitope'] = epitopes[0]
+    dm['max_cdr3b'] = ctx.max_cdr3b
+    dm['max_n_cdr3bs'] = ctx.max_n_cdr3bs
+    dm['epitope_range'] = format_range(ctx.epitope_range)
 
-# @app.route('/generate_inf_img', methods=['GET', 'POST'])
-# def generate_informative_img():
-#     global model
-#     try:
-#         allele = request.form.get('target_allele', '')
-#         pep_seq = request.form.get('target_pepseq', '')
-#         binder = request.form.get('target_binder', 0, type=int)
-#         target_img_txt = request.form.get('target_img', '', type=str)
-#         target_img = json.loads(target_img_txt)
-#         print 'target_img:', target_img, 'allele', allele, 'pep_seq', pep_seq, 'binder:', binder
-#
-#         infr_img = model.find_informative_pixels(np.asarray(target_img), binder=binder)
-#         # plot informative pixels
-#         p_sites = range(1, 10)
-#         h_sites = sorted(np.unique([css[1] for css in model.bdomain.contact_sites(9)]) + 1)
-#
-#         sns.set_context('paper', font_scale=1.1)
-#         sns.axes_style('white')
-#         fig, axes = plt.subplots(nrows=1, ncols=1)
-#         fig.set_figwidth(6)
-#         fig.set_figheight(2)
-#         plt.tight_layout()
-#         fig.subplots_adjust(bottom=0.22)
-#
-#         g = sns.heatmap(infr_img, ax=axes, annot=False, linewidths=.4, cbar=False)
-#         # g.set(title='Informative pixels for %s-%s' % (pep_seq, allele))
-#         g.set_xticklabels(h_sites, rotation=90)
-#         g.set_yticklabels(p_sites[::-1])
-#         g.set(xlabel='HLA contact site', ylabel='Peptide position')
-#
-#         canvas = FigureCanvas(fig)
-#         output = StringIO.StringIO()
-#         canvas.print_png(output)
-#
-#         response = make_response(output.getvalue())
-#         response.mimetype = 'image/png'
-#         response.headers['Content-Type'] = 'image/png'
-#         return response
-#
-#     except Exception as e:
-#         print(traceback.format_exc())
-#         return e.message, 500
+    return render_template('main.html', dm=dm)
+
+@app.route('/tcrbert/predict', methods=['GET', 'POST'])
+def predict():
+    global ctx
+
+    try:
+        epitope = request.form.get('epitope', '', type=str).strip()
+        epitope_len = len(epitope)
+        if epitope_len < ctx.epitope_range[0] or epitope_len > ctx.epitope_range[1]:
+            raise ValueError('Epitope length should be between %s: %s' % (format_range(ctx.epitope_range), epitope_len))
+
+        if not is_valid_aaseq(epitope):
+            raise ValueError('Invalid epitope sequence: %s' % epitope)
+
+        cdr3bs = split_seqs(request.form.get('cdr3bs', '', type=str).strip())
+
+        n_cdr3bs = len(cdr3bs)
+        if n_cdr3bs > ctx.max_n_cdr3bs:
+            raise ValueError('Too many cdr3b sequences: %s > %s' % (n_cdr3bs, ctx.max_n_cdr3bs))
+
+        for cdr3b in cdr3bs:
+            if len(cdr3b) > ctx.max_cdr3b:
+                raise ValueError('Too long CDR3beta: %s, %s > %s' % (cdr3b, len(cdr3b), ctx.max_cdr3b))
+
+        logger.info('epitope: %s' % epitope)
+        logger.info('cdr3bs: %s' % cdr3bs)
+
+        ds = TCREpitopeSentenceDataset.from_items(zip(cycle([epitope]), cdr3bs, cycle([0])), ctx.encoder_config)
+
+        data_loader = DataLoader(ds, batch_size=len(ds), shuffle=False)
+        ctx.model.predict(data_loader=data_loader, use_cuda=use_cuda)
+
+        df_result = ds.df_enc.copy()
+        df_result['cdr3b_len'] = df_result[CN.cdr3b].map(lambda seq: len(seq))
+        output_labels = ctx.pred_recoder.result_map['output_labels']
+        df_result[CN.label] = output_labels
+        attns = ctx.pred_recoder.result_map['attentions']
+        attns = np.mean(attns, axis=(0, 2, 3)) # attns.shape: (n_data, max_len)
+        df_result['attns'] = list(attns)
+
+        results =OrderedDict()
+        for cur_len, subtab in df_result.groupby(['cdr3b_len']):
+            cur_results = []
+            for i, row in subtab.iterrows():
+                cur_results.append(PredictionResult(epitope=row[CN.epitope],
+                                                    cdr3b=row[CN.cdr3b],
+                                                    label=row[CN.label]))
+            sent_len = len(row[CN.epitope]) + cur_len
+            pos_attns = subtab['attns'][subtab[CN.label] == 1].values
+
+            pos_attns = np.mean(pos_attns, axis=0)[1:sent_len+1] if (pos_attns is not None) and (len(pos_attns) > 0) else None
+
+            results[cur_len] = (cur_results, pos_attns)
+        return jsonify(results=results)
+
+    except Exception as e:
+        return str(e), 500
+
+@app.route('/tcrbert/generate_attn_chart', methods=['GET', 'POST'])
+def generate_attn_chart():
+    global ctx
+    try:
+        epitope = request.form.get('epitope', type=str)
+        epitope_len = len(epitope)
+        cdr3b_len = request.form.get('cdr3b_len', type=int)
+        attns = json.loads(request.form.get('attns', type=str))
+
+        logger.info('epitope: %s' % epitope)
+        logger.info('cdr3b_len: %s' % cdr3b_len)
+        logger.info('attns: %s' % attns)
+
+        fig, axes = plt.subplots(nrows=1, ncols=1)
+        fig.set_figwidth(6)
+        fig.set_figheight(2.5)
+
+        ax = pd.Series(attns).plot(kind='bar', ax=axes, rot=0)
+        # ax.set_title('%smer CDR3β sequences' % cdr3b_len)
+
+        ticks = list(epitope) + list(range(1, cdr3b_len + 1))
+        mark_ratio = 0.1
+        mark_pos = []
+
+        for rank, pos in enumerate(np.argsort(attns[:epitope_len])[::-1]):
+            if rank < (epitope_len*mark_ratio):
+                ticks[pos] = '%s\n•' % (ticks[pos])
+                mark_pos.append(pos)
+
+        for rank, pos in enumerate(np.argsort(attns[epitope_len:])[::-1]):
+            if rank < (cdr3b_len*mark_ratio):
+                ticks[epitope_len+pos] = '%s\n•' % (ticks[epitope_len+pos])
+                mark_pos.append(epitope_len+pos)
+
+        ax.set_xticklabels(ticks)
+        for i, tick in enumerate(ax.get_xticklabels()):
+            if i < epitope_len:
+                tick.set_color('green')
+            else:
+                tick.set_color('black')
+            if i in mark_pos:
+                tick.set_color('darkred')
+
+        plt.xticks(fontsize=8)
+        plt.yticks(fontsize=8)
+
+        canvas = FigureCanvas(plt.gcf())
+        output = io.BytesIO()
+        canvas.print_png(output)
+
+        response = make_response(output.getvalue())
+        response.mimetype = 'image/png'
+        response.headers['Content-Type'] = 'image/png'
+        return response
+
+    except Exception as e:
+        logger.error(e)
+        return str(e), 500
+
 
 @app.context_processor
 def override_url_for():
@@ -224,24 +278,50 @@ def dated_url_for(endpoint, **values):
 if __name__ == '__main__':
     app.run()
 
-# import unittest
-#
-# class PredictTestCase(unittest.TestCase):
-#
-#     def setUp(self):
-#         with app.app_context() as ctx:
-#             ctx.push()
-#             g.model = load_model()
-#             self.client = app.test_client()
-#
-#     def test_predict(self):
-#         data = {}
-#         data['peptide_seqs'] = 'AAAYYYRRR AAAYYYRRR'
-#         data['allele'] = 'HLA-A*03:01'
-#         data['peptide_len'] = 9
-#         response = self.client.post('/predict', data=data)
-#         print response
-#
+import unittest
+
+class PredictTestCase(unittest.TestCase):
+
+    def setUp(self):
+        with app.app_context() as ctx:
+            ctx.push()
+            # g.model = load_model()
+            self.app = app.test_client()
+
+    def test_index(self):
+        r = self.app.get('/')
+
+        print(r.dm)
+
+    def test_predict(self):
+        data = {}
+        cdr3b_lens = [11, 15, 17]
+        data['cdr3bs'] = 'RASSFVRGGSYNSPLHF CSARDNERAMNTGELFF CASSPDIEQFF CASSSSRRNTGELFF'
+        data['epitope'] = 'YLQPRTFLL'
+        response = self.app.post('/predict', data=data)
+
+        results = json.loads(response.data)['results']
+        self.assertEqual(3, len(results)) # cdr3b lengths: 11, 15, 17
+        result = results['11']
+        pred_results = result[0]
+        attns = result[1]
+        self.assertEqual('YLQPRTFLL', pred_results[0]['epitope'])
+        self.assertEqual('CASSPDIEQFF', pred_results[0]['cdr3b'])
+
+        result = results['15']
+        pred_results = result[0]
+        self.assertEqual('YLQPRTFLL', pred_results[0]['epitope'])
+        self.assertEqual('CASSSSRRNTGELFF', pred_results[0]['cdr3b'])
+
+        result = results['17']
+        pred_results = result[0]
+        self.assertEqual('YLQPRTFLL', pred_results[0]['epitope'])
+        self.assertEqual('YLQPRTFLL', pred_results[1]['epitope'])
+        self.assertTrue(pred_results[0]['cdr3b'] in ['RASSFVRGGSYNSPLHF', 'CSARDNERAMNTGELFF'])
+        self.assertTrue(pred_results[1]['cdr3b'] in ['RASSFVRGGSYNSPLHF', 'CSARDNERAMNTGELFF'])
+
+        print(results)
+
 
 # if __name__ == '__main__':
 #     unittest.main()
