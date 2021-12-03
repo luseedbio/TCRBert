@@ -60,6 +60,10 @@
                     }
                 });
             });
+            $('#cdr3bBtn').click(function() {
+                $('#cdr3bTxtArea').val("{{' '.join(dm.cdr3bs)}}");
+            });
+
 
         });
         
@@ -136,31 +140,6 @@
                     console.log("attns:" + attns + ", length:" + attns.length)
                 }
             }
-<!--            for(var i=0; i<results.length; i++){-->
-<!--                allele = results[i].allele-->
-<!--                pepSeq = results[i].pep_seq-->
-<!--                binderProb = results[i].binder_prob-->
-<!--                binder = results[i].binder-->
-<!--                bindImg = results[i].bind_img-->
-<!--                bindImgId = 'bindImg' + i-->
-<!--                var htmlRow = "<tr class='resultData'><td>" + allele + "</td>" +-->
-<!--                                  "<input id='allele" + i + "' type='hidden'>" +-->
-<!--                                  "<td>" + pepSeq + "</td>" +-->
-<!--                                  "<input id='pepSeq" + i + "' type='hidden'>" +-->
-<!--                                  "<td>" + binderProb + "</td>" +-->
-<!--                                  "<input id='binderProb" + i + "' type='hidden'>" +-->
-<!--                                  "<td>" + binder + "</td>" +-->
-<!--                                  "<input id='binder" + i + "' type='hidden'>" +-->
-<!--                                  "<input id='bindImg" + i + "' type='hidden'>" +-->
-<!--                                  "<td>" + "<button onclick='showInfomativeImg(" + i + ");'>view</button>" + "</td></tr>";-->
-<!--                $('#resultTab > tbody:last').append(htmlRow);-->
-<!--                -->
-<!--                $('#allele' + i).val(allele);-->
-<!--                $('#pepSeq' + i).val(pepSeq);-->
-<!--                $('#binderProb' + i).val(binderProb);-->
-<!--                $('#binder' + i).val(binder);-->
-<!--                $('#bindImg' + i).val(JSON.stringify(bindImg));-->
-<!--            }-->
         }
         showAttnChart = function(clen){
             var attns = $('#attns' + clen).val();
@@ -178,7 +157,7 @@
             $("iframe#attnFrame").load(function(){
                 $("iframe#attnFrame").css('width', '615px');
                 $("iframe#attnFrame").css('height', '250px');
-                $("span#attnCapSpan").html(" <b>Marginalized position-wise attention weights for the YLQPRTFLL-" + clen +
+                $("span#attnCapSpan").html(" <b>Marginalized position-wise attention weights for the " + epitope + "-" + clen +
                 "mer CDR3β sequence pairs predicted as a binder</b>. The amino acid positions corresponding to the top 10% " +
                 "weights of each the epitope and CDR3 sequences are highlighted in red dots below x-axis ticks.");
 
@@ -213,6 +192,8 @@
                 <tr>
                     <td class="input" colspan="2">
                         <textarea id="cdr3bTxtArea" name="cdr3bs" rows="15" cols="50"></textarea>
+                        <br>
+                        <button id="cdr3bBtn" type="button">Sample</button>
                     </td>
                 </tr>
                 <tr>

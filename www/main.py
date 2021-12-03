@@ -84,6 +84,10 @@ class ModelAppContext(object):
         # print('aa_scorer.feature_names: %s' % self.aa_scorer.feature_names())
 
     @property
+    def cdr3bs(self):
+        return self.data_config['sars2_cdr3b']
+
+    @property
     def epitopes(self):
         return self.data_config['sars2_epitope']
 
@@ -138,6 +142,7 @@ def index():
 
     dm = OrderedDict()
     epitopes = ctx.epitopes
+    dm['cdr3bs'] = ctx.cdr3bs
     dm['epitopes'] = epitopes
     dm['epitope'] = epitopes[0]
     dm['max_cdr3b'] = ctx.max_cdr3b
