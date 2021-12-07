@@ -5,7 +5,6 @@ from flask import Flask, make_response, render_template, request, jsonify, g, js
 from flask.json import JSONEncoder
 import os
 import logging
-
 from collections import OrderedDict
 from itertools import cycle
 import io
@@ -18,8 +17,6 @@ from tcrbert.model import BertTCREpitopeModel
 from tcrbert.dataset import TCREpitopeSentenceDataset, CN
 from tcrbert.commons import FileUtils
 from tcrbert.bioseq import split_seqs, is_valid_aaseq
-
-# Global context
 from tcrbert.predlistener import PredResultRecoder
 
 app = Flask(__name__)

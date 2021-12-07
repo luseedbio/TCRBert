@@ -20,6 +20,7 @@ In python version >= 3.7,
 ```bash
 pip install torch
 pip install tape_proteins
+
 ```
 Run the jupyter notebook, <a href='notebook/exp1.ipynb'>notebook/exp1.ipynb</a>
 
