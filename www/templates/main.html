@@ -1,0 +1,284 @@
+<html>
+<head> 
+    <title>TCRBert@LuseedBio</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='jquery.mloading.css') }}">
+    <script src="{{ url_for('static', filename='jquery-1.12.4.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery.mloading.js') }}"></script>
+
+    <script type=text/javascript>
+        $( function() {
+            $("#attnDialog").dialog({
+                autoOpen: false,
+                width: 630,
+                height: 370,
+    //            resizable: false,
+                modal: true
+    //          show: {
+    //            effect: "blind",
+    //            duration: 1000
+    //          },
+    //          hide: {
+    //            effect: "explode",
+    //            duration: 1000
+    //          }
+            });
+
+            $('#predictBtn').click(function() {
+                if(!$('#epitopeInput').val()){
+                    alert('Input or select the epitope!');
+                    $('input#epitopeInput').focus()
+                    return;
+                }
+                if(!$('#cdr3bTxtArea').val()){
+                    alert('Input CDR3β sequences!');
+                    $('#cdr3bTxtArea').focus()
+                    return;
+                }
+
+                $.ajax({
+                    url: '/tcrbert/predict',
+                    data: $('#inputFrm').serialize(),
+                    type: 'POST',
+                    dataType : 'json',
+                    beforeSend: function(){
+                        $("body").mLoading('show');
+                    },
+                    success: function(response) {
+                        changeResultTabCaption();
+                        clearPredResults();
+                        insertPredResults(response.results);
+                        $("body").mLoading('hide');
+                    },
+                    error: function(request, status, error) {
+                        alert(request.responseText);
+                        $("body").mLoading('hide');
+                    }
+                });
+            });
+            $('#cdr3bBtn').click(function() {
+                $('#cdr3bTxtArea').val("{{' '.join(dm.cdr3bs)}}");
+            });
+
+
+        });
+        
+        $("body").mLoading({
+            text: "Please Wait...",
+            mask: true
+        });
+
+        $(document).delegate('#textPepSeqs', 'keydown', function(e) {
+          var keyCode = e.keyCode || e.which;
+
+          if (keyCode == 9) {
+            e.preventDefault();
+            var start = $(this).get(0).selectionStart;
+            var end = $(this).get(0).selectionEnd;
+
+            // set textarea value to: text before caret + tab + text after caret
+            $(this).val($(this).val().substring(0, start)
+                        + "\t"
+                        + $(this).val().substring(end));
+
+            // put caret at right position again
+            $(this).get(0).selectionStart =
+            $(this).get(0).selectionEnd = start + 1;
+          }
+        });
+
+        clearPredResults = function(){
+            $("#resultTab > tbody").html("");
+        }
+
+        changeResultTabCaption = function(){
+            var epitope = $('#epitopeInput').val()
+            $('#resultTabCaption').html("Prediction Result for " + "<b>" + epitope + "</b>")
+        }
+
+        insertPredResults = function(results){
+            for(key in results){
+                clen = parseInt(key)
+                preds = results[key][0]
+                attns = results[key][1]
+                console.log("current CDR3b length:" + clen)
+                for(var i=0; i<preds.length; i++){
+                    epitope = preds[i].epitope
+                    cdr3b = preds[i].cdr3b
+                    label = preds[i].label
+                    var htmlRow = "<tr class='data'>"
+                    if(i == 0){
+                        htmlRow += "<td rowspan='" + preds.length + "'>" + clen + "</td>";
+                    }
+                    htmlRow += "<td>" + cdr3b + "</td>" +
+                               "<td>" + ((label == 1)? 'Yes' : 'No') + "</td>";
+
+                    if(i == 0){
+                        var htmlBtn = (attns)? "<button onclick='showAttnChart(" + clen + ")'>view</button>": "N/A"
+                        htmlRow += "<td rowspan='" + preds.length + "'>" + htmlBtn + "</td>";
+                        if(attns){
+                            htmlRow += "<input id='attns" + clen + "' type='hidden'/>";
+                        }
+
+                    }
+                    htmlRow += "</tr>";
+
+                    $('#resultTab > tbody:last').append(htmlRow);
+
+                    if(i == 0 && attns){
+                        $('#attns' + clen).val(JSON.stringify(attns));
+                    }
+
+                    console.log("epitope:" + epitope + ", cdr3b:" + cdr3b + ", label:" + label)
+                    console.log("htmlRow:" + htmlRow)
+                }
+                if(attns){
+                    console.log("attns:" + attns + ", length:" + attns.length)
+                }
+            }
+        }
+        showAttnChart = function(clen){
+            var attns = $('#attns' + clen).val();
+            var epitope = $('#epitopeInput').val()
+
+            console.log("clen:" + clen + ", epitope:" + epitope + ", attns:" + attns)
+
+            $("#genAttnFrm > input[name='epitope']").val(epitope);
+            $("#genAttnFrm > input[name='cdr3b_len']").val(clen);
+            $("#genAttnFrm > input[name='attns']").val(attns);
+
+            $("#genAttnFrm").submit();
+            $("body").mLoading('show');
+
+            $("iframe#attnFrame").load(function(){
+                $("iframe#attnFrame").css('width', '615px');
+                $("iframe#attnFrame").css('height', '250px');
+                $("span#attnCapSpan").html(" <b>Marginalized position-wise attention weights for the " + epitope + "-" + clen +
+                "mer CDR3β sequence pairs predicted as a binder</b>. The amino acid positions corresponding to the top 10% " +
+                "weights of each the epitope and CDR3 sequences are highlighted in red dots below x-axis ticks.");
+
+                $("#attnDialog").dialog("option", "title", "Attention weights for " + epitope + "-" + clen + "mer CDR3β sequence pair");
+                $("#attnDialog").dialog("open");
+                $("body").mLoading('hide');
+            });
+        }
+
+    </script>
+</head>
+<body>
+<table id="mainTab" border="0">
+    <tr>
+        <td id="header" colspan="2">
+            <span class="caption">TCRBert</span><br>
+            <span class="subcaption">A web server for predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings</span>
+        </td>
+    </tr>
+    <tr><td colspan="2" class="vspace"></td></tr>
+    <tr>
+        <td class="tabCaption">Inputs</td>
+        <td id="resultTabCaption" class="tabCaption">Prediction results</td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <form id="inputFrm" action="/" method="post">
+            <table id="inputTab" border="0">
+                <tr>
+                    <td class="label" colspan="2">Enter TCR CDR3β sequence(s) with length <= {{dm.max_cdr3b}} in FASTA format or separated by whitespace or comma. # of sequences < {{dm.max_n_cdr3bs}}:</td>
+                </tr>
+                <tr>
+                    <td class="input" colspan="2">
+                        <textarea id="cdr3bTxtArea" name="cdr3bs" rows="15" cols="50"></textarea>
+                        <br>
+                        <button id="cdr3bBtn" type="button">Example</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" colspan="2">Input epitope sequence with length {{dm.epitope_range}}  or Select a SARS-CoV-2 epitope:</td>
+                </tr>
+                <tr>
+                    <td class="input" colspan="2">
+                        <input id="epitopeInput" name="epitope" type="text" size="50" list="epitopeDataList"/>
+                        <datalist id="epitopeDataList">
+                            {% for epitope in dm.epitopes %}
+                            <option value="{{epitope}}">{{epitope}}</option>
+                            {% endfor %}
+                        </datalist>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="button">
+                        <button id="predictBtn" type="button">Predict</button>&nbsp;<button type="reset">Reset</button>
+                    </td>
+                </tr>
+            </table>
+            </form>
+        </td>
+        <td valign="top" style="height: 400px;">
+            <table id="resultTab" border="0">
+                <thead>
+                  <tr>
+                    <th colspan="2">TCR CDR3β</th>
+                    <th rowspan="2">Binder</th>
+                    <th rowspan="2">Attentions of <br>Binders</th>
+                  </tr>
+                  <tr>
+                    <th>Length</th>
+                    <th>Sequence</th>
+                  </tr>
+                </thead>
+                <!-- tfoot>
+                    <tr><td colspan="5"><button id="btnAddRow">add row</button>&nbsp;<button id="btnClearRows">clear rows</button></td></tr>
+                    
+                </tfoot -->
+                <tbody>
+<!--                  <tr class="data">-->
+<!--                    <td rowspan="2">17</td>-->
+<!--                    <td>RASSFVRGGSYNSPLHF</td>-->
+<!--                    <td>Yes</td>-->
+<!--                    <td rowspan="2">View</td>-->
+<!--                  </tr>-->
+<!--                  <tr>-->
+<!--                    <td class="data">CSARDNERAMNTGELFF</td>-->
+<!--                    <td class="data">Yes</td>-->
+<!--                  </tr>-->
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td id="pub" colspan="2">
+            <span class="title">Publications</span>
+            <hr>
+            <span class="item">
+                <a href="https://www.biorxiv.org/content/10.1101/2021.11.17.468929v1">Han, Y. & Aeri, L. (2021). Predicting SARS-CoV-2 epitope-specific TCR recognition using pre-trained protein embeddings, <i>bioRxiv 2021.11.17.468929</i>, doi: https://doi.org/10.1101/2021.11.17.468929
+                </a>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td id="footer" colspan="2" valign="top">
+            Copyright © 2021 &nbsp;<img src="{{ url_for('static', filename='images/logo.png') }}" width="20" style="vertical-align:middle"> &nbsp;LuseedBio Inc. All Right Reserved.
+        </td>
+    </tr>
+
+</table>
+
+<form id="genAttnFrm" action="/tcrbert/generate_attn_chart" target="attn_frame" method="post">
+    <input type="hidden" name="epitope"/>
+    <input type="hidden" name="cdr3b_len"/>
+    <input type="hidden" name="attns"/>
+</form>
+
+<div id="attnDialog" title="">
+    <iframe id="attnFrame" src="" name="attn_frame" frameborder="0"></iframe><br>
+    <hr style="color: darkgrey;">
+    <span id="attnCapSpan" style="color: #333333"></span>
+</div>
+</body>
+
+</html>
+

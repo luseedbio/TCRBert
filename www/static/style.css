@@ -1,0 +1,142 @@
+
+input {
+    margin: 3px;
+    border: 1px solid #777;
+}
+input.focus{
+    margin: 1px;
+    border: 3px solid #0d0;
+}
+
+#mainTab {
+    width: 800px;
+    height: 900px;
+    background-color: white;
+    /*padding: 10px 10px 10px 10px;*/
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
+}
+
+#header{
+    width: 100%;
+    height: 130px;
+    background-color: rgb(82, 24, 73);
+    text-align: left;
+    padding: 20px;
+}
+
+#header .caption {
+    color: white;
+    font-size: 34px;
+}
+
+#header .subcaption {
+    color: azure;
+    font-size: 18px;
+}
+
+#inputTab {
+    width: 400px;
+    height: 500px;
+}
+
+#inputTab td {
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    background-color: #FFC400;
+}
+#inputTab .label {
+    font-size: 13px;
+    /*background-color: rgb(40, 140, 85);*/
+}
+
+#inputTab .input {
+    text-align: left;
+    vertical-align: top;
+}
+
+#inputTab .button {
+    text-align: right;
+}
+
+#resultTab {
+    width: 400px;
+    height: 500px;
+    /*border-top: 1px solid #444444;*/
+    /*border-collapse: collapse;*/
+}
+
+#resultTab th, td {
+    padding: 10px;
+    text-align: center;
+    /*border-bottom: 1px solid #444444;*/
+}
+
+#resultTab thead th{
+    font-size: 13px;
+    background-color: rgb(61, 61, 107);
+    color: white;
+}
+
+#resultTab tbody td {
+    background-color: #cfeeee;
+    font-size: 13px;
+}
+
+#pub {
+    text-align: left;
+}
+
+#pub .title {
+    font-size: 18px;
+}
+
+#pub .item {
+    font-size: 14px;
+
+}
+
+#footer {
+    /*border-color: black;*/
+    /*border-style: solid;*/
+    /*border-width: thin;*/
+    border-top: 1px solid whitesmoke;
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    color: rgb(61, 61, 107)
+}
+
+.tabCaption {
+    font-size: 22px;
+    text-align: center;
+    width: 100%;
+    height: 10px;
+    color: darkred;
+    background-color: #fafaf8;
+}
+
+.vspace {
+    height: 2px;
+}
+
+
+#loadingDiv {
+    display: block;
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#attnCapSpan {
+    font-size: 12px;
+    text-align: center;
+    color: darkred;
+}

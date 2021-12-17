@@ -123,5 +123,17 @@
     },
     "output_csv": "../output/{name}.data.csv",
     "overwrite": false
+  },
+  "pTMnet": {
+    "loaders": ["pTMnet"],
+    "n_cdr3b_cutoff": null,
+    "generate_negatives": true,
+    "encoder": {
+      "type": "nosep",
+      "vocab": "iupac",
+      "max_len": 40
+    },
+    "output_csv": "../output/{name}.data.csv",
+    "overwrite": false
   }
 }

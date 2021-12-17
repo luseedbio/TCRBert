@@ -2,8 +2,9 @@ import re
 import unittest
 from enum import Enum
 import numpy as np
+from io import StringIO
+from tcrbert.commons import BaseTest, StrUtils
 
-from tcrbert.commons import BaseTest
 
 class IupacAminoAcid(Enum):
     A = ('A', 'Ala', 'Alanine')
@@ -91,6 +92,23 @@ def write_seqs(fn, seqs, sep='\n'):
     with open(fn, 'w') as fh:
         fh.write(sep.join(seqs))
 
+
+def split_seqs(text, delim=' \r\n\t,;-'):
+    text = text.strip(' \n\t')
+    seqs = None
+    try:
+        seqs = read_fa_from_text(text)[1]
+    except ValueError as e:
+        pass
+
+    if (seqs is None) or len(seqs) <= 0:
+        seqs = list(map(lambda seq: seq.strip(), re.split("[%s]+" % delim, text)))
+        for seq in seqs:
+            if not is_valid_aaseq(seq):
+                raise ValueError('Invalid amino acid sequence:%s' % seq)
+
+    return seqs
+
 class FastaSeqParser(object):
     class Listener(object):
         def on_begin_parse(self):
@@ -157,18 +175,17 @@ class FastaSeqLoader(FastaSeqParser.Listener):
         #     last = self.seqs[-1]
         #     if len(last) != len(lseq):
         #         raise ValueError('Current seq is not the same length: %s != %s' % (len(last), len(lseq)))
-        self.headers.append(header)
-        self.seqs.append(seq)
-    #
-    # def load(self, fn_fasta=None):
-    #     with open(fn_fasta, 'r') as f:
-    #         parser = FastaSeqParser()
-    #         parser.add_parse_listener(self)
-    #         parser.parse(f)
-    #
-    #     return self.headers, self.seqs
+        if not StrUtils.empty(header):
+            self.headers.append(header)
 
-def read_fa(fn_fasta=None):
+        if not StrUtils.empty(seq):
+            self.seqs.append(seq)
+
+    def on_end_parse(self):
+        if len(self.headers) != len(self.seqs):
+            raise ValueError('len(self.headers) != len(self.seqs): %s != %s' % (len(self.headers), len(self.seqs)))
+
+def read_fa_from_file(fn_fasta=None):
     loader = FastaSeqLoader()
     with open(fn_fasta, 'r') as f:
         parser = FastaSeqParser()
@@ -177,7 +194,23 @@ def read_fa(fn_fasta=None):
 
     return loader.headers, loader.seqs
 
+
+def read_fa_from_text(text=None):
+    loader = FastaSeqLoader()
+    with StringIO(text) as f:
+        parser = FastaSeqParser()
+        parser.add_parse_listener(loader)
+        parser.parse(f)
+
+    return loader.headers, loader.seqs
+
 class BioSeqTest(BaseTest):
+    def setUp(self):
+        self.valid_fasta = [">1\nAGYMNAAK", ">1\nAGYMNAAK\n>2\nMMMTTTAAK\n>3\nLLLYYYRRR\n", ">1\nAGYMNAAK\n\n>2\nMMMTTTAAK\n\n\n>3\nLLLYYYRRR"]
+        self.invalid_fasta = [">XXGYMNAAK\n", "MMMTTTAAK\nLLLYYYRRR\n", "MMMTTTAAK\n>1\nMMMTTTAAK", ">1\nMMMTTTAAK\n>2\nJLLYYYRRR"]
+        self.valid_seqs = ["LLLYYYRRR", "AGYMNAAK, LLLYYYRRR, MMMTTTAAK", "MMMTTTAAK\tMMMTTTAAK\tLLLYYYRRR\t", "\nLLLYYYRRR\nLLLYYYRRR,MMMTTTAAK\n YYYYKKKKMMM\tMMMYYYYKKK\n\t"]
+        self.invalid_seqs = ["AGYMNAAK^LLLYYYRRR, MMMTTTAAK", "XJMMTTTAAK\tMMMTTTAAK\tLLLYYYRRR\t", ""]
+
     def test_amino_acid(self):
         self.assertEqual('ARNDCQEGHILKMFPOSUTWYVBZX', ''.join(AMINO_ACID.codes()))
 
@@ -199,6 +232,32 @@ class BioSeqTest(BaseTest):
         seq = rand_aaseq(seq_len=seq_len)
         self.assertTrue(is_valid_aaseq(seq))
         self.assertEqual(seq_len, len(seq))
+
+    def test_read_fa_from_text(self):
+        for ss in self.valid_fasta:
+            headers, seqs = read_fa_from_text(ss)
+            self.assertTrue(len(headers) > 0)
+            self.assertTrue(len(seqs) > 0)
+
+        for ss in self.invalid_fasta:
+            with self.assertRaises(ValueError) as e:
+                print(ss)
+                headers, seqs = read_fa_from_text(ss)
+                print(e)
+
+    def test_split_seqs(self):
+        for ss in self.valid_fasta:
+            seqs = split_seqs(ss)
+            self.assertTrue(len(seqs) > 0)
+
+        for ss in self.valid_seqs:
+            seqs = split_seqs(ss)
+            self.assertTrue(len(seqs) > 0)
+
+        for ss in self.invalid_seqs:
+            with self.assertRaises(ValueError) as e:
+                print(ss)
+                seqs = split_seqs(ss)
 
 if __name__ == '__main__':
     unittest.main()
