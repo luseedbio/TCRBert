@@ -44,7 +44,7 @@ def main():
     # Arguments for sub command 'generate_data'
     sub_parser = subparsers.add_parser('generate_data')
     sub_parser.set_defaults(func=generate_data)
-    sub_parser.add_argument('--data', type=str, default='iedb_sars2_ex_YLQPRTFLL')
+    sub_parser.add_argument('--data', type=str, default='pTMnet')
 
     # Arguments for sub command 'run_exp'
     sub_parser = subparsers.add_parser('run_exp')

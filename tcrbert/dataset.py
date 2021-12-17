@@ -487,6 +487,35 @@ class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         logger.debug('Loaded NetTCR data. Current df_enc.shape: %s' % str(df.shape))
         return df
 
+class pTMnetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
+    def _load_from_file(self, fn_source):
+        logger.debug('Loading from %s' % fn_source)
+        df = pd.read_csv(fn_source)
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
+        df[CN.epitope] = df['Antigen'].str.strip().str.upper()
+        df[CN.epitope_gene] = None
+        df[CN.epitope_species] = None
+        df[CN.mhc] = df['HLA'].str.strip().str.upper()
+        df[CN.cdr3b] = df['CDR3'].str.strip().str.upper()
+        df[CN.species] = None
+        df[CN.source] = 'pTMnet'
+        df[CN.ref_id] = 'lu2021deep'
+        df[CN.label] = 1
+
+        logger.debug('Select valid beta CDR3 and epitope sequences')
+        df = df.dropna(subset=[CN.cdr3b, CN.epitope])
+        df = df[
+            (df[CN.cdr3b].map(is_valid_aaseq)) &
+            (df[CN.epitope].map(is_valid_aaseq))
+        ]
+        logger.debug('Current df.shape: %s' % str(df.shape))
+
+        df.index = df.apply(lambda row: self._make_index(row), axis=1)
+        df = df.loc[:, CN.values()]
+        logger.debug('Loaded pTMnet data. Current df.shape: %s' % str(df.shape))
+        return df
+
 class ConcatTCREpitopeDFLoader(TCREpitopeDFLoader):
     def __init__(self, loaders=None, filters=None, negative_generator=None):
         super().__init__(filters, negative_generator)
@@ -758,7 +787,8 @@ DATA_LOADERS = OrderedDict({
     'zhang':            ZhangTCREpitopeDFLoader('../data/Zhang'),
     'iedb_sars2':       IEDBTCREpitopeDFLoader('../data/IEDB/tcell_receptor_sars2_20210618.csv'),
     'nettcr_train':     NetTCREpitopeDFLoader('../data/NetTCR/train_beta_90.csv'),
-    'nettcr_eval':      NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv')
+    'nettcr_eval':      NetTCREpitopeDFLoader('../data/NetTCR/mira_eval_threshold90.csv'),
+    'pTMnet':           pTMnetTCREpitopeDFLoader('../data/pTMnet/testing_data.csv')
 })
 
 #######
