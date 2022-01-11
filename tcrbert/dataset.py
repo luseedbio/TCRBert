@@ -775,6 +775,8 @@ class TCREpitopeSentenceDataset(Dataset):
 
 DATA_LOADERS = OrderedDict({
     'test':             NetTCREpitopeDFLoader('../data/test.csv'),
+    'test.train':       NetTCREpitopeDFLoader('../data/test.train.csv'),
+    'test.eval':        NetTCREpitopeDFLoader('../data/test.eval.csv'),
     'dash':             DashTCREpitopeDFLoader('../data/Dash/human_mouse_pairseqs_v1_parsed_seqs_probs_mq20_clones.tsv'),
     'vdjdb':            VDJDbTCREpitopeDFLoader('../data/VDJdb/vdjdb_20210201.txt'),
     'mcpas':            McPASTCREpitopeDFLoader('../data/McPAS/McPAS-TCR_20210521.csv'),

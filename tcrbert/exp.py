@@ -54,8 +54,10 @@ class Experiment(object):
             test_size = round_conf['test_size']
             logger.info('Start %s train round using data: %s, round_conf: %s' % (ir, data_key, round_conf))
 
-            train_ds, test_ds = TCREpitopeSentenceDataset.from_key(data_key).train_test_split(test_size=test_size,
-                                                                                              shuffle=True)
+            ds = TCREpitopeSentenceDataset.from_key(data_key)
+            ds = self._exclude_eval_data(ds)
+
+            train_ds, test_ds = ds.train_test_split(test_size=test_size, shuffle=True)
 
             batch_size = round_conf['batch_size']
             n_workers = round_conf['n_workers']
@@ -311,6 +313,31 @@ class Experiment(object):
             return model
         else:
             raise ValueError('Unknown pretrained model type: %s' % param['type'])
+
+    def _exclude_eval_data(self, ds):
+        df = ds.df_enc
+        train_conf = self.exp_conf['train']
+        eval_conf = self.exp_conf['eval']
+        target_cols = train_conf.get("exclude_eval_data_by", ['index'])
+        logger.info('Start exclude eval data from train data, df_enc.shape: %s, target_cols: %s' % (str(df.shape),
+                                                                                                    target_cols))
+        for i, test_conf in enumerate(eval_conf['tests']):
+            data_key = test_conf['data']
+            test_ds = TCREpitopeSentenceDataset.from_key(data_key)
+            test_df = test_ds.df_enc
+            for col in target_cols:
+                if "index" == col:
+                    df = df[df.index.map(lambda val: val not in test_df.index.values)]
+                else:
+                    df = df[df[col].map(lambda val: val not in test_df[col].values)]
+
+                logger.info('Excluded eval data(%s) by %s from train data, current train df_enc.shape: %s' % (data_key,
+                                                                                                              col,
+                                                                                                              str(df.shape)))
+
+        logger.info('Excluded eval data from train data, final df_enc.shape: %s' % str(df.shape))
+        ds.df_enc = df
+        return ds
 
 
 ############ Tests

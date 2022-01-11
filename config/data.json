@@ -1,6 +1,6 @@
 {
-  "test": {
-    "loaders": ["test"],
+  "test.train": {
+    "loaders": ["test.train"],
     "n_cdr3b_cutoff": 1,
     "generate_negatives": false,
     "encoder": {
@@ -11,7 +11,18 @@
     "output_csv": "../output/{name}.data.csv",
     "overwrite": false
   },
-
+  "test.eval": {
+    "loaders": ["test.eval"],
+    "n_cdr3b_cutoff": 1,
+    "generate_negatives": false,
+    "encoder": {
+      "type": "nosep",
+      "vocab": "iupac",
+      "max_len": 40
+    },
+    "output_csv": "../output/{name}.data.csv",
+    "overwrite": false
+  },
   "dash": {
     "loaders": ["dash"],
     "n_cdr3b_cutoff": 20,
