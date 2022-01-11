@@ -145,7 +145,6 @@ class FileTCREpitopeDFLoader(TCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
         raise NotImplementedError()
 
-
 class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     GENE_INFO_MAP = OrderedDict({
         'BMLF': ('EBV', 'GLCTLVAML', 'HLA-A*02:01'),
@@ -186,7 +185,6 @@ class DashTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df.index = df.apply(lambda row: self._make_index(row), axis=1)
         df = df.loc[:, CN.values()]
         return df
-
 
 class VDJDbTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):
@@ -456,7 +454,6 @@ class IEDBTCREpitopeDFLoader(FileTCREpitopeDFLoader):
         df = df.loc[:, CN.values()]
         logger.debug('Loaded IEDB data. Current df_enc.shape: %s' % str(df.shape))
         return df
-
 
 class NetTCREpitopeDFLoader(FileTCREpitopeDFLoader):
     def _load_from_file(self, fn_source):

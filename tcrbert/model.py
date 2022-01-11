@@ -135,7 +135,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
         # The member name must be 'bert' because the prefix of keys in state_dict
         # that have the pretrained weights is 'bert.xxx'
-        self.bert = ProteinBertModel(config)
+        self._bert = ProteinBertModel(config)
         self.classifier = SimpleMLP(config.hidden_size, 512, config.num_labels)
         self.train_listeners = []
         self.pred_listeners = []
@@ -309,7 +309,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         logger.debug('[BertTCREpitopeModel.forward]: input_ids: %s(%s)' % (input_ids,
                                                                           str(input_ids.shape) if input_ids is not None else 'None'))
         # bert_out: # sequence_output, pooled_output, (hidden_states), (attentions)
-        bert_out = self.bert(input_ids, input_mask=input_mask)
+        bert_out = self._bert(input_ids, input_mask=input_mask)
         # sequence_out.shape: (batch_size, seq_len, hidden_size), pooled_out.shape: (batch_size, hidden_size)
         sequence_out, pooled_out = bert_out[:2]
 
@@ -320,11 +320,12 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         return outputs
 
     def data_parallel(self):
-        self.bert = nn.DataParallel(self.bert)
+        if not self.is_data_parallel():
+            self._bert = nn.DataParallel(self._bert)
         return self
 
     def is_data_parallel(self):
-        return isinstance(self.bert, nn.DataParallel)
+        return isinstance(self._bert, nn.DataParallel)
 
     def state_dict(self):
         sd = super().state_dict()
@@ -416,14 +417,16 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         self._freeze_bert(on=False)
 
     def _freeze_bert(self, on=True):
-        for param in self.bert.parameters():
+        bert = self._bert.module if self.is_data_parallel() else self._bert
+
+        for param in bert.parameters():
             param.requires_grad = (not on)
 
     def train_bert_encoders(self, layer_range=(-2, None)):
         self.freeze_bert()
 
         # Melt target encoder layers and pooler
-        bert = self.bert.module if self.is_data_parallel() else self.bert
+        bert = self._bert.module if self.is_data_parallel() else self._bert
 
         for layer in bert.encoder.layer[layer_range[0]:layer_range[1]]:
             for param in layer.parameters():
@@ -435,19 +438,19 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
     # For DataParallel
     @property
     def bert_config(self):
-        return self.bert.module.config if self.is_data_parallel() else self.bert.config
+        return self._bert.module.config if self.is_data_parallel() else self._bert.config
 
     @property
     def bert_embeddings(self):
-        return self.bert.module.embeddings if self.is_data_parallel() else self.bert.embeddings
+        return self._bert.module.embeddings if self.is_data_parallel() else self._bert.embeddings
 
     @property
     def bert_encoder(self):
-        return self.bert.module.encoder if self.is_data_parallel() else self.bert.encoder
+        return self._bert.module.encoder if self.is_data_parallel() else self._bert.encoder
 
     @property
     def bert_pooler(self):
-        return self.bert.module.pooler if self.is_data_parallel() else self.bert.pooler
+        return self._bert.module.pooler if self.is_data_parallel() else self._bert.pooler
 
     # For train_listeners
     def add_train_listener(self, listener):
