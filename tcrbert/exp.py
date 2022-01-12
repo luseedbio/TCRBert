@@ -270,6 +270,7 @@ class Experiment(object):
         logger.info('Done to backup train results to %s' % fn_bak)
 
     def _create_optimizer(self, model, param):
+        param = copy.deepcopy(param)
         name = param.pop('type')
         if name == 'sgd':
             return SGD(model.parameters(), **param)
