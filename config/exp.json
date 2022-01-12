@@ -198,7 +198,8 @@
       "output_attentions": false,
       "tests": [
         {"data": "shomuradova", "result": "eval.shomuradova.result.json"},
-        {"data": "immunecode", "result": "eval.immunecode.result.json"}
+        {"data": "immunecode", "result": "eval.immunecode.result.json"},
+        {"data": "pTMnet", "result": "eval.pTMnet.result.json"}
       ]
     }
   }
