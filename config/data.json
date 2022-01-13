@@ -45,7 +45,7 @@
       "max_len": 40
     },
     "output_csv": "../output/{name}.data.csv",
-    "overwrite": false
+    "overwrite": true
   },
   "iedb_sars2": {
     "loaders": ["iedb_sars2"],
@@ -58,7 +58,7 @@
       "max_len": 40
     },
     "output_csv": "../output/{name}.data.csv",
-    "overwrite": false
+    "overwrite": true
   },
 
   "shomuradova": {

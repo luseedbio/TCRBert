@@ -704,8 +704,10 @@ class TCREpitopeSentenceDataset(Dataset):
             df[cls.CN_SENTENCE] = df.apply(lambda row: encode_row(row, encoder), axis=1)
             df = df.dropna(subset=[cls.CN_SENTENCE])
             df.to_csv(output_csv)
+            logger.info('%s dataset was saved to %s, df.shape: %s' % (data_key, output_csv, str(df.shape)))
         else:
             df = pd.read_csv(output_csv, index_col=0, converters={cls.CN_SENTENCE: lambda x: eval(x)})
+            logger.info('%s dataset was loaded from %s, df.shape: %s' % (data_key, output_csv, str(df.shape)))
 
         config['output_csv'] = output_csv
         return cls(config=config, df_enc=df, encoder=encoder)
