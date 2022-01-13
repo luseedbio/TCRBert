@@ -139,7 +139,6 @@
       },
       "data_parallel": false,
       "backup": "train.bak.{date}.tar.gz",
-      "exclude_eval_data_by": ["index", "cdr3b"],
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
           "test_size": 0.2,
