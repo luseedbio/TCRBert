@@ -325,7 +325,7 @@ class Experiment(object):
             test_ds = TCREpitopeSentenceDataset.from_key(data_key)
             test_df = test_ds.df_enc
             for col in target_cols:
-                logger.info('Excluding %s eval data of %s by %s from train data' % (test_df.shape[0], data_key, col))
+                logger.info('Excluding %s eval data by %s from train data' % (data_key, col))
                 if "index" == col:
                     df = df[df.index.map(lambda val: val not in test_df.index.values)]
                 else:
