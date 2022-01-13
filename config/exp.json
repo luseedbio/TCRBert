@@ -142,22 +142,22 @@
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
           "test_size": 0.2,
-          "batch_size": 256,
+          "batch_size": 128,
           "n_epochs": 150,
           "n_workers": 12,
           "metrics": ["accuracy"],
           "optimizer": {
             "type": "adam",
-            "lr": 1e-4
+            "lr": 1e-3
           },
           "train_bert_encoders": [-10, null],
           "early_stopper": {
-            "monitor": "accuracy",
+            "monitor": "loss",
             "patience": 15
           },
           "model_checkpoint": {
             "chk": "train.{round}.model_{epoch}.chk",
-            "monitor": "accuracy",
+            "monitor": "loss",
             "save_best_only": true,
             "period": 1
           },
@@ -176,12 +176,12 @@
           },
           "train_bert_encoders": [-6, null],
           "early_stopper": {
-            "monitor": "accuracy",
+            "monitor": "loss",
             "patience": 10
           },
           "model_checkpoint": {
             "chk": "train.{round}.model_{epoch}.chk",
-            "monitor": "accuracy",
+            "monitor": "loss",
             "save_best_only": true,
             "period": 1
         },
