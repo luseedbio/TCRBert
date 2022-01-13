@@ -202,12 +202,12 @@ class Experiment(object):
         return model
 
     @classmethod
-    def from_key(cls, key=None):
-        return Experiment(exp_conf=cls.load_exp_conf(key))
+    def from_key(cls, key=None, reload=False):
+        return Experiment(exp_conf=cls.load_exp_conf(key, reload))
 
     @classmethod
-    def load_exp_conf(cls, key=None):
-        if cls._exp_confs is None:
+    def load_exp_conf(cls, key=None, reload=False):
+        if (cls._exp_confs is None) or reload:
             with open('../config/exp.json', 'r') as f:
                 cls._exp_confs = json.load(f)
 
