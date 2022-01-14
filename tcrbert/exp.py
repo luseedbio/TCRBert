@@ -70,7 +70,7 @@ class Experiment(object):
                 logger.info('The bert encoders to be trained: %s' % round_conf['train_bert_encoders'])
                 model.train_bert_encoders(round_conf['train_bert_encoders'])
             else:
-                logger.info('All bert encoders are trained')
+                logger.info('All bert encoders wiil be trained')
                 model.melt_bert()
 
             metrics = round_conf['metrics']

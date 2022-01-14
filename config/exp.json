@@ -141,6 +141,7 @@
       "backup": "train.bak.{date}.tar.gz",
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
+          "exclude_eval_data_by": ["index", "cdr3b"],
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 150,
@@ -148,16 +149,16 @@
           "metrics": ["accuracy"],
           "optimizer": {
             "type": "adam",
-            "lr": 1e-3
+            "lr": 1e-4
           },
           "train_bert_encoders": [-10, null],
           "early_stopper": {
-            "monitor": "loss",
+            "monitor": "accuracy",
             "patience": 15
           },
           "model_checkpoint": {
             "chk": "train.{round}.model_{epoch}.chk",
-            "monitor": "loss",
+            "monitor": "accuracy",
             "save_best_only": true,
             "period": 1
           },
@@ -165,6 +166,7 @@
         },
         {
           "data": "iedb_sars2",
+          "exclude_eval_data_by": ["index", "cdr3b"],
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 100,
@@ -176,12 +178,12 @@
           },
           "train_bert_encoders": [-6, null],
           "early_stopper": {
-            "monitor": "loss",
+            "monitor": "accuracy",
             "patience": 10
           },
           "model_checkpoint": {
             "chk": "train.{round}.model_{epoch}.chk",
-            "monitor": "loss",
+            "monitor": "accuracy",
             "save_best_only": true,
             "period": 1
         },

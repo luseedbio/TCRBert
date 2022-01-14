@@ -135,7 +135,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
         # The member name must be 'bert' because the prefix of keys in state_dict
         # that have the pretrained weights is 'bert.xxx'
-        self._bert = ProteinBertModel(config)
+        self.bert = ProteinBertModel(config)
         self.classifier = SimpleMLP(config.hidden_size, 512, config.num_labels)
         self.train_listeners = []
         self.pred_listeners = []
@@ -200,30 +200,17 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         self._fire_train_begin(params)
         for epoch in range(n_epochs):
             if not self.stop_training:
-                # begin = datetime.now()
-                # logger.info('--------------------')
-                # logger.info('Begin epoch %s/%s at %s' % (epoch, n_epochs, begin))
                 params['epoch'] = epoch
-
                 self._fire_epoch_begin(params)
 
                 # Train phase
-                # logger.info('Begin training phase at epoch %s/%s' % (epoch, n_epochs))
                 params['phase'] = 'train'
                 self._train_epoch(train_data_loader, params)
-                # logger.info('End training phase at epoch %s/%s' % (epoch, n_epochs))
 
                 # Validation phase
-                # logger.info('Begin validation phase at epoch %s/%s' % (epoch, n_epochs))
                 params['phase'] = 'val'
                 self._train_epoch(test_data_loader, params)
-                # logger.info('End validation phase at epoch %s/%s' % (epoch, n_epochs))
-
                 self._fire_epoch_end(params)
-
-                # end = datetime.now()
-                # logger.info('End epoch %s/%s at %s, elapsed: %s' % (epoch, n_epochs, end, (end - begin)))
-                # logger.info('--------------------')
 
         self._fire_train_end(params)
         logger.info('End training...')
@@ -309,7 +296,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         logger.debug('[BertTCREpitopeModel.forward]: input_ids: %s(%s)' % (input_ids,
                                                                           str(input_ids.shape) if input_ids is not None else 'None'))
         # bert_out: # sequence_output, pooled_output, (hidden_states), (attentions)
-        bert_out = self._bert(input_ids, input_mask=input_mask)
+        bert_out = self.bert(input_ids, input_mask=input_mask)
         # sequence_out.shape: (batch_size, seq_len, hidden_size), pooled_out.shape: (batch_size, hidden_size)
         sequence_out, pooled_out = bert_out[:2]
 
@@ -321,14 +308,15 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
     def data_parallel(self):
         if not self.is_data_parallel():
-            self._bert = nn.DataParallel(self._bert)
+            self.bert = nn.DataParallel(self.bert)
         return self
 
     def is_data_parallel(self):
-        return isinstance(self._bert, nn.DataParallel)
+        return isinstance(self.bert, nn.DataParallel)
 
     def state_dict(self):
         sd = super().state_dict()
+
         if self.is_data_parallel():
             sd = OrderedDict({k.replace('bert.module', 'bert'): v for k, v in sd.items()})
         return sd
@@ -339,8 +327,10 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
             sd = torch.load(fnchk)
         else:
             sd = torch.load(fnchk, map_location=torch.device('cpu'))
+
         if self.is_data_parallel():
             sd = OrderedDict({k.replace('bert', 'bert.module'): v for k, v in sd.items()})
+
         super().load_state_dict(sd)
 
 
@@ -354,8 +344,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         # n_epochs = params['n_epochs']
         device = params['device']
         # batch_size = params['train.batch_size'] if phase == 'train' else params['test.batch_size']
-
-        n_data = params['train_ds.n_data'] if phase == 'train' else params['test_ds.n_data']
+        # n_data = params['train_ds.n_data'] if phase == 'train' else params['test_ds.n_data']
         # n_batches = round(n_data / batch_size)
 
         if phase == 'train':
@@ -375,7 +364,6 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
                 params['targets'] = targets
 
                 self._fire_train_batch_begin(params)
-
                 pbar.set_description('%s in epoch %s/%s' % (('Training' if params['phase'] == 'train' else 'Validating'),
                                                             params['epoch'], params['n_epochs']))
                 # logger.info('Begin %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
@@ -407,8 +395,6 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
 
                 self._fire_train_batch_end(params)
 
-                # logger.info('End %s/%s batch in %s phase of %s/%s epoch' % (bi, n_batches, phase, epoch, n_epochs))
-
     # For freeze and melt bert
     def freeze_bert(self):
         self._freeze_bert(on=True)
@@ -417,7 +403,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         self._freeze_bert(on=False)
 
     def _freeze_bert(self, on=True):
-        bert = self._bert.module if self.is_data_parallel() else self._bert
+        bert = self.bert.module if self.is_data_parallel() else self.bert
 
         for param in bert.parameters():
             param.requires_grad = (not on)
@@ -426,7 +412,7 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
         self.freeze_bert()
 
         # Melt target encoder layers and pooler
-        bert = self._bert.module if self.is_data_parallel() else self._bert
+        bert = self.bert.module if self.is_data_parallel() else self.bert
 
         for layer in bert.encoder.layer[layer_range[0]:layer_range[1]]:
             for param in layer.parameters():
@@ -438,19 +424,19 @@ class BertTCREpitopeModel(ProteinBertAbstractModel):
     # For DataParallel
     @property
     def bert_config(self):
-        return self._bert.module.config if self.is_data_parallel() else self._bert.config
+        return self.bert.module.config if self.is_data_parallel() else self.bert.config
 
     @property
     def bert_embeddings(self):
-        return self._bert.module.embeddings if self.is_data_parallel() else self._bert.embeddings
+        return self.bert.module.embeddings if self.is_data_parallel() else self.bert.embeddings
 
     @property
     def bert_encoder(self):
-        return self._bert.module.encoder if self.is_data_parallel() else self._bert.encoder
+        return self.bert.module.encoder if self.is_data_parallel() else self.bert.encoder
 
     @property
     def bert_pooler(self):
-        return self._bert.module.pooler if self.is_data_parallel() else self._bert.pooler
+        return self.bert.module.pooler if self.is_data_parallel() else self.bert.pooler
 
     # For train_listeners
     def add_train_listener(self, listener):
