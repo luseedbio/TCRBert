@@ -79,22 +79,29 @@ class TCREpitopeDFLoader(object):
             raise NotImplementedError()
 
     class DefaultNegativeGenerator(object):
-        def __init__(self, fn_tcr_cntr='../data/TCRGP/human_tcr_control.csv'):
-            df_cntr = pd.read_csv(fn_tcr_cntr)
-            self.cntr_cdr3b = df_cntr[CN.cdr3b].unique()
+        def __init__(self,
+                     fn_epitope='../data/bglib/bg_epitope.pkl',
+                     fn_cdr3b='../data/bglib/bg_cdr3b.pkl'):
+            self.bg_epitopes = FileUtils.pkl_load(fn_epitope)
+            self.bg_cdr3bs = FileUtils.pkl_load(fn_cdr3b)
 
         def generate_df(self, df_source):
             df_pos = df_source[df_source[CN.label] == 1]
-            pos_cdr3b = df_pos[CN.cdr3b].unique()
-            neg_cdr3b = list(filter(lambda x: x not in pos_cdr3b, self.cntr_cdr3b))
-            logger.debug('len(pos_cdr3b): %s, len(neg_cdr3b): %s' % (len(pos_cdr3b), len(neg_cdr3b)))
+
+            # pos_epitopes = df_pos[CN.epitope].unique()
+            # neg_epitopes = list(filter(lambda x: x not in pos_epitopes, self.bg_epitopes))
+            # logger.debug('len(pos_epitopes): %s, len(neg_epitopes): %s' % (len(pos_epitopes), len(neg_epitopes)))
+
+            pos_cdr3bs = df_pos[CN.cdr3b].unique()
+            neg_cdr3bs = list(filter(lambda x: x not in pos_cdr3bs, self.bg_cdr3bs))
+            logger.debug('len(pos_cdr3bs): %s, len(neg_cdr3bs): %s' % (len(pos_cdr3bs), len(neg_cdr3bs)))
 
             df = pd.DataFrame(columns=CN.values())
             for epitope, subdf in df_pos.groupby([CN.epitope]):
                 subdf_neg = subdf.copy()
                 subdf_neg[CN.source] = 'Control'
                 subdf_neg[CN.label] = 0
-                subdf_neg[CN.cdr3b] = np.random.choice(neg_cdr3b, subdf.shape[0], replace=False)
+                subdf_neg[CN.cdr3b] = np.random.choice(neg_cdr3bs, subdf.shape[0], replace=False)
                 subdf_neg.index = subdf_neg.apply(lambda row: TCREpitopeDFLoader._make_index(row), axis=1)
                 df = df.append(subdf_neg)
             return df

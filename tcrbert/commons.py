@@ -1,7 +1,7 @@
 import json
 import unittest
-from collections import Iterable
-
+from collections import Iterable, OrderedDict
+import pickle
 import numpy as np
 import pandas as pd
 from enum import Enum, auto, IntEnum
@@ -82,6 +82,7 @@ class TypeUtils(object):
         return isinstance(x, Iterable) and not isinstance(x, str)
 
 class FileUtils(object):
+
     @staticmethod
     def json_load(fn):
         data = None
@@ -93,6 +94,18 @@ class FileUtils(object):
     def json_dump(data, fn):
         with open(fn, 'w') as f:
             json.dump(data, f)
+
+    @staticmethod
+    def pkl_load(fn):
+        data = None
+        with open(fn, 'rb') as f:
+            data = pickle.load(f)
+        return data
+
+    @staticmethod
+    def pkl_dump(data, fn):
+        with open(fn, 'wb') as f:
+            pickle.dump(data, f)
 
 class Timestamp(object):
     def start(self):
@@ -232,6 +245,22 @@ class TypeUtilsTest(BaseTest):
         self.assertFalse(TypeUtils.is_collection('ABC'))
         self.assertFalse(TypeUtils.is_collection(None))
 
+class FileUtilsTest(BaseTest):
+    def test_pkl_dump_load(self):
+        data = np.random.randn(100, 100)
+        fn = '../tmp/test.pkl'
+        FileUtils.pkl_dump(data, fn)
+        np.testing.assert_array_equal(data, FileUtils.pkl_load(fn))
+
+    def test_json_dump_load(self):
+        data = OrderedDict({
+            'A': 0.9898,
+            'B': 'XXX',
+            'C': [1, 2, 3]
+        })
+        fn = '../tmp/test.json'
+        FileUtils.json_dump(data, fn)
+        np.testing.assert_array_equal(data, FileUtils.json_load(fn))
 
 if __name__ == '__main__':
     unittest.main()

@@ -141,7 +141,6 @@
       "backup": "train.bak.{date}.tar.gz",
       "rounds": [{
           "data": "dash_vdjdb_mcpas",
-          "exclude_eval_data_by": ["index", "cdr3b"],
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 150,
@@ -166,7 +165,6 @@
         },
         {
           "data": "iedb_sars2",
-          "exclude_eval_data_by": ["index", "cdr3b"],
           "test_size": 0.2,
           "batch_size": 128,
           "n_epochs": 100,
